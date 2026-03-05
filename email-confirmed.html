@@ -6,7 +6,6 @@
     <title>Email Confirmed | Vivo Distro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Your existing styles */
         * {
             margin: 0;
             padding: 0;
@@ -47,6 +46,21 @@
             }
         }
         
+        .loader {
+            border: 4px solid #2a2f45;
+            border-top: 4px solid #6C63FF;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
         .success-icon {
             width: 100px;
             height: 100px;
@@ -61,13 +75,33 @@
             box-shadow: 0 10px 30px rgba(72, 187, 120, 0.3);
         }
         
+        .error-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #F56565, #E53E3E);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            font-size: 3rem;
+            color: white;
+        }
+        
         h1 {
             font-size: 2.2rem;
             margin-bottom: 15px;
+        }
+        
+        .success h1 {
             background: linear-gradient(90deg, #6C63FF, #48BB78);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+        }
+        
+        .error h1 {
+            color: #F56565;
         }
         
         p {
@@ -100,51 +134,14 @@
             box-shadow: 0 15px 30px rgba(108, 99, 255, 0.4);
         }
         
-        .btn i {
-            font-size: 1.2rem;
-        }
-        
-        .loader {
-            border: 4px solid #2a2f45;
-            border-top: 4px solid #6C63FF;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .error-icon {
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, #F56565, #E53E3E);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 30px;
-            font-size: 3rem;
-            color: white;
-        }
-        
         .footer {
             margin-top: 30px;
             color: #718096;
             font-size: 0.9rem;
         }
         
-        .footer a {
-            color: #6C63FF;
-            text-decoration: none;
-        }
-        
-        .footer a:hover {
-            text-decoration: underline;
+        .hidden {
+            display: none;
         }
     </style>
 </head>
@@ -155,7 +152,7 @@
         <p>Please wait while we confirm your email address.</p>
     </div>
 
-    <div class="container" id="successContainer" style="display: none;">
+    <div class="container success hidden" id="successContainer">
         <div class="success-icon">
             <i class="fas fa-check-circle"></i>
         </div>
@@ -170,7 +167,7 @@
         </div>
     </div>
 
-    <div class="container" id="errorContainer" style="display: none;">
+    <div class="container error hidden" id="errorContainer">
         <div class="error-icon">
             <i class="fas fa-exclamation-triangle"></i>
         </div>
@@ -188,6 +185,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         (function() {
+            // Supabase configuration
             const supabaseUrl = 'https://msjinuumxmezrijqemmp.supabase.co';
             const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zamludXVteG1lenJpanFlbW1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwOTAyNjMsImV4cCI6MjA4NzY2NjI2M30.ic50fSC7MQfhSkhfE5E8B0R5-BGCQStMRZNHiy6Zakw';
             
@@ -206,8 +204,38 @@
 
             async function handleEmailConfirmation() {
                 try {
-                    console.log('Checking for session...');
+                    console.log('1. Starting email confirmation...');
+                    console.log('2. Current URL:', window.location.href);
+                    console.log('3. URL Hash:', window.location.hash);
                     
+                    // Check if there's a hash with tokens
+                    if (window.location.hash && window.location.hash.includes('access_token')) {
+                        console.log('4. Found tokens in hash, processing...');
+                        
+                        // Let Supabase handle the hash automatically
+                        const { data, error } = await supabaseClient.auth.getSession();
+                        
+                        if (error) {
+                            console.error('5. Session error:', error);
+                            throw error;
+                        }
+                        
+                        console.log('6. Session data:', data);
+                        
+                        if (data.session) {
+                            console.log('7. ✅ Email confirmed successfully!');
+                            
+                            // Clear the hash from URL
+                            history.replaceState(null, null, window.location.pathname);
+                            
+                            // Show success
+                            loadingContainer.classList.add('hidden');
+                            successContainer.classList.remove('hidden');
+                            return;
+                        }
+                    }
+                    
+                    // If we get here, try to get session anyway
                     const { data, error } = await supabaseClient.auth.getSession();
                     
                     if (error) {
@@ -215,28 +243,14 @@
                         throw error;
                     }
                     
-                    console.log('Session data:', data);
-                    
                     if (data.session) {
-                        console.log('Email confirmed successfully!');
-                        
-                        const pendingUser = localStorage.getItem('pendingUser');
-                        if (pendingUser) {
-                            const userData = JSON.parse(pendingUser);
-                            
-                            await supabaseClient
-                                .from('usernames')
-                                .update({ email_confirmed: true })
-                                .eq('user_id', data.session.user.id);
-                            
-                            localStorage.removeItem('pendingUser');
-                        }
-                        
-                        loadingContainer.style.display = 'none';
-                        successContainer.style.display = 'block';
+                        console.log('✅ Session found, email confirmed!');
+                        loadingContainer.classList.add('hidden');
+                        successContainer.classList.remove('hidden');
                         return;
                     }
                     
+                    // Check for error parameters
                     const urlParams = new URLSearchParams(window.location.search);
                     const errorParam = urlParams.get('error');
                     const errorDescription = urlParams.get('error_description');
@@ -245,42 +259,18 @@
                         throw new Error(errorDescription || 'Verification failed');
                     }
                     
-                    const hashParams = new URLSearchParams(window.location.hash.substring(1));
-                    const accessToken = hashParams.get('access_token');
-                    const refreshToken = hashParams.get('refresh_token');
-                    
-                    if (accessToken && refreshToken) {
-                        console.log('Found tokens in URL hash, setting session...');
-                        
-                        const { error: sessionError } = await supabaseClient.auth.setSession({
-                            access_token: accessToken,
-                            refresh_token: refreshToken
-                        });
-                        
-                        if (sessionError) {
-                            console.error('Error setting session:', sessionError);
-                            throw sessionError;
-                        }
-                        
-                        const { data: newData } = await supabaseClient.auth.getSession();
-                        if (newData.session) {
-                            loadingContainer.style.display = 'none';
-                            successContainer.style.display = 'block';
-                            return;
-                        }
-                    }
-                    
-                    console.log('No session found after all attempts');
-                    throw new Error('Unable to verify email. The link may have expired.');
+                    // No session and no error - link might be expired
+                    throw new Error('No verification session found. The link may have expired.');
                     
                 } catch (err) {
-                    console.error('Confirmation error:', err);
-                    loadingContainer.style.display = 'none';
-                    errorContainer.style.display = 'block';
+                    console.error('❌ Confirmation error:', err);
+                    loadingContainer.classList.add('hidden');
+                    errorContainer.classList.remove('hidden');
                     errorMessage.textContent = err.message || 'The confirmation link is invalid or has expired.';
                 }
             }
 
+            // Run when page loads
             handleEmailConfirmation();
         })();
     </script>
