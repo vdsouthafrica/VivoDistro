@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login | Vivo Distro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 400px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-align: center;
+            background: linear-gradient(90deg, #6C63FF, #FF6584);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.07);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #6C63FF;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(90deg, #6C63FF, #FF6584);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(108, 99, 255, 0.3);
+        }
+        
+        .signup-link {
+            text-align: center;
+            margin-top: 25px;
+            color: #8892b0;
+        }
+        
+        .signup-link a {
+            color: #6C63FF;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .error {
+            color: #F56565;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- GLOBAL FULLSCREEN BUTTON - ALWAYS VISIBLE -->
+    <button id="globalFullscreenBtn" style="
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: #6C63FF;
+        border: 2px solid white;
+        color: white;
+        font-size: 1.3rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 999999;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        transition: all 0.3s ease;
+    ">
+        <i class="fas fa-expand"></i>
+    </button>
+
+    <div class="container">
+        <h1>Login</h1>
+        
+        <div class="form-group">
+            <input type="text" id="username" placeholder="Username">
+        </div>
+        
+        <div class="form-group">
+            <input type="password" id="password" placeholder="Password">
+        </div>
+        
+        <button class="btn" id="loginBtn">Login</button>
+        
+        <div class="signup-link">
+            Don't have an account? <a href="signup.html">Sign up</a>
+        </div>
+        
+        <div class="error" id="errorMsg">Invalid username or password</div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // ===== GLOBAL FULLSCREEN FUNCTIONALITY =====
+        (function() {
+            const fullscreenBtn = document.getElementById('globalFullscreenBtn');
+            
+            if (!fullscreenBtn) {
+                console.error('Fullscreen button not found!');
+                return;
+            }
+            
+            // Check if we were in fullscreen mode before
+            if (localStorage.getItem('fullscreenMode') === 'true') {
+                setTimeout(() => {
+                    if (!document.fullscreenElement) {
+                        if (document.documentElement.requestFullscreen) {
+                            document.documentElement.requestFullscreen().catch(err => {
+                                console.log('Auto fullscreen failed:', err);
+                            });
+                        }
+                        fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+                    }
+                }, 500);
+            }
+            
+            // Toggle fullscreen on button click
+            fullscreenBtn.addEventListener('click', function() {
+                if (!document.fullscreenElement) {
+                    // Enter fullscreen
+                    if (document.documentElement.requestFullscreen) {
+                        document.documentElement.requestFullscreen();
+                    } else if (document.documentElement.webkitRequestFullscreen) { // Safari
+                        document.documentElement.webkitRequestFullscreen();
+                    } else if (document.documentElement.msRequestFullscreen) { // IE/Edge
+                        document.documentElement.msRequestFullscreen();
+                    }
+                    
+                    localStorage.setItem('fullscreenMode', 'true');
+                    this.innerHTML = '<i class="fas fa-compress"></i>';
+                } else {
+                    // Exit fullscreen
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    } else if (document.webkitExitFullscreen) { // Safari
+                        document.webkitExitFullscreen();
+                    } else if (document.msExitFullscreen) { // IE/Edge
+                        document.msExitFullscreen();
+                    }
+                    
+                    localStorage.removeItem('fullscreenMode');
+                    this.innerHTML = '<i class="fas fa-expand"></i>';
+                }
+            });
+            
+            // Update button when fullscreen changes (like pressing ESC)
+            document.addEventListener('fullscreenchange', updateButton);
+            document.addEventListener('webkitfullscreenchange', updateButton);
+            document.addEventListener('mozfullscreenchange', updateButton);
+            document.addEventListener('MSFullscreenChange', updateButton);
+            
+            function updateButton() {
+                if (document.fullscreenElement) {
+                    fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+                    localStorage.setItem('fullscreenMode', 'true');
+                } else {
+                    fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+                    localStorage.removeItem('fullscreenMode');
+                }
+            }
+            
+            // Log that fullscreen button is ready
+            console.log('✅ Fullscreen button initialized');
+        })();
+
+        // ===== LOGIN FUNCTIONALITY =====
+        document.addEventListener('DOMContentLoaded', function() {
+            const supabaseUrl = 'https://msjinuumxmezrijqemmp.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zamludXVteG1lenJpanFlbW1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwOTAyNjMsImV4cCI6MjA4NzY2NjI2M30.ic50fSC7MQfhSkhfE5E8B0R5-BGCQStMRZNHiy6Zakw';
+            const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+            const loginBtn = document.getElementById('loginBtn');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const errorMsg = document.getElementById('errorMsg');
+
+            loginBtn.addEventListener('click', async function() {
+                const username = usernameInput.value.trim();
+                const password = passwordInput.value;
+
+                if (!username || !password) {
+                    errorMsg.textContent = 'Please enter username and password';
+                    errorMsg.style.display = 'block';
+                    return;
+                }
+
+                errorMsg.style.display = 'none';
+                loginBtn.disabled = true;
+                loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+
+                try {
+                    // First, try to sign in directly with email and password
+                    // For test users, we know their emails
+                    let email = '';
+                    
+                    if (username === 'agenttest') email = 'agenttest@vivodistro.com';
+                    else if (username === 'performertest') email = 'performertest@vivodistro.com';
+                    else if (username === 'bookertest') email = 'bookertest@vivodistro.com';
+                    else {
+                        // Try to look up in usernames table
+                        const { data: userData } = await supabaseClient
+                            .from('usernames')
+                            .select('email')
+                            .eq('username', username)
+                            .maybeSingle();
+                        
+                        if (userData) {
+                            email = userData.email;
+                        }
+                    }
+
+                    if (!email) {
+                        throw new Error('User not found');
+                    }
+
+                    // Login with email and password
+                    const { data, error } = await supabaseClient.auth.signInWithPassword({
+                        email: email,
+                        password: password
+                    });
+
+                    if (error) throw error;
+
+                    // Get user's role from metadata
+                    const role = data.user.user_metadata?.role;
+                    
+                    // Check if they have a profile
+                    let hasProfile = false;
+                    
+                    if (role === 'performer') {
+                        const { data: profile } = await supabaseClient
+                            .from('performers')
+                            .select('id')
+                            .eq('auth_id', data.user.id)
+                            .maybeSingle();
+                        hasProfile = !!profile;
+                    } else if (role === 'agent') {
+                        const { data: profile } = await supabaseClient
+                            .from('agents')
+                            .select('id')
+                            .eq('auth_id', data.user.id)
+                            .maybeSingle();
+                        hasProfile = !!profile;
+                    } else if (role === 'booker') {
+                        const { data: profile } = await supabaseClient
+                            .from('bookers')
+                            .select('id')
+                            .eq('auth_id', data.user.id)
+                            .maybeSingle();
+                        hasProfile = !!profile;
+                    }
+
+                    // Redirect
+                    if (hasProfile) {
+                        if (role === 'performer') window.location.href = 'performer-hub.html';
+                        else if (role === 'agent') window.location.href = 'agent-hub.html';
+                        else if (role === 'booker') window.location.href = 'booker-hub.html';
+                        else window.location.href = 'performer-hub.html';
+                    } else {
+                        if (role === 'performer') window.location.href = 'performer-setup.html';
+                        else if (role === 'agent') window.location.href = 'agent-setup.html';
+                        else if (role === 'booker') window.location.href = 'booker-setup.html';
+                        else window.location.href = 'performer-setup.html';
+                    }
+                    
+                } catch (error) {
+                    console.error('Login error:', error);
+                    errorMsg.style.display = 'block';
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = 'Login';
+                }
+            });
+
+            passwordInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    loginBtn.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

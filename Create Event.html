@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Event | Vivo Distro</title>
+    <link rel="stylesheet" href="style.css">
+     <link rel="stylesheet" href="responsive.css"> <!-- YOUR NEW RESPONSIVE CSS -->
+    <link rel="stylesheet" href="hub.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="create event.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <script src="global-fullscreen.js" defer></script>
+</head>
+<body class="dark-theme">
+    <!-- Sidebar -->
+    <aside class="hub-sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fas fa-calendar-check"></i>
+                <span>VIVO <span class="logo-highlight">DISTRO</span></span>
+            </div>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="booker-hub.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="calendar.html" class="nav-item">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Vivo Calendar</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-comments"></i>
+                <span>Vivo Chat</span>
+                <span class="notification-badge">3</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-search"></i>
+                <span>Find Talent</span>
+            </a>
+            <a href="create-event.html" class="nav-item active">
+                <i class="fas fa-plus-circle"></i>
+                <span>Create Event</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="user-avatar" id="userAvatar">
+                    <i class="fas fa-building"></i>
+                </div>
+                <div class="user-info">
+                    <h4 id="userName">Venue Name</h4>
+                    <p id="userRole">Booker</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="hub-main dark-main">
+        <!-- Top Bar -->
+        <header class="hub-header dark-header">
+            <div class="header-actions">
+                <button class="action-btn dark-btn" onclick="window.location.href='browse.html'">
+                    <i class="fas fa-search"></i>
+                    <span>Browse</span>
+                </button>
+                <button class="action-btn dark-btn" onclick="window.location.href='booker-edit.html'">
+                    <i class="fas fa-edit"></i>
+                    <span>Edit Profile</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Create Event Content -->
+        <div class="create-event-container">
+            <div class="create-event-header dark-card">
+                <h1><i class="fas fa-plus-circle"></i> Create New Event</h1>
+                <p>Add details about your upcoming event, upload photos, and set ticket information</p>
+            </div>
+
+            <div class="create-event-form">
+                <!-- Left Column: Basic Info -->
+                <div class="form-column">
+                    <div class="form-section dark-card">
+                        <h2><i class="fas fa-info-circle"></i> Event Information</h2>
+                        
+                        <div class="form-group">
+                            <label for="eventName"><i class="fas fa-heading"></i> Event Name *</label>
+                            <input type="text" id="eventName" placeholder="Enter event name" required class="dark-input">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="eventDescription"><i class="fas fa-align-left"></i> Description *</label>
+                            <textarea id="eventDescription" rows="5" placeholder="Describe your event, performers, special features, etc." required class="dark-input"></textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group half">
+                                <label for="eventVenue"><i class="fas fa-building"></i> Venue Name *</label>
+                                <input type="text" id="eventVenue" placeholder="Enter venue name" required class="dark-input">
+                            </div>
+                            
+                            <div class="form-group half">
+                                <label for="eventLocation"><i class="fas fa-map-marker-alt"></i> Location *</label>
+                                <input type="text" id="eventLocation" placeholder="City, Province" required class="dark-input">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group half">
+                                <label for="eventDate"><i class="fas fa-calendar-day"></i> Date *</label>
+                                <input type="date" id="eventDate" required class="dark-input">
+                            </div>
+                            
+                            <div class="form-group half">
+                                <label for="eventTime"><i class="fas fa-clock"></i> Time *</label>
+                                <input type="time" id="eventTime" required class="dark-input">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ticket Information -->
+                    <div class="form-section dark-card">
+                        <h2><i class="fas fa-ticket-alt"></i> Ticket Information</h2>
+                        
+                        <div class="form-group">
+                            <label for="ticketPrice"><i class="fas fa-money-bill-wave"></i> Ticket Price (ZAR)</label>
+                            <input type="number" id="ticketPrice" placeholder="Enter price per ticket" min="0" step="0.01" class="dark-input">
+                            <small class="form-hint dark-hint">Leave empty if tickets are free</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="ticketLink"><i class="fas fa-link"></i> Ticket Purchase Link</label>
+                            <input type="url" id="ticketLink" placeholder="https://example.com/tickets" class="dark-input">
+                            <small class="form-hint dark-hint">Where can people buy tickets?</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Photos -->
+                <div class="form-column">
+                    <!-- Event Photos Section -->
+                    <div class="form-section dark-card">
+                        <h2><i class="fas fa-images"></i> Event Photos</h2>
+                        <p class="section-subtitle dark-subtitle">Upload up to 4 photos for your event</p>
+                        
+                        <div class="photo-upload-container">
+                            <!-- Photo Preview Area -->
+                            <div class="photo-preview-area dark-photo-area" id="photoPreview">
+                                <div class="photo-preview-header">
+                                    <h3><i class="fas fa-images"></i> Uploaded Photos</h3>
+                                    <span class="photo-count dark-count" id="photoCount">0/4 photos</span>
+                                </div>
+                                
+                                <!-- Swipeable Photo Container -->
+                                <div class="swipe-container dark-swipe">
+                                    <div class="swipe-wrapper" id="swipeWrapper">
+                                        <!-- Photos will be added here dynamically -->
+                                        <div class="empty-photos dark-empty">
+                                            <i class="fas fa-camera"></i>
+                                            <p>No photos uploaded yet</p>
+                                            <small>Upload photos to see preview</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Navigation Arrows -->
+                                    <button class="swipe-arrow left-arrow dark-arrow" id="prevPhoto">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </button>
+                                    <button class="swipe-arrow right-arrow dark-arrow" id="nextPhoto">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                    
+                                    <!-- Photo Indicators/Dots -->
+                                    <div class="photo-indicators" id="photoIndicators">
+                                        <!-- Dots will be added here dynamically -->
+                                    </div>
+                                </div>
+                                
+                                <!-- Upload Controls -->
+                                <div class="upload-controls">
+                                    <label for="photoUpload" class="upload-btn dark-upload-btn">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        <span>Upload Photos</span>
+                                        <input type="file" id="photoUpload" accept="image/*" multiple style="display: none;">
+                                    </label>
+                                    
+                                    <button class="remove-btn dark-remove-btn" id="removeAllPhotos">
+                                        <i class="fas fa-trash"></i>
+                                        Remove All
+                                    </button>
+                                </div>
+                                
+                                <!-- Upload Progress -->
+                                <div class="upload-progress dark-progress" id="uploadProgress" style="display: none;">
+                                    <div class="progress-bar dark-bar">
+                                        <div class="progress-fill" id="progressFill"></div>
+                                    </div>
+                                    <span class="progress-text" id="progressText">Uploading...</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Photo Instructions -->
+                            <div class="photo-instructions dark-instructions">
+                                <h4><i class="fas fa-lightbulb"></i> Tips for great event photos:</h4>
+                                <ul>
+                                    <li>Use high-quality images (min. 1200x800px)</li>
+                                    <li>Include venue shots, past events, or performer photos</li>
+                                    <li>First photo will be the main thumbnail</li>
+                                    <li>Maximum 4 photos per event</li>
+                                    <li>Supported formats: JPG, PNG, WebP</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions dark-actions">
+                <button class="cancel-btn dark-cancel-btn" onclick="window.location.href='booker-hub.html'">
+                    <i class="fas fa-times"></i>
+                    Cancel
+                </button>
+                <button class="save-draft-btn dark-draft-btn" id="saveDraft">
+                    <i class="fas fa-save"></i>
+                    Save as Draft
+                </button>
+                <button class="create-btn" id="createEvent">
+                    <i class="fas fa-check"></i>
+                    Create Event
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script src="creat eevent.js"></script>
+</body>
+</html>

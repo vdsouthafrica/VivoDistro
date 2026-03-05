@@ -1,0 +1,26 @@
+/* responsive.css - Add to ALL pages */
+html, body {
+    width: 100%;
+    overflow-x: hidden;
+    position: relative;
+}
+
+img, video, iframe {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Tablet styles */
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+    /* Your tablet styles */
+}
+
+/* Phone styles */
+@media screen and (max-width: 767px) {
+    /* Your phone styles */
+}
+
+/* Small phone styles */
+@media screen and (max-width: 480px) {
+    /* Your small phone styles */
+}

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Agent Dashboard | Vivo Distro</title>
+    <link rel="stylesheet" href="style.css">
+     <link rel="stylesheet" href="responsive.css"> <!-- YOUR NEW RESPONSIVE CSS -->
+    <link rel="stylesheet" href="hub.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons@6.6.6/css/flag-icons.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <script src="global-fullscreen.js" defer></script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="hub-sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fas fa-user-tie"></i>
+                <span>VIVO <span class="logo-highlight">DISTRO</span></span>
+            </div>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active">
+                <i class="fas fa-home"></i> <span>Dashboard</span>
+            </a>
+            <a href="agent-calendar.html" class="nav-item">
+                <i class="fas fa-calendar-alt"></i> <span>Calendar</span>
+            </a>
+            <a href="agent-artists.html" class="nav-item">
+                <i class="fas fa-users"></i> <span>My Artists</span>
+            </a>
+            <a href="agent-calculator.html" class="nav-item">
+                <i class="fas fa-calculator"></i> <span>Calculator</span>
+            </a>
+            <a href="vivo-chat.html" class="nav-item">
+                <i class="fas fa-comments"></i> <span>Vivo Chat</span>
+                <span class="notification-badge" id="chatNotificationBadge" style="display: none;">0</span>
+            </a>
+            <a href="browse.html" class="nav-item">
+                <i class="fas fa-search"></i> <span>Browse</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-cog"></i> <span>Settings</span>
+            </a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="user-avatar" id="userAvatar">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <div class="user-info">
+                    <h4 id="userName">Agency Name</h4>
+                    <p id="userRole">Agent</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="hub-main">
+        <header class="hub-header">
+            <div class="header-actions">
+                <button class="action-btn" onclick="window.location.href='browse.html'">
+                    <i class="fas fa-search"></i> <span>Browse</span>
+                </button>
+                <button class="action-btn" onclick="window.location.href='agent-edit.html'">
+                    <i class="fas fa-edit"></i> <span>Edit Profile</span>
+                </button>
+            </div>
+        </header>
+
+        <div class="dashboard-content">
+            <!-- Agency Profile Card with Flag -->
+            <div class="profile-card">
+                <div class="profile-header">
+                    <h2><i class="fas fa-user-tie"></i> Agency Profile</h2>
+                </div>
+                
+                <!-- Country Flag Badge -->
+                <div class="country-flag-badge" id="countryFlagBadge" style="display: none;">
+                    <span class="fi" id="countryFlag"></span>
+                    <span class="country-name" id="countryName"></span>
+                </div>
+                
+                <div class="profile-content">
+                    <div class="profile-avatar-large" id="profileAvatar">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    
+                    <div class="profile-details">
+                        <h3 id="profileName">Agency Name</h3>
+                        <p class="profile-location" id="profileLocation">
+                            <i class="fas fa-map-marker-alt"></i> Location
+                        </p>
+                        
+                        <div class="profile-bio" id="profileBio"></div>
+                        
+                        <div class="profile-specialties" id="profileSpecialties"></div>
+                        
+                        <div class="profile-social" id="profileSocial"></div>
+                        
+                        <div class="profile-stats">
+                            <div class="stat">
+                                <div class="stat-number" id="artistsCount">0</div>
+                                <div class="stat-label">ARTISTS</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="push-service.js"></script>
+    <script src="chat-notifications.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            const supabaseUrl = 'https://msjinuumxmezrijqemmp.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zamludXVteG1lenJpanFlbW1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwOTAyNjMsImV4cCI6MjA4NzY2NjI2M30.ic50fSC7MQfhSkhfE5E8B0R5-BGCQStMRZNHiy6Zakw';
+            const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+            // Initialize push notifications
+            PushService.init(supabaseClient);
+            
+            // Initialize chat notifications
+            ChatNotifications.init(supabaseClient);
+            
+            // Register callback for badge updates
+            ChatNotifications.onUpdate((count) => {
+                const badge = document.getElementById('chatNotificationBadge');
+                if (badge) {
+                    if (count > 0) {
+                        badge.textContent = count;
+                        badge.style.display = 'inline-block';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                }
+            });
+
+            await loadProfile();
+
+            async function loadProfile() {
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                if (!user) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const { data: profile, error } = await supabaseClient
+                    .from('agents')
+                    .select('*')
+                    .eq('auth_id', user.id)
+                    .single();
+
+                if (error) {
+                    if (error.code === 'PGRST116') {
+                        window.location.href = 'agent-setup.html';
+                    }
+                    return;
+                }
+
+                if (profile) updateDashboard(profile);
+            }
+
+            function updateDashboard(profile) {
+                // Update country flag
+                updateCountryFlag(profile.country_code, profile.country);
+                
+                // Update avatar
+                const avatars = document.querySelectorAll('#userAvatar, #profileAvatar');
+                avatars.forEach(el => {
+                    if (profile.logo_url) {
+                        el.innerHTML = `<img src="${profile.logo_url}" style="width:100%; height:100%; object-fit:cover;">`;
+                    }
+                });
+
+                // Update name
+                document.getElementById('userName').textContent = profile.name || 'Agency Name';
+                document.getElementById('profileName').textContent = profile.name || 'Agency Name';
+                
+                // Update location
+                document.getElementById('profileLocation').innerHTML = 
+                    `<i class="fas fa-map-marker-alt"></i> ${profile.location || 'Location not set'}`;
+
+                // Update bio
+                const bioEl = document.getElementById('profileBio');
+                if (profile.bio) {
+                    bioEl.innerHTML = `<p>${profile.bio}</p>`;
+                }
+
+                // Update specialties
+                const specsEl = document.getElementById('profileSpecialties');
+                if (profile.specialties?.length > 0) {
+                    specsEl.innerHTML = profile.specialties.map(s => 
+                        `<span class="type-badge">${s}</span>`
+                    ).join('');
+                }
+
+                // Update social links
+                const socialEl = document.getElementById('profileSocial');
+                if (profile.social_links?.length > 0) {
+                    socialEl.innerHTML = profile.social_links.map(link => {
+                        const icons = {
+                            'instagram': 'fab fa-instagram',
+                            'facebook': 'fab fa-facebook',
+                            'twitter': 'fab fa-twitter',
+                            'tiktok': 'fab fa-tiktok',
+                            'youtube': 'fab fa-youtube',
+                            'linkedin': 'fab fa-linkedin',
+                            'website': 'fas fa-globe'
+                        };
+                        return `<a href="${link.url}" target="_blank" class="social-icon">
+                            <i class="${icons[link.platform] || 'fas fa-link'}"></i>
+                        </a>`;
+                    }).join('');
+                }
+
+                // Update stats
+                document.getElementById('artistsCount').textContent = profile.stats?.artists || '0';
+            }
+
+            function updateCountryFlag(countryCode, countryName) {
+                const flagBadge = document.getElementById('countryFlagBadge');
+                const flagElement = document.getElementById('countryFlag');
+                const nameElement = document.getElementById('countryName');
+                
+                if (countryCode) {
+                    const code = countryCode.toLowerCase();
+                    flagElement.className = `fi fi-${code} fi-circle`;
+                    nameElement.textContent = countryName || '';
+                    flagBadge.style.display = 'flex';
+                } else {
+                    flagBadge.style.display = 'none';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

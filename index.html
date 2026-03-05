@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vivo Distro | The Heartbeat of Entertainment</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <script src="global-fullscreen.js" defer></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: #0a0e1a;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: rfixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .pulse {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, #6C63FF 0%, transparent 70%);
+            opacity: 0.1;
+            border-radius: 50%;
+            animation: pulse 8s ease-in-out infinite;
+            top: 20%;
+            left: 10%;
+        }
+
+        .pulse.delay-1 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, #FF6584 0%, transparent 70%);
+            opacity: 0.05;
+            top: 60%;
+            left: 70%;
+            animation-delay: -2s;
+        }
+
+        .pulse.delay-2 {
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, #4FD1C5 0%, transparent 70%);
+            opacity: 0.07;
+            top: 30%;
+            left: 80%;
+            animation-delay: -4s;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.1; }
+            50% { transform: scale(1.2); opacity: 0.15; }
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 40px;
+            z-index: 1000;
+            background: rgba(10, 15, 31, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .logo i {
+            color: #6C63FF;
+            font-size: 1.8rem;
+        }
+
+        .logo-highlight {
+            color: #6C63FF;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #8892b0;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .nav-link:hover {
+            color: #fff;
+        }
+
+        .nav-link.active {
+            color: #6C63FF;
+        }
+
+        .join-btn {
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #6C63FF, #FF6584);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .join-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(108, 99, 255, 0.3);
+        }
+
+        /* Main Content Container */
+        .content-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 40px 40px;
+            min-height: 100vh;
+        }
+
+        /* Page Transitions */
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ========== HOME PAGE ========== */
+        .hero-section {
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .title-line {
+            display: block;
+        }
+
+        .title-line.highlight {
+            background: linear-gradient(135deg, #6C63FF, #FF6584);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: #8892b0;
+            max-width: 600px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #6C63FF, #FF6584);
+            color: white;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(108, 99, 255, 0.4);
+        }
+
+        /* ========== ABOUT PAGE ========== */
+        .about-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 0;
+        }
+
+        .about-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .about-header h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #6C63FF, #FF6584);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .about-header p {
+            color: #8892b0;
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .about-content {
+            background: rgba(21, 26, 44, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .about-text {
+            margin-bottom: 40px;
+        }
+
+        .about-text p {
+            color: #cbd5e0;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 25px;
+        }
+
+        .about-text p:last-child {
+            margin-bottom: 0;
+        }
+
+        .highlight-box {
+            background: rgba(108, 99, 255, 0.1);
+            border-left: 4px solid #6C63FF;
+            padding: 30px;
+            border-radius: 12px;
+            margin-top: 40px;
+        }
+
+        .highlight-box p {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 0;
+            background: linear-gradient(135deg, #6C63FF, #FF6584);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .mission-vision {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .mission-box, .vision-box {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .mission-box:hover, .vision-box:hover {
+            border-color: #6C63FF;
+            transform: translateY(-5px);
+        }
+
+        .mission-box h3, .vision-box h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mission-box h3 i, .vision-box h3 i {
+            color: #6C63FF;
+        }
+
+        .mission-box p, .vision-box p {
+            color: #8892b0;
+            line-height: 1.6;
+        }
+
+        /* ========== FEATURES PAGE ========== */
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 0;
+        }
+
+        .features-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .features-header h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #6C63FF, #FF6584);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .features-header p {
+            color: #8892b0;
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: rgba(21, 26, 44, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: #6C63FF;
+            box-shadow: 0 20px 40px rgba(108, 99, 255, 0.2);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, rgba(108, 99, 255, 0.2), rgba(255, 101, 132, 0.2));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+
+        .feature-icon i {
+            font-size: 2.5rem;
+            color: #6C63FF;
+        }
+
+        .feature-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .feature-card p {
+            color: #8892b0;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-list li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            color: #cbd5e0;
+        }
+
+        .feature-list li i {
+            color: #6C63FF;
+            font-size: 0.9rem;
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            background: rgba(108, 99, 255, 0.15);
+            border: 1px solid rgba(108, 99, 255, 0.3);
+            border-radius: 20px;
+            color: #6C63FF;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 80px;
+            padding: 40px;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .footer-links a {
+            color: #8892b0;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .footer-links a:hover {
+            color: #6C63FF;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 15px 20px;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .mission-vision {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .about-content {
+                padding: 30px 20px;
+            }
+            
+            .about-header h1 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="pulse"></div>
+        <div class="pulse delay-1"></div>
+        <div class="pulse delay-2"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo" id="logo">
+                <i class="fas fa-music"></i>
+                <span>VIVO <span class="logo-highlight">DISTRO</span></span>
+            </div>
+            <div class="nav-links">
+                <a class="nav-link active" data-page="home">Home</a>
+                <a class="nav-link" data-page="about">About</a>
+                <a class="nav-link" data-page="features">Features</a>
+                <button class="join-btn" id="joinNowBtn">Join Now →</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <div class="content-container">
+        <!-- HOME PAGE -->
+        <div id="home-page" class="page active">
+            <div class="hero-section">
+                <h1 class="hero-title animate-text">
+                    <span class="title-line">Welcome to</span>
+                    <span class="title-line highlight">Vivo Distro</span>
+                </h1>
+                
+                <p class="hero-subtitle">
+                    The Heartbeat of Entertainment.<br>
+                    The best digital music manager.
+                </p>
+                
+                <div class="hero-buttons">
+                    <button class="btn-primary" id="heroJoinBtn">
+                        <span>Join Now</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABOUT PAGE -->
+        <div id="about-page" class="page">
+            <div class="about-container">
+                <div class="about-header">
+                    <h1>About Vivo Distro</h1>
+                    <p>The Heartbeat of Entertainment</p>
+                </div>
+
+                <div class="about-content">
+                    <div class="about-text">
+                        <p>Vivo Distro is a multi-purpose digital platform built to connect performers, agents, and businesses in one powerful online space.</p>
+                        
+                        <p>We provide performers with a professional digital presence where they can showcase their talent, manage their profiles, and be discovered by the right people. For agents and managers, Vivo Distro works as an efficient digital management tool — making it easier to organize talent, promote artists, and connect with opportunities.</p>
+                        
+                        <p>For businesses and event organizers, the platform doubles as an advertising and talent discovery hub. Companies can promote events, search for performers, and book talent directly through a streamlined, modern system designed for the entertainment industry.</p>
+                        
+                        <p>Vivo Distro brings together talent management, digital promotion, and event advertising into one connected platform — simplifying how the industry discovers, manages, and books performers in the digital age.</p>
+                    </div>
+
+                    <div class="highlight-box">
+                        <p>One platform. Three industries. Endless opportunities.</p>
+                    </div>
+
+                    <div class="mission-vision">
+                        <div class="mission-box">
+                            <h3><i class="fas fa-bullseye"></i> Our Mission</h3>
+                            <p>To empower South African talent by providing a professional platform that connects performers with opportunities, simplifies management for agents, and helps bookers find the perfect talent for any event.</p>
+                        </div>
+                        <div class="vision-box">
+                            <h3><i class="fas fa-eye"></i> Our Vision</h3>
+                            <p>To become Africa's leading entertainment technology platform, revolutionizing how the industry discovers, manages, and books talent across the continent.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FEATURES PAGE -->
+        <div id="features-page" class="page">
+            <div class="features-container">
+                <div class="features-header">
+                    <h1>Built for the Industry</h1>
+                    <p>Everything you need to succeed in entertainment</p>
+                </div>
+
+                <div class="features-grid">
+                    <!-- Performer Features -->
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-microphone"></i>
+                        </div>
+                        <h3>Performers</h3>
+                        <p>Showcase your talent and grow your career with professional tools designed for artists.</p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check-circle"></i> Professional profile with bio, photos, and social links</li>
+                            <li><i class="fas fa-check-circle"></i> Interactive calendar to manage gigs and availability</li>
+                            <li><i class="fas fa-check-circle"></i> Vivo Calculator for professional quotes and pricing</li>
+                            <li><i class="fas fa-check-circle"></i> Direct messaging with bookers and agents</li>
+                            <li><i class="fas fa-check-circle"></i> Get discovered by venues and event planners</li>
+                        </ul>
+                        <div style="margin-top: 20px;">
+                            <span class="role-badge">Solo Artist</span>
+                            <span class="role-badge">Band</span>
+                            <span class="role-badge">DJ</span>
+                            <span class="role-badge">Producer</span>
+                        </div>
+                    </div>
+
+                    <!-- Agent Features -->
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <h3>Agents</h3>
+                        <p>Manage multiple artists and grow your roster with powerful management tools.</p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check-circle"></i> Manage unlimited artists in your roster</li>
+                            <li><i class="fas fa-check-circle"></i> Track bookings, revenue, and performance</li>
+                            <li><i class="fas fa-check-circle"></i> Calendar view of all artist gigs</li>
+                            <li><i class="fas fa-check-circle"></i> Direct communication with bookers</li>
+                            <li><i class="fas fa-check-circle"></i> Professional agency profile</li>
+                        </ul>
+                        <div style="margin-top: 20px;">
+                            <span class="role-badge">Talent Agency</span>
+                            <span class="role-badge">Management</span>
+                        </div>
+                    </div>
+
+                    <!-- Booker Features -->
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <h3>Bookers</h3>
+                        <p>Find and book the perfect talent for your events with advanced search tools.</p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check-circle"></i> Browse thousands of performers across SA</li>
+                            <li><i class="fas fa-check-circle"></i> Filter by location, genre, and availability</li>
+                            <li><i class="fas fa-check-circle"></i> Create and manage events</li>
+                            <li><i class="fas fa-check-circle"></i> Direct booking requests with auto-forms</li>
+                            <li><i class="fas fa-check-circle"></i> Ticket link integration</li>
+                        </ul>
+                        <div style="margin-top: 20px;">
+                            <span class="role-badge">Venue Owner</span>
+                            <span class="role-badge">Event Planner</span>
+                            <span class="role-badge">Festival Manager</span>
+                        </div>
+                    </div>
+
+                    <!-- Platform Features -->
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <h3>Vivo Chat</h3>
+                        <p>Smart messaging with booking forms and professional communication tools.</p>
+                        <ul class="feature-list">
+                            <li><i class="fas fa-check-circle"></i> Real-time messaging with read receipts</li>
+                            <li><i class="fas fa-check-circle"></i> Smart booking request forms</li>
+                            <li><i class="fas fa-check-circle"></i> Accept/decline with professional templates</li>
+                            <li><i class="fas fa-check-circle"></i> File and image sharing</li>
+                            <li><i class="fas fa-check-circle"></i> Quote generator built into chat</li>
+                        </ul>
+                        <div style="margin-top: 20px;">
+                            <span class="role-badge">All Users</span>
+                            <span class="role-badge">Real-time</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>© 2024 Vivo Distro. All rights reserved.</p>
+            <div class="footer-links">
+                <a data-page="about">About</a>
+                <a data-page="features">Features</a>
+                <a id="footerContact">Contact</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Page navigation
+            const pages = {
+                home: document.getElementById('home-page'),
+                about: document.getElementById('about-page'),
+                features: document.getElementById('features-page')
+            };
+            
+            const navLinks = document.querySelectorAll('.nav-link');
+            const footerLinks = document.querySelectorAll('.footer-links a');
+            const logo = document.getElementById('logo');
+            
+            // Function to switch pages
+            function switchPage(pageId) {
+                // Hide all pages
+                Object.values(pages).forEach(page => {
+                    page.classList.remove('active');
+                });
+                
+                // Show selected page
+                if (pages[pageId]) {
+                    pages[pageId].classList.add('active');
+                }
+                
+                // Update active nav link
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.dataset.page === pageId) {
+                        link.classList.add('active');
+                    }
+                });
+                
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+            
+            // Add click handlers to nav links
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const pageId = this.dataset.page;
+                    if (pageId) {
+                        switchPage(pageId);
+                    }
+                });
+            });
+            
+            // Add click handlers to footer links
+            footerLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const pageId = this.dataset.page;
+                    if (pageId) {
+                        switchPage(pageId);
+                    } else if (this.id === 'footerContact') {
+                        alert('Contact us at: info@vivodistro.com');
+                    }
+                });
+            });
+            
+            // Logo click goes to home
+            logo.addEventListener('click', function() {
+                switchPage('home');
+            });
+            
+            // Join Now buttons
+            const joinButtons = [document.getElementById('joinNowBtn'), document.getElementById('heroJoinBtn')];
+            joinButtons.forEach(btn => {
+                if (btn) {
+                    btn.addEventListener('click', function() {
+                        window.location.href = 'signup.html';
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

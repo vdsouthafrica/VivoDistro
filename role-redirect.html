@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <link rel="stylesheet" href="style.css">
+     <link rel="stylesheet" href="responsive.css"> <!-- YOUR NEW RESPONSIVE CSS -->
+     <script src="global-fullscreen.js" defer></script>
+    
+    <style>
+        body {
+            background: #0a0e1a;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            margin: 0;
+        }
+        .loader {
+            border: 4px solid #2a2f45;
+            border-top: 4px solid #6C63FF;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .container {
+            text-align: center;
+            background: rgba(21, 26, 44, 0.9);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid #2a2f45;
+            max-width: 400px;
+        }
+        h2 {
+            margin-bottom: 10px;
+            color: #fff;
+        }
+        p {
+            color: #8892b0;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Signing you in...</h2>
+        <p>Please wait while we redirect you</p>
+        <div class="loader"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Supabase config
+        const supabaseUrl = 'https://msjinuumxmezrijqemmp.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zamludXVteG1lenJpanFlbW1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwOTAyNjMsImV4cCI6MjA4NzY2NjI2M30.ic50fSC7MQfhSkhfE5E8B0R5-BGCQStMRZNHiy6Zakw';
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+        async function handleRedirect() {
+            try {
+                // Get the current session
+                const { data: { session }, error } = await supabase.auth.getSession();
+                
+                if (error) throw error;
+                
+                if (session) {
+                    console.log('Session found:', session.user);
+                    
+                    // Get the user's email
+                    const userEmail = session.user.email;
+                    
+                    // Check if they already have a password set
+                    // For now, we'll check if they have a profile
+                    const { data: profile } = await supabase
+                        .from('profiles')
+                        .select('*')
+                        .eq('id', session.user.id)
+                        .single();
+                    
+                    // Check if we have a pending role
+                    const pending = localStorage.getItem('pendingSignIn');
+                    let role = 'performer'; // default
+                    
+                    if (pending) {
+                        const pendingData = JSON.parse(pending);
+                        role = pendingData.role;
+                        
+                        // Save their role
+                        if (!profile) {
+                            await supabase
+                                .from('profiles')
+                                .insert({
+                                    id: session.user.id,
+                                    email: userEmail,
+                                    role: role
+                                });
+                        }
+                        
+                        localStorage.removeItem('pendingSignIn');
+                    }
+                    
+                    // Check if this is a new user (no password set yet)
+                    // We can check if they have a profile or if this is their first time
+                    const isNewUser = !session.user.confirmed_at || !profile;
+                    
+                    if (isNewUser) {
+                        // New user - send to create password page
+                        window.location.href = 'create-password.html?email=' + encodeURIComponent(userEmail) + '&role=' + role;
+                    } else {
+                        // Existing user - send directly to hub
+                        if (role === 'performer') {
+                            window.location.href = 'performer-hub.html';
+                        } else if (role === 'agent') {
+                            window.location.href = 'agent-hub.html';
+                        } else if (role === 'booker') {
+                            window.location.href = 'booker-hub.html';
+                        } else if (role === 'fan') {
+                            window.location.href = 'browse.html';
+                        } else {
+                            window.location.href = 'performer-hub.html';
+                        }
+                    }
+                } else {
+                    // No session, send back to sign in
+                    window.location.href = 'signup.html';
+                }
+            } catch (error) {
+                console.error('Error in redirect:', error);
+                window.location.href = 'signup.html?error=session';
+            }
+        }
+
+        // Run when page loads
+        handleRedirect();
+    </script>
+</body>
+</html>

@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard | Vivo Distro</title>
+    <link rel="stylesheet" href="style.css">
+     <link rel="stylesheet" href="responsive.css"> <!-- YOUR NEW RESPONSIVE CSS -->
+    <link rel="stylesheet" href="hub.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons@6.6.6/css/flag-icons.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <script src="global-fullscreen.js" defer></script>
+</head>
+<body>
+    
+    <!-- Sidebar -->
+    <aside class="hub-sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fas fa-music"></i>
+                <span>VIVO <span class="logo-highlight">DISTRO</span></span>
+            </div>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="browse.html" class="nav-item">
+                <i class="fas fa-search"></i>
+                <span>Browse</span>
+            </a>
+            <a href="calendar.html" class="nav-item" id="calendarNavItem">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Vivo Calendar</span>
+                <span class="notification-badge" id="calendarBadge" style="display: none;">0</span>
+            </a>
+            <a href="calculator.html" class="nav-item">
+                <i class="fas fa-calculator"></i>
+                <span>Vivo Calculator</span>
+            </a>
+            
+            <!-- VIVO CHAT -->
+            <a href="vivo-chat.html" class="nav-item" id="chatNavItem">
+                <i class="fas fa-comments"></i>
+                <span>Vivo Chat</span>
+                <span class="notification-badge" id="chatNotificationBadge" style="display: none;">0</span>
+            </a>
+            
+            <!-- UPCOMING EVENT NAV ITEM -->
+            <a href="calendar.html" class="nav-item" id="upcomingEventNavItem">
+                <i class="fas fa-clock"></i>
+                <span id="upcomingEventText">Next Event</span>
+                <span class="upcoming-event-badge" id="upcomingEventBadge" style="display: none;"></span>
+            </a>
+            
+            <a href="#" class="nav-item">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="user-avatar" id="userAvatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-info">
+                    <h4 id="userName">Stage Name</h4>
+                    <p id="userRole">Performer</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="hub-main">
+        <!-- Top Bar -->
+        <header class="hub-header">
+            <div class="header-actions">
+                <button class="action-btn" onclick="window.location.href='browse.html'">
+                    <i class="fas fa-search"></i>
+                    <span>Browse</span>
+                </button>
+                <button class="action-btn" onclick="window.location.href='performer-edit.html'">
+                    <i class="fas fa-edit"></i>
+                    <span>Edit Profile</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+            <!-- Your Profile Card with Flag -->
+            <div class="profile-card extended-profile" id="profileCard">
+                <div class="profile-header">
+                    <h2><i class="fas fa-user"></i> Your Profile</h2>
+                </div>
+                
+                <!-- Country Flag Badge -->
+                <div class="country-flag-badge" id="countryFlagBadge" style="display: none;">
+                    <span class="fi" id="countryFlag"></span>
+                    <span class="country-name" id="countryName"></span>
+                </div>
+                
+                <div class="profile-content extended-content">
+                    <div class="profile-avatar-large" id="profileAvatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    
+                    <div class="profile-details extended-details">
+                        <h3 id="profileName">Stage Name</h3>
+                        <p class="profile-location" id="profileLocation">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Location
+                        </p>
+                        
+                        <div class="profile-bio" id="profileBio">
+                            <!-- Bio will be inserted here -->
+                        </div>
+                        
+                        <div class="profile-types" id="profileTypes">
+                            <!-- Types will be inserted here -->
+                        </div>
+                        
+                        <!-- Instruments section -->
+                        <div class="profile-instruments" id="profileInstruments" style="display: none;">
+                            <!-- Instruments will be inserted here -->
+                        </div>
+                        
+                        <!-- Contact section -->
+                        <div class="profile-contact" id="profileContact">
+                            <!-- Contact info will be inserted here -->
+                        </div>
+                        
+                        <!-- Social section - WITH ALL SOCIAL ICONS -->
+                        <div class="profile-social" id="profileSocial">
+                            <!-- Social icons will be inserted here -->
+                        </div>
+                        
+                        <div class="profile-stats">
+                            <div class="stat">
+                                <div class="stat-number" id="fansCount">0</div>
+                                <div class="stat-label">FANS</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="push-service.js"></script>
+    <script src="chat-notifications.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            const supabaseUrl = 'https://msjinuumxmezrijqemmp.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zamludXVteG1lenJpanFlbW1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwOTAyNjMsImV4cCI6MjA4NzY2NjI2M30.ic50fSC7MQfhSkhfE5E8B0R5-BGCQStMRZNHiy6Zakw';
+            const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+            // Initialize push notifications
+            PushService.init(supabaseClient);
+            
+            // Initialize chat notifications
+            ChatNotifications.init(supabaseClient);
+            
+            // Register callback for badge updates
+            ChatNotifications.onUpdate((count) => {
+                const badge = document.getElementById('chatNotificationBadge');
+                if (badge) {
+                    if (count > 0) {
+                        badge.textContent = count;
+                        badge.style.display = 'inline-block';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                }
+            });
+
+            await loadProfile();
+            checkUpcomingEvent();
+
+            async function loadProfile() {
+                console.log('Loading performer profile from Supabase...');
+                
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                
+                if (!user) {
+                    console.log('No user logged in');
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                const { data: profile, error } = await supabaseClient
+                    .from('performers')
+                    .select('*')
+                    .eq('auth_id', user.id)
+                    .single();
+                
+                if (error) {
+                    console.error('Error loading profile:', error);
+                    if (error.code === 'PGRST116') {
+                        window.location.href = 'performer-setup.html';
+                    }
+                    return;
+                }
+                
+                if (profile) {
+                    console.log('Profile loaded:', profile);
+                    updateDashboard(profile);
+                }
+            }
+            
+            function updateDashboard(profile) {
+                console.log('Updating dashboard with profile:', profile);
+                
+                // Update country flag
+                updateCountryFlag(profile.country_code, profile.country);
+                
+                // Update profile picture
+                const avatarElements = document.querySelectorAll('#userAvatar, #profileAvatar');
+                avatarElements.forEach(element => {
+                    if (profile.image_url) {
+                        element.innerHTML = `<img src="${profile.image_url}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">`;
+                    } else {
+                        element.innerHTML = '<i class="fas fa-user"></i>';
+                    }
+                });
+                
+                // Update name
+                const nameElements = document.querySelectorAll('#userName, #profileName');
+                nameElements.forEach(element => {
+                    if (element) element.textContent = profile.name || 'Stage Name';
+                });
+                
+                // Update location
+                const locationElement = document.getElementById('profileLocation');
+                if (locationElement) {
+                    locationElement.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${profile.location || 'Location not set'}`;
+                }
+                
+                // Update role
+                const roleElement = document.getElementById('userRole');
+                if (roleElement) {
+                    roleElement.textContent = 'Performer';
+                }
+                
+                // Update bio
+                const bioElement = document.getElementById('profileBio');
+                if (bioElement) {
+                    if (profile.bio && profile.bio.trim()) {
+                        bioElement.innerHTML = `<p>${profile.bio}</p>`;
+                        bioElement.classList.remove('empty');
+                    } else {
+                        bioElement.innerHTML = '<p class="bio-placeholder">Add a bio to tell people about yourself...</p>';
+                        bioElement.classList.add('empty');
+                    }
+                }
+                
+                // Update types
+                const typesElement = document.getElementById('profileTypes');
+                if (typesElement) {
+                    if (profile.types && profile.types.length > 0) {
+                        typesElement.innerHTML = profile.types.map(type => 
+                            `<span class="type-badge">${type}</span>`
+                        ).join('');
+                    } else {
+                        typesElement.innerHTML = '';
+                    }
+                }
+                
+                // Update instruments
+                const instrumentsElement = document.getElementById('profileInstruments');
+                if (instrumentsElement) {
+                    if (profile.instruments && profile.instruments.length > 0) {
+                        instrumentsElement.style.display = 'block';
+                        instrumentsElement.innerHTML = `
+                            <div class="instruments-section">
+                                <div class="section-header">
+                                    <i class="fas fa-guitar"></i>
+                                    <h4>Instruments</h4>
+                                </div>
+                                <div class="instruments-tags">
+                                    ${profile.instruments.map(instrument => 
+                                        `<span class="instrument-tag">${instrument}</span>`
+                                    ).join('')}
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        instrumentsElement.style.display = 'none';
+                    }
+                }
+                
+                // Update contact info
+                const contactElement = document.getElementById('profileContact');
+                if (contactElement) {
+                    const contactHTML = [];
+                    
+                    if (profile.phone) {
+                        contactHTML.push(`
+                            <div class="contact-card">
+                                <i class="fas fa-phone-alt"></i>
+                                <span>${profile.phone}</span>
+                            </div>
+                        `);
+                    }
+                    
+                    if (profile.email) {
+                        contactHTML.push(`
+                            <div class="contact-card">
+                                <i class="fas fa-envelope"></i>
+                                <span>${profile.email}</span>
+                            </div>
+                        `);
+                    }
+                    
+                    if (profile.website) {
+                        const displayWebsite = profile.website.replace('https://', '').replace('http://', '');
+                        contactHTML.push(`
+                            <div class="contact-card">
+                                <i class="fas fa-globe"></i>
+                                <a href="${profile.website}" target="_blank">${displayWebsite}</a>
+                            </div>
+                        `);
+                    }
+                    
+                    if (contactHTML.length > 0) {
+                        contactElement.innerHTML = `<div class="contact-grid">${contactHTML.join('')}</div>`;
+                    } else {
+                        contactElement.innerHTML = '';
+                    }
+                }
+                
+                // Update social links
+                const socialElement = document.getElementById('profileSocial');
+                if (socialElement) {
+                    if (profile.social_links && profile.social_links.length > 0) {
+                        socialElement.innerHTML = `
+                            <div class="social-section">
+                                <div class="section-header">
+                                    <i class="fas fa-share-alt"></i>
+                                    <h4>Connect</h4>
+                                </div>
+                                <div class="social-icons-grid">
+                                    ${profile.social_links.map(link => {
+                                        const platform = getSocialPlatform(link.platform);
+                                        if (platform) {
+                                            if (link.platform === 'whatsapp') {
+                                                const number = link.url.replace(/\D/g, '');
+                                                return `
+                                                    <div class="social-icon-copy" onclick="copyToClipboard('${number}', 'WhatsApp number')"
+                                                         style="background: ${platform.color + '15'}; cursor: pointer;"
+                                                         title="Click to copy WhatsApp number">
+                                                        <i class="${platform.icon}" style="color: ${platform.color};"></i>
+                                                        <span class="copy-tooltip">Copy</span>
+                                                    </div>
+                                                `;
+                                            } else if (link.platform === 'email') {
+                                                const email = link.url.replace('mailto:', '');
+                                                return `
+                                                    <div class="social-icon-copy" onclick="copyToClipboard('${email}', 'Email address')"
+                                                         style="background: ${platform.color + '15'}; cursor: pointer;"
+                                                         title="Click to copy email address">
+                                                        <i class="${platform.icon}" style="color: ${platform.color};"></i>
+                                                        <span class="copy-tooltip">Copy</span>
+                                                    </div>
+                                                `;
+                                            } else {
+                                                return `
+                                                    <a href="${link.url}" target="_blank" class="social-icon-link" 
+                                                       style="background: ${platform.color + '15'};"
+                                                       title="${platform.name}">
+                                                        <i class="${platform.icon}" style="color: ${platform.color};"></i>
+                                                    </a>
+                                                `;
+                                            }
+                                        }
+                                        return '';
+                                    }).join('')}
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        socialElement.innerHTML = '';
+                    }
+                }
+                
+                // Update fans count
+                const fansElement = document.getElementById('fansCount');
+                if (fansElement) {
+                    fansElement.textContent = profile.fans || '0';
+                }
+            }
+
+            function updateCountryFlag(countryCode, countryName) {
+                const flagBadge = document.getElementById('countryFlagBadge');
+                const flagElement = document.getElementById('countryFlag');
+                const nameElement = document.getElementById('countryName');
+                
+                if (countryCode) {
+                    const code = countryCode.toLowerCase();
+                    flagElement.className = `fi fi-${code} fi-circle`;
+                    nameElement.textContent = countryName || '';
+                    flagBadge.style.display = 'flex';
+                } else {
+                    flagBadge.style.display = 'none';
+                }
+            }
+
+            function getSocialPlatform(platformKey) {
+                const socialPlatforms = {
+                    'whatsapp': { name: 'WhatsApp', icon: 'fab fa-whatsapp', color: '#25D366' },
+                    'email': { name: 'Email', icon: 'fas fa-envelope', color: '#EA4335' },
+                    'instagram': { name: 'Instagram', icon: 'fab fa-instagram', color: '#E4405F' },
+                    'facebook': { name: 'Facebook', icon: 'fab fa-facebook', color: '#1877F2' },
+                    'twitter': { name: 'Twitter', icon: 'fab fa-twitter', color: '#1DA1F2' },
+                    'tiktok': { name: 'TikTok', icon: 'fab fa-tiktok', color: '#000000' },
+                    'youtube': { name: 'YouTube', icon: 'fab fa-youtube', color: '#FF0000' },
+                    'spotify': { name: 'Spotify', icon: 'fab fa-spotify', color: '#1DB954' },
+                    'soundcloud': { name: 'SoundCloud', icon: 'fab fa-soundcloud', color: '#FF3300' },
+                    'website': { name: 'Website', icon: 'fas fa-globe', color: '#6C63FF' }
+                };
+                return socialPlatforms[platformKey];
+            }
+
+            window.copyToClipboard = function(text, type) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast(`${type} copied to clipboard!`, 'success');
+                }).catch(() => {
+                    showToast('Failed to copy', 'error');
+                });
+            };
+
+            function showToast(message, type) {
+                const toast = document.createElement('div');
+                toast.textContent = message;
+                toast.style.cssText = `
+                    position: fixed; top: 20px; right: 20px; padding: 15px 25px;
+                    background: ${type === 'success' ? '#48BB78' : '#F56565'};
+                    color: white; border-radius: 10px; z-index: 10001;
+                    animation: slideInRight 0.3s ease; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                `;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
+            }
+
+            function checkUpcomingEvent() {
+                console.log('Checking for upcoming events...');
+            }
+        });
+        
+    </script>
+    
+</body>
+</html>

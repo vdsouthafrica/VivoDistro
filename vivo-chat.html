@@ -1,0 +1,1667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Vivo Chat</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: #0a0e1a;
+            color: #fff;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        .chat-app {
+            display: flex;
+            height: 100%;
+            width: 100%;
+            background: #0f1425;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .chat-sidebar {
+            width: 320px;
+            background: #151a2c;
+            border-right: 1px solid #2a2f45;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            transition: transform 0.3s ease;
+            z-index: 2000;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .sidebar-user {
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid #2a2f45;
+            flex-shrink: 0;
+        }
+
+        .user-avatar {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: #6C63FF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #fff;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-info {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .user-info h4 {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-role {
+            font-size: 0.8rem;
+            color: #6C63FF;
+            background: rgba(108, 99, 255, 0.15);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .back-button-container {
+            padding: 15px 25px;
+            border-bottom: 1px solid #2a2f45;
+            flex-shrink: 0;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #2a2f45;
+            border-radius: 10px;
+            color: #fff;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .back-btn i {
+            color: #6C63FF;
+        }
+
+        .back-btn:hover {
+            background: rgba(108, 99, 255, 0.15);
+            border-color: #6C63FF;
+        }
+
+        .new-chat-btn {
+            margin: 0 25px 20px 25px;
+            padding: 14px;
+            background: rgba(108, 99, 255, 0.1);
+            border: 1px dashed #6C63FF;
+            border-radius: 12px;
+            color: #6C63FF;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .new-chat-btn:hover {
+            background: rgba(108, 99, 255, 0.2);
+            transform: translateY(-2px);
+            border-style: solid;
+        }
+
+        .conversations-header {
+            padding: 15px 25px 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .conversations-header h3 {
+            color: #8892b0;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .conversation-count {
+            background: #2a2f45;
+            color: #8892b0;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+
+        .conversations-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 15px 15px;
+        }
+
+        .conversation-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 5px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid #2a2f45;
+            position: relative;
+        }
+
+        .conversation-item:hover {
+            background: rgba(108, 99, 255, 0.1);
+            border-color: #6C63FF;
+        }
+
+        .conversation-item.active {
+            background: rgba(108, 99, 255, 0.15);
+            border-color: #6C63FF;
+            border-left: 3px solid #6C63FF;
+        }
+
+        .delete-conv-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(245, 101, 101, 0.15);
+            border: 1px solid rgba(245, 101, 101, 0.3);
+            color: #F56565;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            opacity: 0;
+            z-index: 10;
+        }
+
+        .conversation-item:hover .delete-conv-btn {
+            opacity: 1;
+        }
+
+        .delete-conv-btn:hover {
+            background: rgba(245, 101, 101, 0.3);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .conv-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: rgba(108, 99, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6C63FF;
+            font-size: 1.2rem;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .conv-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .conv-info {
+            flex: 1;
+            min-width: 0;
+            margin-right: 35px;
+        }
+
+        .conv-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .conv-name {
+            color: #fff;
+            font-weight: 600;
+            font-size: 1rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .conv-time {
+            color: #8892b0;
+            font-size: 0.7rem;
+            flex-shrink: 0;
+        }
+
+        .conv-preview {
+            color: #8892b0;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .empty-conversations {
+            text-align: center;
+            padding: 40px 20px;
+            color: #8892b0;
+        }
+
+        .empty-conversations i {
+            font-size: 3rem;
+            color: #6C63FF;
+            opacity: 0.3;
+            margin-bottom: 15px;
+        }
+
+        /* ===== MAIN CHAT AREA ===== */
+        .chat-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #0f1425;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .chat-header {
+            padding: 20px 30px;
+            background: #151a2c;
+            border-bottom: 1px solid #2a2f45;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+
+        .chat-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .chat-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #6C63FF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.3rem;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .chat-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .chat-user-info {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .chat-user-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .chat-user-role {
+            font-size: 0.8rem;
+            color: #6C63FF;
+            background: rgba(108, 99, 255, 0.15);
+            padding: 3px 12px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        /* ===== CHAT ACTIONS ===== */
+        .chat-actions {
+            display: flex;
+            gap: 10px;
+            flex-shrink: 0;
+            align-items: center;
+        }
+
+        .chat-action-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #2a2f45;
+            color: #8892b0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .chat-action-btn:hover {
+            background: rgba(108, 99, 255, 0.15);
+            color: #6C63FF;
+            border-color: #6C63FF;
+        }
+
+        .delete-chat-btn {
+            background: rgba(245, 101, 101, 0.15) !important;
+            color: #F56565 !important;
+        }
+
+        .delete-chat-btn:hover {
+            background: rgba(245, 101, 101, 0.3) !important;
+        }
+
+        /* ===== FULLSCREEN BUTTON (NOW IN NAV BAR) ===== */
+        .fullscreen-nav-btn {
+            width: 40px !important;
+            height: 40px !important;
+            border-radius: 50% !important;
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid #2a2f45 !important;
+            color: #8892b0 !important;
+            cursor: pointer !important;
+            transition: all 0.3s ease !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            flex-shrink: 0 !important;
+        }
+
+        .fullscreen-nav-btn:hover {
+            background: rgba(108, 99, 255, 0.15) !important;
+            color: #6C63FF !important;
+            border-color: #6C63FF !important;
+        }
+
+        /* ===== MESSAGES AREA ===== */
+        .messages-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-height: 0;
+        }
+
+        .message {
+            max-width: 70%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .message.sent {
+            align-self: flex-end;
+        }
+
+        .message.received {
+            align-self: flex-start;
+        }
+
+        .message-content {
+            padding: 12px 18px;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+
+        .message.received .message-content {
+            background: #1e243b;
+            color: #fff;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message.sent .message-content {
+            background: #6C63FF;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            color: #8892b0;
+            margin-top: 5px;
+            padding: 0 5px;
+        }
+
+        .message.sent .message-time {
+            text-align: right;
+        }
+
+        /* ===== DELETE MESSAGE BUTTON ===== */
+        .delete-message-btn {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #F56565;
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            box-shadow: 0 2px 8px rgba(245, 101, 101, 0.4);
+        }
+
+        .message.sent:hover .delete-message-btn {
+            display: flex;
+        }
+
+        .delete-message-btn:hover {
+            transform: scale(1.1);
+            background: #E53E3E;
+        }
+
+        /* ===== EMOJI PICKER ===== */
+        .emoji-picker {
+            position: absolute;
+            bottom: 100px;
+            right: 30px;
+            background: #1e243b;
+            border: 1px solid #2a2f45;
+            border-radius: 12px;
+            padding: 15px;
+            display: none;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 8px;
+            max-width: 400px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .emoji-picker.active {
+            display: grid;
+        }
+
+        .emoji {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .emoji:hover {
+            background: rgba(108, 99, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        /* ===== INPUT BAR ===== */
+        .message-input-area {
+            flex-shrink: 0;
+            padding: 15px 20px;
+            background: #151a2c;
+            border-top: 1px solid #2a2f45;
+            width: 100%;
+            position: relative;
+            z-index: 100;
+            padding-bottom: max(15px, env(safe-area-inset-bottom));
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid #2a2f45;
+            border-radius: 25px;
+            padding: 5px 5px 5px 15px;
+        }
+
+        .input-wrapper:focus-within {
+            border-color: #6C63FF;
+        }
+
+        #messageInput {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 16px !important;
+            outline: none;
+            padding: 12px 0;
+            min-width: 0;
+        }
+
+        .send-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #6C63FF;
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .send-btn:hover:not(:disabled) {
+            background: #554fd8;
+            transform: scale(1.05);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .no-chat-selected {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 20px;
+            color: #8892b0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .no-chat-selected i {
+            font-size: 5rem;
+            color: #6C63FF;
+            opacity: 0.3;
+        }
+
+        .no-chat-selected h3 {
+            font-size: 1.8rem;
+            color: #fff;
+        }
+
+        /* ===== DELETE MODAL ===== */
+        .delete-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+
+        .delete-modal.active {
+            display: flex;
+        }
+
+        .delete-modal-content {
+            background: #151a2c;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            border: 1px solid #2a2f45;
+        }
+
+        .delete-modal-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .delete-modal-header i {
+            font-size: 3rem;
+            color: #F56565;
+            margin-bottom: 10px;
+        }
+
+        .delete-modal-header h3 {
+            color: #fff;
+            font-size: 1.5rem;
+        }
+
+        .delete-modal-body {
+            text-align: center;
+            color: #8892b0;
+            margin-bottom: 25px;
+        }
+
+        .delete-modal-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .delete-modal-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .delete-modal-cancel {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            border: 1px solid #2a2f45;
+        }
+
+        .delete-modal-cancel:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .delete-modal-confirm {
+            background: #F56565;
+            color: white;
+        }
+
+        .delete-modal-confirm:hover {
+            background: #E53E3E;
+        }
+
+        .delete-modal-confirm:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .menu-toggle {
+            display: none;
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media screen and (max-width: 768px) {
+            .chat-sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                transform: translateX(-100%);
+                width: 280px;
+                box-shadow: 2px 0 20px rgba(0,0,0,0.5);
+            }
+            
+            .chat-sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .menu-toggle {
+                display: flex !important;
+                position: fixed;
+                top: 15px;
+                left: 15px;
+                z-index: 2001;
+                width: 45px;
+                height: 45px;
+                border-radius: 50%;
+                background: #6C63FF;
+                border: none;
+                color: white;
+                font-size: 1.3rem;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+                cursor: pointer;
+            }
+            
+            .chat-header {
+                padding: 15px 20px 15px 70px !important;
+            }
+            
+            .message {
+                max-width: 85%;
+            }
+            
+            .message-content {
+                padding: 10px 14px;
+                font-size: 0.9rem;
+            }
+            
+            .message-input-area {
+                padding: 12px 15px;
+                padding-bottom: max(12px, env(safe-area-inset-bottom));
+            }
+            
+            .input-wrapper {
+                padding: 3px 3px 3px 12px;
+            }
+            
+            #messageInput {
+                padding: 10px 0;
+            }
+            
+            .send-btn {
+                width: 45px;
+                height: 45px;
+            }
+            
+            .emoji-picker {
+                position: fixed !important;
+                bottom: 80px;
+                left: 10px;
+                right: 10px;
+                width: auto !important;
+                max-width: none !important;
+                grid-template-columns: repeat(6, 1fr) !important;
+            }
+            
+            .fullscreen-nav-btn {
+                width: 35px !important;
+                height: 35px !important;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .message {
+                max-width: 90%;
+            }
+            
+            .chat-actions {
+                gap: 5px;
+            }
+            
+            .chat-action-btn, .fullscreen-nav-btn {
+                width: 35px !important;
+                height: 35px !important;
+            }
+            
+            .chat-user-info h3 {
+                font-size: 1rem;
+            }
+            
+            .emoji-picker {
+                grid-template-columns: repeat(4, 1fr) !important;
+            }
+        }
+
+        @media screen and (orientation: landscape) and (max-height: 500px) {
+            .chat-header {
+                padding: 10px 20px 10px 70px !important;
+            }
+            
+            .message-input-area {
+                padding: 8px 15px !important;
+            }
+            
+            .send-btn {
+                width: 40px;
+                height: 40px;
+            }
+            
+            #messageInput {
+                padding: 8px 0;
+            }
+        }
+
+        @supports (-webkit-touch-callout: none) {
+            body, .chat-app, .chat-main {
+                height: -webkit-fill-available !important;
+            }
+            
+            .message-input-area {
+                padding-bottom: max(15px, env(safe-area-inset-bottom)) !important;
+            }
+        }
+
+        .messages-area::-webkit-scrollbar,
+        .conversations-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .messages-area::-webkit-scrollbar-track,
+        .conversations-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .messages-area::-webkit-scrollbar-thumb,
+        .conversations-list::-webkit-scrollbar-thumb {
+            background: rgba(108, 99, 255, 0.3);
+            border-radius: 3px;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-app">
+        <button class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="chat-sidebar" id="chatSidebar">
+            <div class="sidebar-user" id="sidebarUser">
+                <div class="user-avatar" id="sidebarAvatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-info">
+                    <h4 id="sidebarUserName">Loading...</h4>
+                    <span class="user-role" id="sidebarUserRole">...</span>
+                </div>
+            </div>
+
+            <div class="back-button-container">
+                <button class="back-btn" id="backButton">
+                    <i class="fas fa-arrow-left"></i> <span>Back</span>
+                </button>
+            </div>
+
+            <button class="new-chat-btn" id="newChatBtn">
+                <i class="fas fa-search"></i> <span>Find People to Chat</span>
+            </button>
+
+            <div class="conversations-header">
+                <h3>Conversations</h3>
+                <span class="conversation-count" id="conversationCount">0</span>
+            </div>
+
+            <div class="conversations-list" id="conversationsList">
+                <div class="empty-conversations">
+                    <i class="fas fa-comments"></i>
+                    <p>No conversations yet</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-main" id="chatMain">
+            <div class="chat-header" id="chatHeader" style="display: none;">
+                <div class="chat-user">
+                    <div class="chat-avatar" id="chatAvatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="chat-user-info">
+                        <h3 id="chatUserName">Select a chat</h3>
+                        <span class="chat-user-role" id="chatUserRole">...</span>
+                    </div>
+                </div>
+                <div class="chat-actions">
+                    <button class="fullscreen-nav-btn" id="chatFullscreenBtn" title="Toggle Fullscreen">
+                        <i class="fas fa-expand"></i>
+                    </button>
+                    <button class="chat-action-btn" id="emojiBtn" title="Emoji">
+                        <i class="fas fa-smile"></i>
+                    </button>
+                    <button class="chat-action-btn delete-chat-btn" id="deleteConversationBtn" title="Delete Conversation">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="emoji-picker" id="emojiPicker"></div>
+
+            <div class="messages-area" id="messagesArea"></div>
+
+            <div class="no-chat-selected" id="noChatSelected">
+                <i class="fas fa-comments"></i>
+                <h3>Select a conversation</h3>
+                <p>Choose a chat from the sidebar to start messaging</p>
+            </div>
+
+            <div class="message-input-area" id="messageInputArea">
+                <div class="input-wrapper">
+                    <input type="text" id="messageInput" placeholder="Type your message...">
+                    <button class="send-btn" id="sendMessageBtn" disabled>
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Message Modal -->
+    <div class="delete-modal" id="deleteMessageModal">
+        <div class="delete-modal-content">
+            <div class="delete-modal-header">
+                <i class="fas fa-trash"></i>
+                <h3>Delete Message</h3>
+            </div>
+            <div class="delete-modal-body">
+                <p>Are you sure you want to delete this message?</p>
+            </div>
+            <div class="delete-modal-actions">
+                <button class="delete-modal-btn delete-modal-cancel" id="cancelMessageDelete">Cancel</button>
+                <button class="delete-modal-btn delete-modal-confirm" id="confirmMessageDelete">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Conversation Modal -->
+    <div class="delete-modal" id="deleteConversationModal">
+        <div class="delete-modal-content">
+            <div class="delete-modal-header">
+                <i class="fas fa-trash"></i>
+                <h3>Delete Conversation</h3>
+            </div>
+            <div class="delete-modal-body">
+                <p>This will permanently delete this conversation and all messages. This action cannot be undone.</p>
+            </div>
+            <div class="delete-modal-actions">
+                <button class="delete-modal-btn delete-modal-cancel" id="cancelConversationDelete">Cancel</button>
+                <button class="delete-modal-btn delete-modal-confirm" id="confirmConversationDelete">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Emoji list
+        const EMOJIS = ['😀', '😂', '🥰', '😊', '😎', '🤔', '😴', '😭', '😱', '🤯', '😤', '🥳', '😈', '👋', '👍', '👎', '👏', '🙏', '🔥', '✨', '⭐', '💯', '💪', '🎉', '🎵', '🎸', '🎤', '💰', '💎', '❤️', '💔', '✅', '❌', '⚠️', '❓', '❗', '🔔', '📅', '📍', '📎', '🔗'];
+
+        // Supabase configuration
+        const supabaseUrl = 'https://msjinuumxmezrijqemmp.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zamludXVteG1lenJpanFlbW1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwOTAyNjMsImV4cCI6MjA4NzY2NjI2M30.ic50fSC7MQfhSkhfE5E8B0R5-BGCQStMRZNHiy6Zakw';
+        
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        // Global state
+        let currentUser = null;
+        let currentUserProfile = null;
+        let conversations = [];
+        let currentConversation = null;
+        let messagesSubscription = null;
+        let conversationSubscription = null;
+        let conversationToDelete = null;
+        let messageToDelete = null;
+        const displayedMessageIds = new Set();
+
+        // DOM elements
+        const menuToggle = document.getElementById('menuToggle');
+        const chatSidebar = document.getElementById('chatSidebar');
+        const backButton = document.getElementById('backButton');
+        const newChatBtn = document.getElementById('newChatBtn');
+        const conversationsList = document.getElementById('conversationsList');
+        const conversationCount = document.getElementById('conversationCount');
+        const chatHeader = document.getElementById('chatHeader');
+        const messagesArea = document.getElementById('messagesArea');
+        const messageInputArea = document.getElementById('messageInputArea');
+        const noChatSelected = document.getElementById('noChatSelected');
+        const messageInput = document.getElementById('messageInput');
+        const sendMessageBtn = document.getElementById('sendMessageBtn');
+        const chatUserName = document.getElementById('chatUserName');
+        const chatUserRole = document.getElementById('chatUserRole');
+        const chatAvatar = document.getElementById('chatAvatar');
+        const sidebarUserName = document.getElementById('sidebarUserName');
+        const sidebarUserRole = document.getElementById('sidebarUserRole');
+        const sidebarAvatar = document.getElementById('sidebarAvatar');
+        const emojiBtn = document.getElementById('emojiBtn');
+        const emojiPicker = document.getElementById('emojiPicker');
+        const deleteConversationBtn = document.getElementById('deleteConversationBtn');
+        const fullscreenBtn = document.getElementById('chatFullscreenBtn');
+
+        // Delete modals
+        const deleteMessageModal = document.getElementById('deleteMessageModal');
+        const cancelMessageDelete = document.getElementById('cancelMessageDelete');
+        const confirmMessageDelete = document.getElementById('confirmMessageDelete');
+        const deleteConversationModal = document.getElementById('deleteConversationModal');
+        const cancelConversationDelete = document.getElementById('cancelConversationDelete');
+        const confirmConversationDelete = document.getElementById('confirmConversationDelete');
+
+        // ===== FULLSCREEN BUTTON FUNCTIONALITY =====
+        if (fullscreenBtn) {
+            if (localStorage.getItem('chatFullscreenMode') === 'true') {
+                setTimeout(() => {
+                    if (!document.fullscreenElement) {
+                        document.documentElement.requestFullscreen().catch(() => {});
+                        fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+                    }
+                }, 500);
+            }
+            
+            if (document.fullscreenElement) {
+                fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+            }
+            
+            fullscreenBtn.addEventListener('click', function() {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen();
+                    localStorage.setItem('chatFullscreenMode', 'true');
+                    this.innerHTML = '<i class="fas fa-compress"></i>';
+                } else {
+                    document.exitFullscreen();
+                    localStorage.removeItem('chatFullscreenMode');
+                    this.innerHTML = '<i class="fas fa-expand"></i>';
+                }
+            });
+            
+            document.addEventListener('fullscreenchange', () => {
+                if (document.fullscreenElement) {
+                    fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+                    localStorage.setItem('chatFullscreenMode', 'true');
+                } else {
+                    fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+                    localStorage.removeItem('chatFullscreenMode');
+                }
+            });
+        }
+
+        // ===== MOBILE MENU =====
+        menuToggle.addEventListener('click', () => {
+            chatSidebar.classList.toggle('active');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768 && 
+                chatSidebar.classList.contains('active') && 
+                !chatSidebar.contains(e.target) && 
+                !menuToggle.contains(e.target)) {
+                chatSidebar.classList.remove('active');
+            }
+        });
+
+        // ===== INITIALIZATION =====
+        init();
+
+        async function init() {
+            console.log('Chat initializing...');
+            await loadCurrentUser();
+            setupConversationSubscription();
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const conversationId = urlParams.get('id');
+            
+            if (conversationId) {
+                await loadConversations();
+                const conv = conversations.find(c => c.id === conversationId);
+                if (conv) {
+                    const otherUserId = conv.participant1_id === currentUser.id ? conv.participant2_id : conv.participant1_id;
+                    await selectConversation(conversationId, otherUserId);
+                }
+            } else {
+                await loadConversations();
+            }
+            
+            setupEventListeners();
+            setupEmojiPicker();
+        }
+
+        async function loadCurrentUser() {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            currentUser = user;
+            
+            const { data: usernameData } = await supabaseClient
+                .from('usernames')
+                .select('username')
+                .eq('user_id', user.id)
+                .single();
+
+            const role = user.user_metadata?.role;
+            
+            if (role === 'performer') {
+                const { data: profile } = await supabaseClient
+                    .from('performers')
+                    .select('*')
+                    .eq('auth_id', user.id)
+                    .single();
+                currentUserProfile = profile;
+                sidebarUserName.textContent = profile?.name || usernameData?.username || 'Performer';
+                sidebarUserRole.textContent = 'Performer';
+            } else if (role === 'agent') {
+                const { data: profile } = await supabaseClient
+                    .from('agents')
+                    .select('*')
+                    .eq('auth_id', user.id)
+                    .single();
+                currentUserProfile = profile;
+                sidebarUserName.textContent = profile?.name || usernameData?.username || 'Agent';
+                sidebarUserRole.textContent = 'Agent';
+            } else if (role === 'booker') {
+                const { data: profile } = await supabaseClient
+                    .from('bookers')
+                    .select('*')
+                    .eq('auth_id', user.id)
+                    .single();
+                currentUserProfile = profile;
+                sidebarUserName.textContent = profile?.name || usernameData?.username || 'Booker';
+                sidebarUserRole.textContent = 'Booker';
+            } else {
+                sidebarUserName.textContent = usernameData?.username || 'User';
+                sidebarUserRole.textContent = 'User';
+            }
+
+            if (currentUserProfile?.image_url || currentUserProfile?.logo_url) {
+                const avatarUrl = currentUserProfile.image_url || currentUserProfile.logo_url;
+                sidebarAvatar.innerHTML = `<img src="${avatarUrl}" alt="Avatar">`;
+            }
+        }
+
+        function setupConversationSubscription() {
+            conversationSubscription = supabaseClient
+                .channel('conversations-channel')
+                .on('postgres_changes', 
+                    { event: '*', schema: 'public', table: 'conversations' },
+                    (payload) => {
+                        if (payload.new && 
+                            (payload.new.participant1_id === currentUser.id || 
+                             payload.new.participant2_id === currentUser.id)) {
+                            loadConversations();
+                        }
+                    }
+                )
+                .subscribe();
+        }
+
+        async function loadConversations() {
+            const { data, error } = await supabaseClient
+                .from('conversations')
+                .select('*')
+                .or(`participant1_id.eq.${currentUser.id},participant2_id.eq.${currentUser.id}`)
+                .order('updated_at', { ascending: false });
+
+            if (error) {
+                console.error('Error loading conversations:', error);
+                return;
+            }
+
+            const uniqueMap = new Map();
+            
+            for (const conv of data || []) {
+                if (!uniqueMap.has(conv.id)) {
+                    uniqueMap.set(conv.id, conv);
+                }
+            }
+
+            conversations = Array.from(uniqueMap.values());
+            conversationCount.textContent = conversations.length;
+            
+            await renderConversations();
+        }
+
+        async function renderConversations() {
+            conversationsList.innerHTML = '';
+            
+            if (conversations.length === 0) {
+                conversationsList.innerHTML = `
+                    <div class="empty-conversations">
+                        <i class="fas fa-comments"></i>
+                        <p>No conversations yet</p>
+                        <small>Click "Find People to Chat" to start messaging</small>
+                    </div>
+                `;
+                return;
+            }
+
+            for (const conv of conversations) {
+                const otherUserId = conv.participant1_id === currentUser.id 
+                    ? conv.participant2_id 
+                    : conv.participant1_id;
+
+                const { data: otherUsername } = await supabaseClient
+                    .from('usernames')
+                    .select('username')
+                    .eq('user_id', otherUserId)
+                    .single();
+
+                const { data: lastMessage } = await supabaseClient
+                    .from('messages')
+                    .select('*')
+                    .eq('conversation_id', conv.id)
+                    .order('created_at', { ascending: false })
+                    .limit(1)
+                    .maybeSingle();
+
+                const convElement = document.createElement('div');
+                convElement.className = `conversation-item ${currentConversation?.id === conv.id ? 'active' : ''}`;
+                convElement.dataset.id = conv.id;
+                convElement.dataset.otherUserId = otherUserId;
+                
+                const time = lastMessage ? formatTime(lastMessage.created_at) : '';
+                
+                convElement.innerHTML = `
+                    <div class="conv-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="conv-info">
+                        <div class="conv-header">
+                            <span class="conv-name">${otherUsername?.username || 'User'}</span>
+                            <span class="conv-time">${time}</span>
+                        </div>
+                        <div class="conv-preview">
+                            ${lastMessage ? lastMessage.content.substring(0, 30) + (lastMessage.content.length > 30 ? '...' : '') : 'No messages yet'}
+                        </div>
+                    </div>
+                    <button class="delete-conv-btn" onclick="event.stopPropagation(); showDeleteConversationModal('${conv.id}')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+
+                convElement.addEventListener('click', () => selectConversation(conv.id, otherUserId));
+                conversationsList.appendChild(convElement);
+            }
+        }
+
+        function cleanupSubscription() {
+            if (messagesSubscription) {
+                messagesSubscription.unsubscribe();
+                messagesSubscription = null;
+            }
+        }
+
+        async function selectConversation(conversationId, otherUserId) {
+            console.log('Selecting conversation:', conversationId);
+            currentConversation = conversations.find(c => c.id === conversationId);
+            
+            noChatSelected.style.display = 'none';
+            chatHeader.style.display = 'flex';
+            messagesArea.style.display = 'flex';
+            messageInputArea.style.display = 'block';
+            
+            await loadMessages(conversationId);
+            await renderConversations();
+            
+            const { data: otherUsername } = await supabaseClient
+                .from('usernames')
+                .select('username')
+                .eq('user_id', otherUserId)
+                .single();
+                
+            chatUserName.textContent = otherUsername?.username || 'User';
+            chatUserRole.textContent = 'User';
+            
+            cleanupSubscription();
+            
+            messagesSubscription = supabaseClient
+                .channel(`conversation-${conversationId}`)
+                .on('postgres_changes', 
+                    { event: 'INSERT', schema: 'public', table: 'messages', filter: `conversation_id=eq.${conversationId}` },
+                    (payload) => {
+                        if (!displayedMessageIds.has(payload.new.id)) {
+                            displayedMessageIds.add(payload.new.id);
+                            addMessageToUI(payload.new, payload.new.sender_id === currentUser.id);
+                        }
+                    }
+                )
+                .subscribe();
+
+            if (window.innerWidth <= 768) {
+                chatSidebar.classList.remove('active');
+            }
+            
+            setTimeout(() => messageInput.focus(), 300);
+        }
+
+        async function loadMessages(conversationId) {
+            const { data: messages, error } = await supabaseClient
+                .from('messages')
+                .select('*')
+                .eq('conversation_id', conversationId)
+                .order('created_at', { ascending: true });
+
+            if (error) {
+                console.error('Error loading messages:', error);
+                return;
+            }
+
+            messagesArea.innerHTML = '';
+            displayedMessageIds.clear();
+            
+            messages.forEach(msg => {
+                displayedMessageIds.add(msg.id);
+                addMessageToUI(msg, msg.sender_id === currentUser.id);
+            });
+            
+            scrollToBottom();
+        }
+
+        function addMessageToUI(message, isSent) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isSent ? 'sent' : 'received'}`;
+            messageDiv.dataset.messageId = message.id;
+            
+            const time = formatTime(message.created_at);
+            
+            if (message.message_type === 'quote' && message.quote_data) {
+                const data = message.quote_data;
+                messageDiv.innerHTML = `
+                    <div class="message-content">
+                        <div style="background: rgba(108,99,255,0.1); padding: 12px; border-radius: 12px; border-left: 4px solid #6C63FF;">
+                            <div style="display: flex; gap: 8px; margin-bottom: 8px; color: #6C63FF; font-weight: 600;">
+                                <i class="fas fa-file-invoice-dollar"></i>
+                                <span>Quote: ${data.title || 'Performance Quote'}</span>
+                            </div>
+                            <div>${data.description || ''}</div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
+                                <div>
+                                    <div style="color: #8892b0; font-size: 0.8rem;">Amount</div>
+                                    <div style="color: #48BB78; font-size: 1.2rem; font-weight: 700;">R ${data.amount || '0'}</div>
+                                </div>
+                                ${data.valid_until ? `
+                                    <div>
+                                        <div style="color: #8892b0; font-size: 0.8rem;">Valid Until</div>
+                                        <div style="color: #fff; font-weight: 600;">${new Date(data.valid_until).toLocaleDateString()}</div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                            ${data.terms ? `<div style="margin-top: 10px; font-size: 0.8rem; color: #8892b0;">${data.terms}</div>` : ''}
+                        </div>
+                    </div>
+                    <div class="message-time">${time}</div>
+                `;
+            } else {
+                messageDiv.innerHTML = `
+                    <div class="message-content">${message.content}</div>
+                    <div class="message-time">${time}</div>
+                `;
+            }
+            
+            if (isSent) {
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'delete-message-btn';
+                deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+                deleteBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    showDeleteMessageModal(message.id);
+                };
+                messageDiv.appendChild(deleteBtn);
+            }
+            
+            messagesArea.appendChild(messageDiv);
+            scrollToBottom();
+        }
+
+        // ===== SEND MESSAGE FUNCTION =====
+        async function sendMessage(content) {
+            if (!currentConversation || !content.trim()) return;
+
+            const messageData = {
+                conversation_id: currentConversation.id,
+                sender_id: currentUser.id,
+                content: content.trim(),
+                message_type: 'text',
+                created_at: new Date().toISOString()
+            };
+
+            const { error } = await supabaseClient
+                .from('messages')
+                .insert(messageData);
+
+            if (error) {
+                console.error('Error sending message:', error);
+                return;
+            }
+
+            await supabaseClient
+                .from('conversations')
+                .update({ updated_at: new Date().toISOString() })
+                .eq('id', currentConversation.id);
+
+            messageInput.value = '';
+            sendMessageBtn.disabled = true;
+        }
+
+        // ===== DELETE MESSAGE FUNCTION =====
+        async function deleteMessage(messageId) {
+            if (!messageId) return;
+            
+            try {
+                const { error } = await supabaseClient
+                    .from('messages')
+                    .delete()
+                    .eq('id', messageId)
+                    .eq('sender_id', currentUser.id);
+
+                if (error) throw error;
+
+                // Remove from UI
+                const messageElement = document.querySelector(`[data-message-id="${messageId}"]`);
+                if (messageElement) {
+                    messageElement.remove();
+                }
+
+                // Remove from displayed IDs
+                displayedMessageIds.delete(messageId);
+                
+                hideDeleteMessageModal();
+
+            } catch (error) {
+                console.error('Error deleting message:', error);
+                alert('Failed to delete message');
+                hideDeleteMessageModal();
+            }
+        }
+
+        // ===== DELETE CONVERSATION FUNCTION =====
+        async function deleteConversation(conversationId) {
+            try {
+                await supabaseClient.from('messages').delete().eq('conversation_id', conversationId);
+                await supabaseClient.from('conversations').delete().eq('id', conversationId);
+
+                conversations = conversations.filter(c => c.id !== conversationId);
+                
+                if (currentConversation?.id === conversationId) {
+                    currentConversation = null;
+                    noChatSelected.style.display = 'flex';
+                    chatHeader.style.display = 'none';
+                    messagesArea.style.display = 'none';
+                    messageInputArea.style.display = 'none';
+                    messagesArea.innerHTML = '';
+                }
+
+                conversationCount.textContent = conversations.length;
+                hideDeleteConversationModal();
+
+            } catch (error) {
+                console.error('Delete failed:', error);
+                alert('Failed to delete conversation');
+                hideDeleteConversationModal();
+            }
+        }
+
+        // ===== MODAL FUNCTIONS =====
+        function showDeleteMessageModal(messageId) {
+            messageToDelete = messageId;
+            deleteMessageModal.classList.add('active');
+        }
+
+        function hideDeleteMessageModal() {
+            deleteMessageModal.classList.remove('active');
+            messageToDelete = null;
+        }
+
+        function showDeleteConversationModal(conversationId) {
+            conversationToDelete = conversationId;
+            deleteConversationModal.classList.add('active');
+        }
+
+        function hideDeleteConversationModal() {
+            deleteConversationModal.classList.remove('active');
+            conversationToDelete = null;
+        }
+
+        // ===== EMOJI PICKER =====
+        function setupEmojiPicker() {
+            if (!emojiPicker) return;
+            emojiPicker.innerHTML = EMOJIS.map(emoji => 
+                `<div class="emoji" onclick="insertEmoji('${emoji}')">${emoji}</div>`
+            ).join('');
+        }
+
+        window.insertEmoji = function(emoji) {
+            messageInput.value += emoji;
+            messageInput.dispatchEvent(new Event('input'));
+            emojiPicker.classList.remove('active');
+            messageInput.focus();
+        };
+
+        function scrollToBottom() {
+            messagesArea.scrollTop = messagesArea.scrollHeight;
+        }
+
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            const now = new Date();
+            
+            if (date.toDateString() === now.toDateString()) {
+                return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            } else {
+                return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+            }
+        }
+
+        function setupEventListeners() {
+            backButton.addEventListener('click', () => window.history.back());
+            
+            newChatBtn.addEventListener('click', () => {
+                window.location.href = 'browse.html';
+            });
+            
+            messageInput.addEventListener('input', () => {
+                sendMessageBtn.disabled = !messageInput.value.trim();
+            });
+            
+            messageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    if (!sendMessageBtn.disabled) {
+                        sendMessage(messageInput.value.trim());
+                    }
+                }
+            });
+            
+            sendMessageBtn.addEventListener('click', () => {
+                sendMessage(messageInput.value.trim());
+            });
+            
+            emojiBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                emojiPicker.classList.toggle('active');
+            });
+            
+            deleteConversationBtn.addEventListener('click', () => {
+                if (currentConversation) {
+                    showDeleteConversationModal(currentConversation.id);
+                }
+            });
+            
+            // Message delete modal events
+            cancelMessageDelete.addEventListener('click', hideDeleteMessageModal);
+            confirmMessageDelete.addEventListener('click', async () => {
+                if (messageToDelete) {
+                    await deleteMessage(messageToDelete);
+                }
+            });
+            
+            // Conversation delete modal events
+            cancelConversationDelete.addEventListener('click', hideDeleteConversationModal);
+            confirmConversationDelete.addEventListener('click', async () => {
+                if (conversationToDelete) {
+                    await deleteConversation(conversationToDelete);
+                }
+            });
+            
+            // Close modals when clicking outside
+            deleteMessageModal.addEventListener('click', (e) => {
+                if (e.target === deleteMessageModal) {
+                    hideDeleteMessageModal();
+                }
+            });
+            
+            deleteConversationModal.addEventListener('click', (e) => {
+                if (e.target === deleteConversationModal) {
+                    hideDeleteConversationModal();
+                }
+            });
+            
+            document.addEventListener('click', (e) => {
+                if (!emojiBtn.contains(e.target) && !emojiPicker.contains(e.target)) {
+                    emojiPicker.classList.remove('active');
+                }
+            });
+        }
+
+        window.addEventListener('beforeunload', function() {
+            cleanupSubscription();
+            if (conversationSubscription) {
+                conversationSubscription.unsubscribe();
+            }
+        });
+    </script>
+</body>
+</html>

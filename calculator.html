@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vivo Calculator | Vivo Distro</title>
+    <link rel="stylesheet" href="style.css">
+     <link rel="stylesheet" href="responsive.css"> <!-- YOUR NEW RESPONSIVE CSS -->
+    <link rel="stylesheet" href="calculator.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <script src="global-fullscreen.js" defer></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="calc-header">
+        <a href="performer-hub.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+            <span>Back to Dashboard</span>
+        </a>
+        <div class="logo">
+            <i class="fas fa-calculator"></i>
+            <span>VIVO <span class="logo-highlight">CALCULATOR</span></span>
+        </div>
+    </header>
+
+    <main class="calc-main">
+        <div class="calc-container">
+            <!-- Left Column: Calculator & Fee Options -->
+            <div class="calc-column">
+                <div class="calculator-card" id="calculatorCard">
+                    <h2><i class="fas fa-calculator"></i> Vivo Calculator</h2>
+                    <p>Add fees to build your professional quote</p>
+                    
+                    <!-- Calculator Display -->
+                    <div class="calc-display">
+                        <div class="calc-screen" id="calcScreen">0</div>
+                        <div class="calc-operations" id="calcOperations"></div>
+                    </div>
+                    
+                    <!-- Add Fee Button -->
+                    <button class="add-fee-btn" id="addFeeBtn">
+                        <i class="fas fa-plus-circle"></i> Add Fee
+                    </button>
+                    
+                    <!-- Calculator Functions -->
+                    <div class="calc-functions">
+                        <button class="calc-btn" data-action="clear">C</button>
+                        <button class="calc-btn" data-action="backspace">⌫</button>
+                        <button class="calc-btn" data-action="percentage">%</button>
+                        <button class="calc-btn" data-action="divide">÷</button>
+                        
+                        <button class="calc-btn" data-number="7">7</button>
+                        <button class="calc-btn" data-number="8">8</button>
+                        <button class="calc-btn" data-number="9">9</button>
+                        <button class="calc-btn" data-action="multiply">×</button>
+                        
+                        <button class="calc-btn" data-number="4">4</button>
+                        <button class="calc-btn" data-number="5">5</button>
+                        <button class="calc-btn" data-number="6">6</button>
+                        <button class="calc-btn" data-action="subtract">−</button>
+                        
+                        <button class="calc-btn" data-number="1">1</button>
+                        <button class="calc-btn" data-number="2">2</button>
+                        <button class="calc-btn" data-number="3">3</button>
+                        <button class="calc-btn" data-action="add">+</button>
+                        
+                        <button class="calc-btn" data-number="0">0</button>
+                        <button class="calc-btn" data-action="decimal">.</button>
+                        <button class="calc-btn" data-action="equals" style="grid-column: span 2;">=</button>
+                    </div>
+                    
+                    <!-- Discount Section -->
+                    <div class="discount-section">
+                        <h3><i class="fas fa-percent"></i> Apply Discount</h3>
+                        <div class="discount-input">
+                            <input type="number" id="discountInput" placeholder="Enter %" min="0" max="100" step="0.1">
+                            <span>%</span>
+                            <button class="apply-discount-btn" id="applyDiscountBtn">Apply</button>
+                        </div>
+                        <div class="discount-preview" id="discountPreview">
+                            <!-- Discount details will appear here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Inline Fee Form (Hidden by default) -->
+                <div class="inline-fee-form" id="inlineFeeForm">
+                    <div class="fee-form-header">
+                        <h3><i class="fas fa-plus-circle"></i> Add Fee</h3>
+                        <button class="close-inline-form" id="closeInlineForm">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="fee-form-content">
+                        <!-- Fee Type Selection -->
+                        <div class="fee-type-section" id="feeTypeSection">
+                            <h4>Select Fee Type</h4>
+                            <div class="fee-type-grid" id="feeTypeGrid">
+                                <!-- Fee types will be loaded by JavaScript -->
+                            </div>
+                        </div>
+                        
+                        <!-- Fee Details Form (shown when type selected) -->
+                        <div class="fee-details-form" id="feeDetailsForm">
+                            <!-- Back button to return to fee type selection -->
+                            <button class="back-to-types" id="backToTypesBtn">
+                                <i class="fas fa-arrow-left"></i>
+                            </button>
+                            
+                            <h4 id="selectedFeeTitle">Fee Details</h4>
+                            
+                            <!-- Dynamic form fields will be inserted here -->
+                            <div class="form-fields" id="formFields"></div>
+                            
+                            <!-- Preview -->
+                            <div class="fee-preview" id="feePreview">
+                                <h5>Preview:</h5>
+                                <p id="previewText">Fee: R 0.00</p>
+                            </div>
+                            
+                            <div class="inline-form-actions">
+                                <button type="button" class="btn-cancel" id="cancelInlineFee">
+                                    Cancel
+                                </button>
+                                <button type="button" class="btn-add" id="addToQuoteInline">
+                                    <i class="fas fa-plus"></i> Add to Quote
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Quote Sheet -->
+            <div class="sheet-column">
+                <div class="sheet-card">
+                    <div class="sheet-header">
+                        <h2><i class="fas fa-file-invoice-dollar"></i> Quote Sheet</h2>
+                        <div class="sheet-actions">
+                            <button class="sheet-btn" id="clearSheetBtn">
+                                <i class="fas fa-trash"></i> Clear
+                            </button>
+                            <button class="sheet-btn" id="saveQuoteBtn">
+                                <i class="fas fa-save"></i> Save
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Quote Details -->
+                    <div class="quote-details">
+                        <div class="client-info">
+                            <h3>Client Information</h3>
+                            <div class="info-row">
+                                <input type="text" id="clientName" placeholder="Client Name" class="client-input">
+                                <input type="text" id="clientEmail" placeholder="Email" class="client-input">
+                            </div>
+                            <input type="text" id="eventName" placeholder="Event Name / Description" class="client-input full-width">
+                            <input type="date" id="eventDate" class="client-input full-width">
+                        </div>
+                        
+                        <!-- Fee Items List -->
+                        <div class="fee-list-container">
+                            <h3>Fee Breakdown</h3>
+                            <div class="fee-list" id="feeList">
+                                <!-- Fee items will appear here -->
+                                <div class="empty-fees">
+                                    <i class="fas fa-calculator"></i>
+                                    <p>No fees added yet</p>
+                                    <small>Use the calculator to add fees</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Totals -->
+                        <div class="totals-section">
+                            <div class="total-row">
+                                <span>Subtotal:</span>
+                                <span id="subtotalAmount">R 0.00</span>
+                            </div>
+                            <div class="total-row discount-row">
+                                <span>Discount (<span id="discountPercent">0</span>%):</span>
+                                <span id="discountAmount">-R 0.00</span>
+                            </div>
+                            <div class="total-row grand-total">
+                                <span>TOTAL:</span>
+                                <span id="grandTotal">R 0.00</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Notes -->
+                        <div class="notes-section">
+                            <h3>Notes</h3>
+                            <textarea id="quoteNotes" placeholder="Add any additional notes for the client..." rows="3"></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Send Button -->
+                    <button class="send-quote-btn" id="sendQuoteBtn">
+                        <i class="fas fa-paper-plane"></i> Preview & Send Quote
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Quote Preview Modal -->
+    <div class="modal-overlay" id="previewModal" style="display: none;">
+        <div class="preview-modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-file-invoice-dollar"></i> Quote Preview</h3>
+                <button class="close-modal" id="closePreviewModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="preview-content" id="previewContent">
+                <!-- Quote preview will be generated here -->
+            </div>
+            
+            <div class="preview-actions">
+                <button class="btn-cancel" id="editQuoteBtn">
+                    <i class="fas fa-edit"></i> Edit Quote
+                </button>
+                <button class="btn-send" id="sendNowBtn">
+                    <i class="fas fa-paper-plane"></i> Send to Client
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="calculator.js"></script>
+</body>
+</html>

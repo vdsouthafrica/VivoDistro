@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Artists | Agent</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <link rel="stylesheet" href="style.css">
+     <link rel="stylesheet" href="responsive.css"> <!-- YOUR NEW RESPONSIVE CSS -->
+    <script src="script.js" defer></script>
+    <script src="global-fullscreen.js" defer></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        body {
+            background: #0a0e1a;
+            color: #fff;
+        }
+        
+        .header {
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #151a2c;
+            border-bottom: 1px solid #2a2f45;
+        }
+        
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #8892b0;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.2rem;
+        }
+        
+        .logo i {
+            color: #6C63FF;
+        }
+        
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+        
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .page-header p {
+            color: #8892b0;
+        }
+        
+        .add-btn {
+            padding: 12px 24px;
+            background: #6C63FF;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .add-btn:hover {
+            background: #554fd8;
+            transform: translateY(-2px);
+        }
+        
+        .artists-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .artist-card {
+            background: #151a2c;
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid #2a2f45;
+            transition: all 0.3s ease;
+        }
+        
+        .artist-card:hover {
+            transform: translateY(-5px);
+            border-color: #6C63FF;
+        }
+        
+        .artist-header {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .artist-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: rgba(108,99,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: #6C63FF;
+            overflow: hidden;
+        }
+        
+        .artist-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .artist-info h3 {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+        
+        .artist-location {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #8892b0;
+            font-size: 0.9rem;
+        }
+        
+        .artist-types {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .type-tag {
+            background: rgba(108,99,255,0.15);
+            color: #6C63FF;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+        
+        .artist-footer {
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid #2a2f45;
+            padding-top: 20px;
+        }
+        
+        .edit-btn, .delete-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .edit-btn {
+            background: rgba(108,99,255,0.15);
+            color: #6C63FF;
+        }
+        
+        .edit-btn:hover {
+            background: rgba(108,99,255,0.25);
+        }
+        
+        .delete-btn {
+            background: rgba(245,101,101,0.15);
+            color: #F56565;
+        }
+        
+        .delete-btn:hover {
+            background: rgba(245,101,101,0.25);
+        }
+        
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px;
+            background: #151a2c;
+            border-radius: 20px;
+            border: 2px dashed #2a2f45;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            color: #6C63FF;
+            opacity: 0.5;
+            margin-bottom: 20px;
+        }
+        
+        .empty-state h3 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+        
+        .empty-state p {
+            color: #8892b0;
+            margin-bottom: 30px;
+        }
+        
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: #151a2c;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid #2a2f45;
+        }
+        
+        .modal-header {
+            padding: 25px;
+            border-bottom: 1px solid #2a2f45;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h2 i {
+            color: #6C63FF;
+            margin-right: 10px;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: #8892b0;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+        
+        .modal-body {
+            padding: 25px;
+        }
+        
+        .modal-footer {
+            padding: 20px 25px;
+            border-top: 1px solid #2a2f45;
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #fff;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid #2a2f45;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1rem;
+        }
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #6C63FF;
+        }
+        
+        /* FIXED CHECKBOX STYLES - MUCH BETTER LOOKING */
+        .type-checkboxes {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 15px 0;
+        }
+        
+        .type-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid #2a2f45;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .type-checkbox:hover {
+            border-color: #6C63FF;
+            background: rgba(108, 99, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .type-checkbox input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: #6C63FF;
+            margin: 0;
+            cursor: pointer;
+        }
+        
+        .type-checkbox span {
+            color: #fff;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        
+        .type-checkbox:has(input:checked) {
+            border-color: #6C63FF;
+            background: rgba(108, 99, 255, 0.15);
+        }
+        
+        /* Fix dropdown options */
+        select option {
+            background-color: #151a2c !important;
+            color: #fff !important;
+            padding: 10px !important;
+        }
+        
+        select option:hover {
+            background-color: #6C63FF !important;
+        }
+        
+        .btn-cancel {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid #2a2f45;
+            border-radius: 8px;
+            color: #fff;
+            cursor: pointer;
+        }
+        
+        .btn-save {
+            padding: 10px 20px;
+            background: #6C63FF;
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            cursor: pointer;
+        }
+        
+        .instrument-tag {
+            display: inline-block;
+            background: rgba(108,99,255,0.15);
+            color: #6C63FF;
+            padding: 5px 12px;
+            border-radius: 20px;
+            margin: 0 5px 5px 0;
+            font-size: 0.9rem;
+        }
+        
+        .instrument-tag button {
+            background: none;
+            border: none;
+            color: #6C63FF;
+            margin-left: 5px;
+            cursor: pointer;
+        }
+
+        /* ========== MOBILE RESPONSIVE FIXES ========== */
+        @media screen and (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+            }
+            
+            .main-container {
+                padding: 20px;
+            }
+            
+            .page-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .page-header h1 {
+                font-size: 2rem;
+            }
+            
+            .add-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .artists-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .artist-card {
+                padding: 20px;
+            }
+            
+            .artist-header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            
+            .artist-avatar {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .artist-info h3 {
+                font-size: 1.2rem;
+            }
+            
+            .artist-types {
+                justify-content: center;
+            }
+            
+            .artist-footer {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .edit-btn, .delete-btn {
+                width: 100%;
+                padding: 12px;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 10px;
+                max-height: 85vh;
+            }
+            
+            .type-checkboxes {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            
+            .type-checkbox {
+                padding: 10px 12px;
+            }
+            
+            .form-group input, 
+            .form-group select, 
+            .form-group textarea {
+                font-size: 16px;
+                padding: 12px;
+            }
+            
+            .modal-header {
+                padding: 20px;
+            }
+            
+            .modal-body {
+                padding: 20px;
+            }
+            
+            .modal-footer {
+                padding: 15px 20px;
+                flex-direction: column;
+            }
+            
+            .btn-cancel, .btn-save {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .empty-state {
+                padding: 40px 20px;
+            }
+            
+            .empty-state i {
+                font-size: 3rem;
+            }
+            
+            .empty-state h3 {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Extra small devices */
+        @media screen and (max-width: 480px) {
+            .artist-avatar {
+                width: 70px;
+                height: 70px;
+                font-size: 1.5rem;
+            }
+            
+            .artist-info h3 {
+                font-size: 1.1rem;
+            }
+            
+            .type-tag {
+                font-size: 0.75rem;
+                padding: 3px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="agent-hub.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i> <span>Back to Hub</span>
+        </a>
+        <div class="logo">
+            <i class="fas fa-users"></i> <span>MY <span style="color:#6C63FF;">ARTISTS</span></span>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="page-header">
+            <div>
+                <h1>Manage Your Artists</h1>
+                <p>Add and manage performers in your roster</p>
+            </div>
+            <button class="add-btn" id="addArtistBtn">
+                <i class="fas fa-plus"></i> Add New Artist
+            </button>
+        </div>
+
+        <div class="artists-grid" id="artistsGrid">
+            <div class="empty-state">
+                <i class="fas fa-users"></i>
+                <h3>No Artists Yet</h3>
+                <p>Add your first artist to get started</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Artist Modal -->
+    <div class="modal-overlay" id="artistModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-user-plus"></i> <span id="modalTitle">Add Artist</span></h2>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+            
+            <form id="artistForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Profile Picture</label>
+                        <div style="text-align: center;">
+                            <div id="artistAvatarPreview" style="width:100px; height:100px; border-radius:50%; background:rgba(108,99,255,0.2); margin:0 auto; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden;">
+                                <i class="fas fa-user" style="font-size:2rem; color:#6C63FF;"></i>
+                            </div>
+                            <input type="file" id="artistAvatar" accept="image/*" hidden>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Stage Name *</label>
+                        <input type="text" id="artistName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Location *</label>
+                        <input type="text" id="artistLocation" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Bio</label>
+                        <textarea id="artistBio" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Performer Type *</label>
+                        <div class="type-checkboxes" id="artistTypes">
+                            <label class="type-checkbox"><input type="checkbox" value="Solo Artist"><span>Solo Artist</span></label>
+                            <label class="type-checkbox"><input type="checkbox" value="Duo"><span>Duo</span></label>
+                            <label class="type-checkbox"><input type="checkbox" value="Band"><span>Band</span></label>
+                            <label class="type-checkbox"><input type="checkbox" value="DJ"><span>DJ</span></label>
+                            <label class="type-checkbox"><input type="checkbox" value="Sound Engineer"><span>Sound Engineer</span></label>
+                            <label class="type-checkbox"><input type="checkbox" value="Music Producer"><span>Music Producer</span></label>
+                            <label class="type-checkbox"><input type="checkbox" value="Songwriter"><span>Songwriter</span></label>
+                            <label class="type-checkbox"><input type="checkbox" value="Instrumentalist"><span>Instrumentalist</span></label>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="instrumentSection" style="display: none;">
+                        <label>Instruments</label>
+                        <input type="text" id="instrumentInput" placeholder="Type and press Enter">
+                        <div id="instrumentsList" style="margin-top: 10px;"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Social Media Links</label>
+                        <div id="socialInputs"></div>
+                        <button type="button" class="add-social-btn" id="addSocialBtn" style="margin-top:10px; padding:10px; background:rgba(108,99,255,0.1); border:1px dashed #6C63FF; border-radius:8px; color:#6C63FF; cursor:pointer; width:100%;">
+                            <i class="fas fa-plus"></i> Add Social
+                        </button>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" id="cancelModal">Cancel</button>
+                    <button type="submit" class="btn-save">Save Artist</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const supabaseUrl = 'https://msjinuumxmezrijqemmp.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zamludXVteG1lenJpanFlbW1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwOTAyNjMsImV4cCI6MjA4NzY2NjI2M30.ic50fSC7MQfhSkhfE5E8B0R5-BGCQStMRZNHiy6Zakw';
+            const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+            let currentAgentId = null;
+            let editingArtistId = null;
+            let selectedInstruments = [];
+
+            const socialPlatforms = {
+                'whatsapp': 'WhatsApp', 'email': 'Email', 'instagram': 'Instagram',
+                'facebook': 'Facebook', 'twitter': 'Twitter', 'tiktok': 'TikTok',
+                'youtube': 'YouTube', 'spotify': 'Spotify', 'soundcloud': 'SoundCloud',
+                'website': 'Website'
+            };
+
+            loadAgentAndArtists();
+
+            async function loadAgentAndArtists() {
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                if (!user) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const { data: agent } = await supabaseClient
+                    .from('agents')
+                    .select('id')
+                    .eq('auth_id', user.id)
+                    .single();
+
+                if (agent) {
+                    currentAgentId = agent.id;
+                    loadArtists();
+                }
+            }
+
+            async function loadArtists() {
+                if (!currentAgentId) return;
+
+                const { data: artists, error } = await supabaseClient
+                    .from('roster_artists')
+                    .select('*')
+                    .eq('agent_id', currentAgentId)
+                    .order('created_at', { ascending: false });
+
+                if (error) {
+                    console.error('Error loading artists:', error);
+                    return;
+                }
+
+                renderArtists(artists || []);
+            }
+
+            function renderArtists(artists) {
+                const grid = document.getElementById('artistsGrid');
+                
+                if (artists.length === 0) {
+                    grid.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-users"></i>
+                            <h3>No Artists Yet</h3>
+                            <p>Add your first artist to get started</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                grid.innerHTML = artists.map(artist => `
+                    <div class="artist-card">
+                        <div class="artist-header">
+                            <div class="artist-avatar">
+                                ${artist.image_url 
+                                    ? `<img src="${artist.image_url}" alt="${artist.name}">` 
+                                    : '<i class="fas fa-user"></i>'}
+                            </div>
+                            <div class="artist-info">
+                                <h3>${artist.name}</h3>
+                                <div class="artist-location">
+                                    <i class="fas fa-map-marker-alt"></i> ${artist.location}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="artist-types">
+                            ${artist.types?.map(type => 
+                                `<span class="type-tag">${type}</span>`
+                            ).join('') || '<span class="type-tag">Performer</span>'}
+                        </div>
+                        
+                        <div class="artist-footer">
+                            <button class="edit-btn" onclick="editArtist('${artist.id}')">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="delete-btn" onclick="deleteArtist('${artist.id}')">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Modal functionality
+            const modal = document.getElementById('artistModal');
+            const addBtn = document.getElementById('addArtistBtn');
+            const closeBtn = document.getElementById('closeModal');
+            const cancelBtn = document.getElementById('cancelModal');
+
+            addBtn.addEventListener('click', () => {
+                editingArtistId = null;
+                document.getElementById('modalTitle').textContent = 'Add Artist';
+                document.getElementById('artistForm').reset();
+                document.getElementById('instrumentSection').style.display = 'none';
+                selectedInstruments = [];
+                document.getElementById('instrumentsList').innerHTML = '';
+                document.getElementById('socialInputs').innerHTML = '';
+                document.getElementById('artistAvatarPreview').innerHTML = '<i class="fas fa-user" style="font-size:2rem; color:#6C63FF;"></i>';
+                modal.classList.add('active');
+            });
+
+            closeBtn.addEventListener('click', () => modal.classList.remove('active'));
+            cancelBtn.addEventListener('click', () => modal.classList.remove('active'));
+
+            document.querySelectorAll('#artistTypes input').forEach(cb => {
+                cb.addEventListener('change', function() {
+                    if (this.value === 'Instrumentalist') {
+                        document.getElementById('instrumentSection').style.display = 
+                            this.checked ? 'block' : 'none';
+                    }
+                });
+            });
+
+            document.getElementById('instrumentInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const instrument = this.value.trim();
+                    if (instrument && !selectedInstruments.includes(instrument)) {
+                        selectedInstruments.push(instrument);
+                        this.value = '';
+                        updateInstrumentsDisplay();
+                    }
+                }
+            });
+
+            function updateInstrumentsDisplay() {
+                const container = document.getElementById('instrumentsList');
+                container.innerHTML = selectedInstruments.map(inst => 
+                    `<span class="instrument-tag">${inst} <button onclick="removeInstrument('${inst}')">×</button></span>`
+                ).join('');
+            }
+
+            window.removeInstrument = function(instrument) {
+                selectedInstruments = selectedInstruments.filter(i => i !== instrument);
+                updateInstrumentsDisplay();
+            };
+
+            document.getElementById('addSocialBtn').addEventListener('click', addSocialInput);
+
+            function addSocialInput(platform = '', url = '') {
+                const container = document.getElementById('socialInputs');
+                const div = document.createElement('div');
+                div.style.cssText = 'display:flex; gap:10px; margin-bottom:10px;';
+                div.innerHTML = `
+                    <select style="flex:1; padding:10px; background:rgba(255,255,255,0.05); border:1px solid #2a2f45; border-radius:8px; color:#fff;">
+                        <option value="">Platform</option>
+                        ${Object.entries(socialPlatforms).map(([key, name]) => 
+                            `<option value="${key}" ${platform===key?'selected':''}>${name}</option>`
+                        ).join('')}
+                    </select>
+                    <input type="text" value="${url}" placeholder="URL" style="flex:2; padding:10px; background:rgba(255,255,255,0.05); border:1px solid #2a2f45; border-radius:8px; color:#fff;">
+                    <button onclick="this.parentElement.remove()" style="padding:10px; background:rgba(245,101,101,0.1); border:1px solid rgba(245,101,101,0.3); border-radius:8px; color:#F56565; cursor:pointer;">×</button>
+                `;
+                container.appendChild(div);
+            }
+
+            document.getElementById('artistForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                if (!currentAgentId) return;
+
+                const types = [];
+                document.querySelectorAll('#artistTypes input:checked').forEach(cb => {
+                    types.push(cb.value);
+                });
+
+                if (types.length === 0) {
+                    alert('Please select at least one performer type');
+                    return;
+                }
+
+                const socialLinks = [];
+                document.querySelectorAll('#socialInputs > div').forEach(div => {
+                    const select = div.querySelector('select');
+                    const input = div.querySelector('input');
+                    if (select.value && input.value) {
+                        socialLinks.push({ platform: select.value, url: input.value });
+                    }
+                });
+
+                const avatarPreview = document.getElementById('artistAvatarPreview');
+                const img = avatarPreview.querySelector('img');
+                const imageUrl = img ? img.src : '';
+
+                const artistData = {
+                    agent_id: currentAgentId,
+                    name: document.getElementById('artistName').value,
+                    location: document.getElementById('artistLocation').value,
+                    bio: document.getElementById('artistBio').value,
+                    types: types,
+                    instruments: selectedInstruments,
+                    image_url: imageUrl,
+                    social_links: socialLinks
+                };
+
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+                submitBtn.disabled = true;
+
+                let error;
+                if (editingArtistId) {
+                    ({ error } = await supabaseClient
+                        .from('roster_artists')
+                        .update(artistData)
+                        .eq('id', editingArtistId));
+                } else {
+                    ({ error } = await supabaseClient
+                        .from('roster_artists')
+                        .insert([artistData]));
+                }
+
+                if (error) {
+                    alert('Error: ' + error.message);
+                    console.error('Save error:', error);
+                } else {
+                    modal.classList.remove('active');
+                    loadArtists();
+                }
+
+                submitBtn.innerHTML = 'Save Artist';
+                submitBtn.disabled = false;
+            });
+
+            window.editArtist = async function(artistId) {
+                const { data: artist } = await supabaseClient
+                    .from('roster_artists')
+                    .select('*')
+                    .eq('id', artistId)
+                    .single();
+
+                if (artist) {
+                    editingArtistId = artistId;
+                    document.getElementById('modalTitle').textContent = 'Edit Artist';
+                    
+                    document.getElementById('artistName').value = artist.name || '';
+                    document.getElementById('artistLocation').value = artist.location || '';
+                    document.getElementById('artistBio').value = artist.bio || '';
+
+                    document.querySelectorAll('#artistTypes input').forEach(cb => {
+                        cb.checked = artist.types?.includes(cb.value) || false;
+                    });
+
+                    if (artist.types?.includes('Instrumentalist')) {
+                        document.getElementById('instrumentSection').style.display = 'block';
+                    }
+
+                    selectedInstruments = artist.instruments || [];
+                    updateInstrumentsDisplay();
+
+                    if (artist.image_url) {
+                        document.getElementById('artistAvatarPreview').innerHTML = 
+                            `<img src="${artist.image_url}" style="width:100%; height:100%; object-fit:cover;">`;
+                    }
+
+                    document.getElementById('socialInputs').innerHTML = '';
+                    artist.social_links?.forEach(link => {
+                        addSocialInput(link.platform, link.url);
+                    });
+
+                    modal.classList.add('active');
+                }
+            };
+
+            window.deleteArtist = async function(artistId) {
+                if (confirm('Are you sure you want to remove this artist?')) {
+                    const { error } = await supabaseClient
+                        .from('roster_artists')
+                        .delete()
+                        .eq('id', artistId);
+
+                    if (!error) {
+                        loadArtists();
+                    }
+                }
+            };
+
+            const avatarPreview = document.getElementById('artistAvatarPreview');
+            const avatarInput = document.getElementById('artistAvatar');
+
+            avatarPreview.addEventListener('click', () => avatarInput.click());
+
+            avatarInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        avatarPreview.innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; object-fit:cover;">`;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
