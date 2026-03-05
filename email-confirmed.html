@@ -6,6 +6,7 @@
     <title>Email Confirmed | Vivo Distro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* Your existing styles */
         * {
             margin: 0;
             padding: 0;
@@ -187,11 +188,9 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         (function() {
-            // Supabase configuration
             const supabaseUrl = 'https://msjinuumxmezrijqemmp.supabase.co';
             const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zamludXVteG1lenJpanFlbW1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwOTAyNjMsImV4cCI6MjA4NzY2NjI2M30.ic50fSC7MQfhSkhfE5E8B0R5-BGCQStMRZNHiy6Zakw';
             
-            // Create Supabase client
             const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey, {
                 auth: {
                     autoRefreshToken: true,
@@ -209,7 +208,6 @@
                 try {
                     console.log('Checking for session...');
                     
-                    // Get the session from the URL
                     const { data, error } = await supabaseClient.auth.getSession();
                     
                     if (error) {
@@ -220,15 +218,12 @@
                     console.log('Session data:', data);
                     
                     if (data.session) {
-                        // Success! User is confirmed
                         console.log('Email confirmed successfully!');
                         
-                        // Check if we have pending user data
                         const pendingUser = localStorage.getItem('pendingUser');
                         if (pendingUser) {
                             const userData = JSON.parse(pendingUser);
                             
-                            // Update usernames table to mark as confirmed if needed
                             await supabaseClient
                                 .from('usernames')
                                 .update({ email_confirmed: true })
@@ -237,13 +232,11 @@
                             localStorage.removeItem('pendingUser');
                         }
                         
-                        // Show success
                         loadingContainer.style.display = 'none';
                         successContainer.style.display = 'block';
                         return;
                     }
                     
-                    // Check URL parameters for error
                     const urlParams = new URLSearchParams(window.location.search);
                     const errorParam = urlParams.get('error');
                     const errorDescription = urlParams.get('error_description');
@@ -252,7 +245,6 @@
                         throw new Error(errorDescription || 'Verification failed');
                     }
                     
-                    // If no session and no error, try to get tokens from hash
                     const hashParams = new URLSearchParams(window.location.hash.substring(1));
                     const accessToken = hashParams.get('access_token');
                     const refreshToken = hashParams.get('refresh_token');
@@ -260,7 +252,6 @@
                     if (accessToken && refreshToken) {
                         console.log('Found tokens in URL hash, setting session...');
                         
-                        // Set the session manually
                         const { error: sessionError } = await supabaseClient.auth.setSession({
                             access_token: accessToken,
                             refresh_token: refreshToken
@@ -271,7 +262,6 @@
                             throw sessionError;
                         }
                         
-                        // Check again
                         const { data: newData } = await supabaseClient.auth.getSession();
                         if (newData.session) {
                             loadingContainer.style.display = 'none';
@@ -280,7 +270,6 @@
                         }
                     }
                     
-                    // If we get here, no session found
                     console.log('No session found after all attempts');
                     throw new Error('Unable to verify email. The link may have expired.');
                     
@@ -292,7 +281,6 @@
                 }
             }
 
-            // Run when page loads
             handleEmailConfirmation();
         })();
     </script>
