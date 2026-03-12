@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Confirmed | Vivo Distro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 50px 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            animation: fadeInUp 0.6s ease;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .success-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #48BB78, #38A169);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            font-size: 3rem;
+            color: white;
+            box-shadow: 0 10px 30px rgba(72, 187, 120, 0.3);
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, #6C63FF, #48BB78);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        p {
+            color: #cbd5e0;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 16px 40px;
+            background: linear-gradient(90deg, #6C63FF, #FF6584);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(108, 99, 255, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(108, 99, 255, 0.4);
+        }
+        
+        .btn i {
+            font-size: 1.2rem;
+        }
+        
+        .loader {
+            border: 4px solid #2a2f45;
+            border-top: 4px solid #6C63FF;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #F56565, #E53E3E);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            font-size: 3rem;
+            color: white;
+        }
+        
+        .footer {
+            margin-top: 30px;
+            color: #718096;
+            font-size: 0.9rem;
+        }
+        
+        .footer a {
+            color: #6C63FF;
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="loadingContainer">
+        <div class="loader"></div>
+        <h2>Verifying your email...</h2>
+        <p>Please wait while we confirm your email address.</p>
+    </div>
+
+    <div class="container" id="successContainer" style="display: none;">
+        <div class="success-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <h1>Email Confirmed!</h1>
+        <p>Your email has been successfully verified.<br>Your account is now active.</p>
+        <a href="login.html" class="btn">
+            <i class="fas fa-sign-in-alt"></i>
+            Proceed to Login
+        </a>
+        <div class="footer">
+            <p>© 2025 Vivo Distro. All rights reserved.</p>
+        </div>
+    </div>
+
+    <div class="container" id="errorContainer" style="display: none;">
+        <div class="error-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h1>Verification Failed</h1>
+        <p id="errorMessage">The confirmation link is invalid or has expired.</p>
+        <a href="signup.html" class="btn">
+            <i class="fas fa-user-plus"></i>
+            Sign Up Again
+        </a>
+        <div class="footer">
+            <p>Need help? <a href="mailto:support@vivodistro.com">Contact Support</a></p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        (function() {
+            // Supabase configuration
+            const supabaseUrl = 'https://msjinuumxmezrijqemmp.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zamludXVteG1lenJpanFlbW1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwOTAyNjMsImV4cCI6MjA4NzY2NjI2M30.ic50fSC7MQfhSkhfE5E8B0R5-BGCQStMRZNHiy6Zakw';
+            
+            // Create Supabase client
+            const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey, {
+                auth: {
+                    autoRefreshToken: true,
+                    persistSession: true,
+                    detectSessionInUrl: true
+                }
+            });
+
+            const loadingContainer = document.getElementById('loadingContainer');
+            const successContainer = document.getElementById('successContainer');
+            const errorContainer = document.getElementById('errorContainer');
+            const errorMessage = document.getElementById('errorMessage');
+
+            async function handleEmailConfirmation() {
+                try {
+                    console.log('Checking for session...');
+                    
+                    // Get the session from the URL
+                    const { data, error } = await supabaseClient.auth.getSession();
+                    
+                    if (error) {
+                        console.error('Session error:', error);
+                        throw error;
+                    }
+                    
+                    console.log('Session data:', data);
+                    
+                    if (data.session) {
+                        // Success! User is confirmed
+                        console.log('Email confirmed successfully!');
+                        
+                        // Check if we have pending user data
+                        const pendingUser = localStorage.getItem('pendingUser');
+                        if (pendingUser) {
+                            const userData = JSON.parse(pendingUser);
+                            
+                            // Update usernames table to mark as confirmed if needed
+                            await supabaseClient
+                                .from('usernames')
+                                .update({ email_confirmed: true })
+                                .eq('user_id', data.session.user.id);
+                            
+                            localStorage.removeItem('pendingUser');
+                        }
+                        
+                        // Show success
+                        loadingContainer.style.display = 'none';
+                        successContainer.style.display = 'block';
+                        return;
+                    }
+                    
+                    // Check URL parameters for error
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const errorParam = urlParams.get('error');
+                    const errorDescription = urlParams.get('error_description');
+                    
+                    if (errorParam || errorDescription) {
+                        throw new Error(errorDescription || 'Verification failed');
+                    }
+                    
+                    // If no session and no error, try to get tokens from hash
+                    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+                    const accessToken = hashParams.get('access_token');
+                    const refreshToken = hashParams.get('refresh_token');
+                    
+                    if (accessToken && refreshToken) {
+                        console.log('Found tokens in URL hash, setting session...');
+                        
+                        // Set the session manually
+                        const { error: sessionError } = await supabaseClient.auth.setSession({
+                            access_token: accessToken,
+                            refresh_token: refreshToken
+                        });
+                        
+                        if (sessionError) {
+                            console.error('Error setting session:', sessionError);
+                            throw sessionError;
+                        }
+                        
+                        // Check again
+                        const { data: newData } = await supabaseClient.auth.getSession();
+                        if (newData.session) {
+                            loadingContainer.style.display = 'none';
+                            successContainer.style.display = 'block';
+                            return;
+                        }
+                    }
+                    
+                    // If we get here, no session found
+                    console.log('No session found after all attempts');
+                    throw new Error('Unable to verify email. The link may have expired.');
+                    
+                } catch (err) {
+                    console.error('Confirmation error:', err);
+                    loadingContainer.style.display = 'none';
+                    errorContainer.style.display = 'block';
+                    errorMessage.textContent = err.message || 'The confirmation link is invalid or has expired.';
+                }
+            }
+
+            // Run when page loads
+            handleEmailConfirmation();
+        })();
+    </script>
+</body>
+</html>

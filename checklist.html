@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CheckList · Vivo Distro</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      background: #0f0f13;
+      color: #e5e5e5;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #2c2c3a;
+    }
+
+    .header h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .header h1 i {
+      color: #4f46e5;
+      margin-right: 0.5rem;
+    }
+
+    .back-btn {
+      background: transparent;
+      border: 1px solid #4f46e5;
+      color: #4f46e5;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .back-btn:hover {
+      background: #4f46e5;
+      color: #fff;
+    }
+
+    .btn {
+      background: #2a2a35;
+      border: none;
+      color: #fff;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: background 0.2s;
+    }
+
+    .btn-primary {
+      background: #4f46e5;
+    }
+
+    .btn-primary:hover {
+      background: #6366f1;
+    }
+
+    .btn-danger {
+      background: #b91c1c;
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+
+    .checklist-layout {
+      display: flex;
+      gap: 2rem;
+      height: calc(100vh - 200px);
+    }
+
+    .list-sidebar {
+      width: 300px;
+      background: #1a1a24;
+      border: 1px solid #2c2c3a;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .list-sidebar-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid #2c2c3a;
+    }
+
+    .list-sidebar-header h3 {
+      color: #fff;
+      margin-bottom: 1rem;
+    }
+
+    .list-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem;
+    }
+
+    .list-btn {
+      width: 100%;
+      text-align: left;
+      padding: 0.75rem 1rem;
+      background: #1e1e28;
+      border: none;
+      color: #fff;
+      border-radius: 6px;
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      transition: background 0.2s;
+    }
+
+    .list-btn:hover {
+      background: #2a2a35;
+    }
+
+    .list-btn.active {
+      background: #4f46e5;
+    }
+
+    .checklist-main {
+      flex: 1;
+      background: #1a1a24;
+      border: 1px solid #2c2c3a;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .checklist-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid #2c2c3a;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .checklist-header h2 {
+      font-size: 1.4rem;
+      font-weight: 500;
+      color: #fff;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .items-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem;
+      background: #1e1e28;
+      border-radius: 6px;
+      margin-bottom: 0.5rem;
+    }
+
+    .checklist-item input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: #4f46e5;
+      cursor: pointer;
+    }
+
+    .item-name {
+      flex: 1;
+      font-size: 1rem;
+      color: #fff;
+    }
+
+    .quantity-badge {
+      background: #2a2a35;
+      color: #aaa;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+    }
+
+    .delete-item {
+      background: none;
+      border: none;
+      color: #a0a0b0;
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 0.25rem;
+    }
+
+    .delete-item:hover {
+      color: #dc2626;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: #666;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: #1e1e28;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 500px;
+      padding: 2rem;
+      border: 1px solid #3a3a4a;
+    }
+
+    .modal-content h3 {
+      margin-bottom: 1.5rem;
+      color: #fff;
+    }
+
+    .modal-content input {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      background: #2a2a35;
+      border: 1px solid #3a3a4a;
+      border-radius: 4px;
+      color: #fff;
+      font-size: 1rem;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1><i class="fas fa-check-square"></i> CheckList</h1>
+      <button class="back-btn" onclick="javascript:history.back()">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+      </button>
+    </div>
+
+    <div class="checklist-layout">
+      <div class="list-sidebar">
+        <div class="list-sidebar-header">
+          <h3>My Lists</h3>
+          <button class="btn btn-primary" id="newListBtn" style="width: 100%;">
+            <i class="fas fa-plus"></i> New List
+          </button>
+        </div>
+        <div class="list-container" id="listsContainer"></div>
+      </div>
+
+      <div class="checklist-main">
+        <div class="checklist-header">
+          <h2 id="activeListTitle">Select a list</h2>
+          <div class="header-actions">
+            <button class="btn" id="addItemBtn" disabled>
+              <i class="fas fa-plus"></i> Add Item
+            </button>
+            <button class="btn" id="clearChecksBtn" disabled>
+              <i class="fas fa-undo"></i> Clear Checks
+            </button>
+            <button class="btn btn-danger" id="deleteListBtn" disabled>
+              <i class="fas fa-trash"></i> Delete List
+            </button>
+          </div>
+        </div>
+        <div class="items-container" id="itemsContainer">
+          <div class="empty-state">Select a list to view items</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="itemModal">
+    <div class="modal-content">
+      <h3 id="itemModalTitle">Add Item</h3>
+      <input type="text" id="itemName" placeholder="Item name" autocomplete="off">
+      <input type="number" id="itemQuantity" placeholder="Quantity" value="1" min="1">
+      <div class="modal-actions">
+        <button class="btn" id="cancelItemBtn">Cancel</button>
+        <button class="btn btn-primary" id="saveItemBtn">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Storage key
+      const STORAGE_KEY = 'vivo_checklists';
+      
+      // State
+      let checklists = [];
+      let activeListId = null;
+      let editingItemId = null;
+
+      // Load from localStorage
+      function loadFromStorage() {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          try {
+            checklists = JSON.parse(stored);
+          } catch (e) {
+            console.error('Failed to parse stored data', e);
+            checklists = [];
+          }
+        } else {
+          // Create a default list if none exists
+          checklists = [
+            {
+              id: generateId(),
+              name: 'My First List',
+              items: []
+            }
+          ];
+        }
+        saveToStorage();
+      }
+
+      // Save to localStorage
+      function saveToStorage() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(checklists));
+      }
+
+      // Generate unique ID
+      function generateId() {
+        return Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+      }
+
+      // Render lists in sidebar
+      function renderLists() {
+        const container = document.getElementById('listsContainer');
+        
+        if (!checklists.length) {
+          container.innerHTML = '<div class="empty-state">No lists yet. Create one!</div>';
+          return;
+        }
+
+        container.innerHTML = checklists.map(list => `
+          <button class="list-btn ${list.id === activeListId ? 'active' : ''}" data-list-id="${list.id}">
+            <i class="fas fa-list"></i>
+            ${escapeHtml(list.name)}
+          </button>
+        `).join('');
+
+        document.querySelectorAll('.list-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            setActiveList(btn.dataset.listId);
+          });
+        });
+      }
+
+      // Set active checklist
+      function setActiveList(id) {
+        activeListId = id;
+        renderLists();
+        
+        const list = checklists.find(l => l.id === id);
+        document.getElementById('activeListTitle').textContent = list ? list.name : 'Select a list';
+        
+        document.getElementById('addItemBtn').disabled = !list;
+        document.getElementById('clearChecksBtn').disabled = !list;
+        document.getElementById('deleteListBtn').disabled = !list;
+        
+        renderItems(list ? list.items : []);
+      }
+
+      // Render items for active list
+      function renderItems(items) {
+        const container = document.getElementById('itemsContainer');
+        
+        if (!items || items.length === 0) {
+          container.innerHTML = '<div class="empty-state">No items. Click "Add Item" to start.</div>';
+          return;
+        }
+
+        container.innerHTML = items.map(item => `
+          <div class="checklist-item" data-item-id="${item.id}">
+            <input type="checkbox" class="item-checkbox" ${item.checked ? 'checked' : ''}>
+            <span class="item-name">${escapeHtml(item.name)}</span>
+            <span class="quantity-badge">x${item.quantity}</span>
+            <button class="delete-item" title="Delete item">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        `).join('');
+
+        document.querySelectorAll('.item-checkbox').forEach(cb => {
+          cb.addEventListener('change', function() {
+            const itemId = this.closest('.checklist-item').dataset.itemId;
+            const list = checklists.find(l => l.id === activeListId);
+            const item = list.items.find(i => i.id === itemId);
+            if (item) {
+              item.checked = this.checked;
+              saveToStorage();
+            }
+          });
+        });
+
+        document.querySelectorAll('.delete-item').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const itemId = this.closest('.checklist-item').dataset.itemId;
+            if (confirm('Delete this item?')) {
+              const list = checklists.find(l => l.id === activeListId);
+              list.items = list.items.filter(i => i.id !== itemId);
+              saveToStorage();
+              renderItems(list.items);
+            }
+          });
+        });
+      }
+
+      // New list
+      document.getElementById('newListBtn').addEventListener('click', () => {
+        const name = prompt('Enter checklist name:');
+        if (!name) return;
+        
+        const newList = {
+          id: generateId(),
+          name: name,
+          items: []
+        };
+        
+        checklists.push(newList);
+        saveToStorage();
+        renderLists();
+        setActiveList(newList.id);
+      });
+
+      // Clear checks
+      document.getElementById('clearChecksBtn').addEventListener('click', () => {
+        if (!activeListId) return;
+        
+        const list = checklists.find(l => l.id === activeListId);
+        list.items.forEach(item => item.checked = false);
+        saveToStorage();
+        renderItems(list.items);
+      });
+
+      // Delete list
+      document.getElementById('deleteListBtn').addEventListener('click', () => {
+        if (!activeListId || !confirm('Delete this entire list?')) return;
+        
+        checklists = checklists.filter(l => l.id !== activeListId);
+        saveToStorage();
+        
+        activeListId = checklists.length > 0 ? checklists[0].id : null;
+        renderLists();
+        
+        if (activeListId) {
+          setActiveList(activeListId);
+        } else {
+          document.getElementById('activeListTitle').textContent = 'Select a list';
+          document.getElementById('itemsContainer').innerHTML = '<div class="empty-state">No lists yet. Create one!</div>';
+          document.getElementById('addItemBtn').disabled = true;
+          document.getElementById('clearChecksBtn').disabled = true;
+          document.getElementById('deleteListBtn').disabled = true;
+        }
+      });
+
+      // Item modal
+      const itemModal = document.getElementById('itemModal');
+      const itemName = document.getElementById('itemName');
+      const itemQuantity = document.getElementById('itemQuantity');
+
+      document.getElementById('addItemBtn').addEventListener('click', () => {
+        editingItemId = null;
+        document.getElementById('itemModalTitle').textContent = 'Add Item';
+        itemName.value = '';
+        itemQuantity.value = '1';
+        itemModal.style.display = 'flex';
+      });
+
+      document.getElementById('cancelItemBtn').addEventListener('click', () => {
+        itemModal.style.display = 'none';
+      });
+
+      document.getElementById('saveItemBtn').addEventListener('click', () => {
+        const name = itemName.value.trim();
+        const qty = parseInt(itemQuantity.value);
+        
+        if (!name || !activeListId) return;
+
+        const list = checklists.find(l => l.id === activeListId);
+
+        if (editingItemId) {
+          const item = list.items.find(i => i.id === editingItemId);
+          if (item) {
+            item.name = name;
+            item.quantity = qty;
+          }
+        } else {
+          const newItem = {
+            id: generateId(),
+            name: name,
+            quantity: qty,
+            checked: false
+          };
+          list.items.push(newItem);
+        }
+
+        saveToStorage();
+        itemModal.style.display = 'none';
+        renderItems(list.items);
+      });
+
+      window.addEventListener('click', (e) => {
+        if (e.target === itemModal) {
+          itemModal.style.display = 'none';
+        }
+      });
+
+      function escapeHtml(unsafe) {
+        return unsafe
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      // Initialize
+      loadFromStorage();
+      
+      if (checklists.length > 0) {
+        setActiveList(checklists[0].id);
+      } else {
+        renderLists();
+      }
+    });
+  </script>
+</body>
+</html>

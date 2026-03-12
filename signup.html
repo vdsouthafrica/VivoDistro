@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign Up | Vivo Distro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="responsive.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+    <script src="global-fullscreen.js" defer></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 450px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-align: center;
+            background: linear-gradient(90deg, #6C63FF, #FF6584);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.07);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #6C63FF;
+        }
+        
+        .password-wrapper {
+            position: relative;
+            width: 100%;
+        }
+        
+        .password-wrapper input {
+            padding-right: 50px;
+        }
+        
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #8892b0;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .toggle-password:hover {
+            color: #6C63FF;
+        }
+        
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 12px;
+        }
+        
+        select option {
+            background-color: #1a1a2e;
+            color: #fff;
+            padding: 12px;
+        }
+        
+        select option:first-child {
+            color: #8892b0;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(90deg, #6C63FF, #FF6584);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(108, 99, 255, 0.3);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .login-link {
+            text-align: center;
+            margin-top: 25px;
+            color: #8892b0;
+        }
+        
+        .login-link a {
+            color: #6C63FF;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .error {
+            color: #F56565;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .username-taken {
+            color: #F56565;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .success-message {
+            background: rgba(72, 187, 120, 0.15);
+            border: 1px solid #48BB78;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            display: none;
+        }
+        
+        .success-message i {
+            font-size: 3rem;
+            color: #48BB78;
+            margin-bottom: 10px;
+        }
+        
+        .success-message h3 {
+            color: #48BB78;
+            margin-bottom: 10px;
+        }
+        
+        .success-message p {
+            color: #8892b0;
+            line-height: 1.6;
+        }
+        
+        .resend-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #2a2f45;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .resend-btn:hover {
+            border-color: #6C63FF;
+            background: rgba(108, 99, 255, 0.1);
+        }
+        
+        .resend-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sign Up</h1>
+        
+        <!-- Success Message (hidden by default) -->
+        <div class="success-message" id="successMessage">
+            <i class="fas fa-envelope"></i>
+            <h3>Check Your Email</h3>
+            <p>We've sent a confirmation link to <strong id="sentEmail"></strong></p>
+            <p style="font-size: 0.9rem; margin-top: 10px;">Click the link in the email to verify your account, then you can log in.</p>
+            <button class="resend-btn" id="resendBtn">
+                <i class="fas fa-redo-alt"></i> Resend Confirmation
+            </button>
+        </div>
+        
+        <!-- Sign Up Form (hidden when success shown) -->
+        <div id="signupForm">
+            <div class="form-group">
+                <input type="text" id="username" placeholder="Username" autocomplete="off" required>
+                <div class="username-taken" id="usernameTaken">Username already taken</div>
+            </div>
+            
+            <div class="form-group">
+                <div class="password-wrapper">
+                    <input type="password" id="password" placeholder="Password" required>
+                    <button type="button" class="toggle-password" id="togglePassword">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <div class="password-wrapper">
+                    <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+                    <button type="button" class="toggle-password" id="toggleConfirmPassword">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <input type="email" id="email" placeholder="Email address" required>
+            </div>
+            
+            <div class="form-group">
+                <select id="role" required>
+                    <option value="" disabled selected>Select your role</option>
+                    <option value="performer">Performer</option>
+                    <option value="agent">Agent</option>
+                    <option value="booker">Booker</option>
+                </select>
+            </div>
+            
+            <button class="btn" id="signupBtn">Create Account</button>
+            
+            <div class="login-link">
+                Already have an account? <a href="login.html">Login</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Supabase configuration
+            const supabaseUrl = 'https://msjinuumxmezrijqemmp.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zamludXVteG1lenJpanFlbW1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwOTAyNjMsImV4cCI6MjA4NzY2NjI2M30.ic50fSC7MQfhSkhfE5E8B0R5-BGCQStMRZNHiy6Zakw';
+            const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey, {
+                auth: {
+                    autoRefreshToken: true,
+                    persistSession: true,
+                    detectSessionInUrl: true
+                }
+            });
+
+            // Get DOM elements
+            const signupForm = document.getElementById('signupForm');
+            const successMessage = document.getElementById('successMessage');
+            const sentEmail = document.getElementById('sentEmail');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const confirmInput = document.getElementById('confirmPassword');
+            const emailInput = document.getElementById('email');
+            const roleSelect = document.getElementById('role');
+            const signupBtn = document.getElementById('signupBtn');
+            const usernameTaken = document.getElementById('usernameTaken');
+            const togglePassword = document.getElementById('togglePassword');
+            const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+            const resendBtn = document.getElementById('resendBtn');
+
+            let lastSignupEmail = '';
+
+            // Toggle password visibility
+            togglePassword.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+            });
+
+            toggleConfirmPassword.addEventListener('click', function() {
+                const type = confirmInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                confirmInput.setAttribute('type', type);
+                this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+            });
+
+            // Check username availability
+            let usernameTimeout;
+            usernameInput.addEventListener('input', function() {
+                clearTimeout(usernameTimeout);
+                const username = this.value.trim();
+                
+                if (username.length < 3) {
+                    usernameTaken.style.display = 'none';
+                    return;
+                }
+                
+                usernameTimeout = setTimeout(async () => {
+                    try {
+                        const { data, error } = await supabaseClient
+                            .from('usernames')
+                            .select('username')
+                            .eq('username', username)
+                            .maybeSingle();
+                        
+                        if (error) {
+                            console.error('Username check error:', error);
+                            return;
+                        }
+                        
+                        usernameTaken.style.display = data ? 'block' : 'none';
+                    } catch (err) {
+                        console.error('Username check exception:', err);
+                    }
+                }, 500);
+            });
+
+            // SIGN UP BUTTON CLICK - DEBUG VERSION
+            signupBtn.addEventListener('click', async function() {
+                // Get form values
+                const username = usernameInput.value.trim();
+                const password = passwordInput.value;
+                const confirm = confirmInput.value;
+                const email = emailInput.value.trim();
+                const role = roleSelect.value;
+
+                // Validation
+                if (!username || !password || !email || !role) {
+                    alert('Please fill in all fields');
+                    return;
+                }
+
+                if (password !== confirm) {
+                    alert('Passwords do not match');
+                    return;
+                }
+
+                if (password.length < 6) {
+                    alert('Password must be at least 6 characters');
+                    return;
+                }
+
+                // Disable button during signup
+                signupBtn.disabled = true;
+                signupBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
+
+                try {
+                    // Check if username is taken one more time
+                    console.log('1. Checking if username exists...');
+                    const { data: existingUser, error: checkError } = await supabaseClient
+                        .from('usernames')
+                        .select('username')
+                        .eq('username', username)
+                        .maybeSingle();
+
+                    if (checkError) {
+                        console.error('Username check error:', checkError);
+                    }
+
+                    if (existingUser) {
+                        usernameTaken.style.display = 'block';
+                        signupBtn.disabled = false;
+                        signupBtn.innerHTML = 'Create Account';
+                        return;
+                    }
+
+                    // Create auth user
+                    console.log('2. Creating auth user for:', email);
+                    
+                    // IMPORTANT: Fix redirect URL - REMOVE /VivoDistro/ for now
+                    const redirectUrl = window.location.origin + '/email-confirmed.html';
+                    
+                    const { data: authData, error: authError } = await supabaseClient.auth.signUp({
+                        email: email,
+                        password: password,
+                        options: {
+                            data: {
+                                username: username,
+                                role: role
+                            },
+                            emailRedirectTo: redirectUrl
+                        }
+                    });
+
+                    if (authError) {
+                        console.error('❌ AUTH ERROR:', authError);
+                        
+                        if (authError.message.includes('User already registered')) {
+                            alert('This email is already registered. Please login instead.');
+                            window.location.href = 'login.html';
+                        } else {
+                            alert('Auth Error: ' + authError.message);
+                        }
+                        
+                        signupBtn.disabled = false;
+                        signupBtn.innerHTML = 'Create Account';
+                        return;
+                    }
+
+                    if (!authData || !authData.user) {
+                        throw new Error('No user data returned from auth');
+                    }
+
+                    console.log('3. ✅ Auth user created successfully!');
+                    console.log('   User ID:', authData.user.id);
+                    console.log('   Email:', authData.user.email);
+                    
+                    // CRITICAL: Wait for auth to propagate (2 seconds)
+                    console.log('4. ⏳ Waiting 2 seconds for auth to propagate...');
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    
+                    // NOW save username to database with VERIFICATION
+                    console.log('5. Attempting to save username to database...');
+                    console.log('   Username:', username);
+                    console.log('   User ID:', authData.user.id);
+                    console.log('   Email:', email);
+                    console.log('   Role:', role);
+                    
+                    const { data: insertData, error: usernameError } = await supabaseClient
+                        .from('usernames')
+                        .insert({
+                            username: username,
+                            user_id: authData.user.id,
+                            email: email,
+                            role: role,
+                            created_at: new Date().toISOString()
+                        })
+                        .select();
+
+                    if (usernameError) {
+                        console.error('❌❌❌ USERNAME SAVE FAILED!');
+                        console.error('Error code:', usernameError.code);
+                        console.error('Error message:', usernameError.message);
+                        console.error('Error details:', usernameError.details);
+                        console.error('Full error object:', usernameError);
+                        
+                        // Show alert so you KNOW it failed
+                        alert('❌ CRITICAL ERROR: Username not saved!\n\n' + 
+                              'Error Code: ' + (usernameError.code || 'N/A') + '\n' +
+                              'Error: ' + usernameError.message + '\n\n' +
+                              'Check the console (F12) for full details.\n\n' +
+                              'Take a screenshot of the console and send it!');
+                        
+                        // Try one more time with a different approach
+                        console.log('6. ⚠️ Attempting second save attempt...');
+                        
+                        const { error: retryError } = await supabaseClient
+                            .from('usernames')
+                            .upsert({
+                                username: username,
+                                user_id: authData.user.id,
+                                email: email,
+                                role: role,
+                                created_at: new Date().toISOString()
+                            }, { onConflict: 'user_id' });
+                            
+                        if (retryError) {
+                            console.error('❌ Second attempt also failed:', retryError);
+                        } else {
+                            console.log('✅ Second attempt succeeded!');
+                        }
+                    } else {
+                        console.log('6. ✅ Username saved successfully!');
+                        console.log('   Saved data:', insertData);
+                        
+                        // Verify it was saved
+                        const { data: verifyData, error: verifyError } = await supabaseClient
+                            .from('usernames')
+                            .select('*')
+                            .eq('user_id', authData.user.id);
+                            
+                        if (verifyError) {
+                            console.error('Verification query error:', verifyError);
+                        } else {
+                            console.log('7. Verification query result:', verifyData);
+                        }
+                    }
+
+                    // Save pending user data as backup
+                    localStorage.setItem('pendingUser', JSON.stringify({
+                        userId: authData.user.id,
+                        email: email,
+                        username: username,
+                        role: role,
+                        timestamp: new Date().toISOString()
+                    }));
+
+                    // Check if email confirmation is required
+                    if (authData.user.identities && authData.user.identities.length > 0) {
+                        const identity = authData.user.identities[0];
+                        if (identity && !identity.identity_data?.email_verified) {
+                            console.log('8. 📧 Email confirmation required - waiting for verification');
+                        }
+                    }
+
+                    // Success! Show confirmation message
+                    lastSignupEmail = email;
+                    sentEmail.textContent = email;
+                    signupForm.style.display = 'none';
+                    successMessage.style.display = 'block';
+                    
+                } catch (error) {
+                    console.error('❌ CATASTROPHIC ERROR:', error);
+                    alert('FATAL ERROR: ' + error.message + '\n\nCheck console (F12) for details');
+                    signupBtn.disabled = false;
+                    signupBtn.innerHTML = 'Create Account';
+                }
+            });
+
+            // Resend confirmation email
+            resendBtn.addEventListener('click', async function() {
+                if (!lastSignupEmail) return;
+                
+                resendBtn.disabled = true;
+                resendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+                
+                try {
+                    const { error } = await supabaseClient.auth.resend({
+                        type: 'signup',
+                        email: lastSignupEmail,
+                        options: {
+                            emailRedirectTo: window.location.origin + '/email-confirmed.html'
+                        }
+                    });
+                    
+                    if (error) {
+                        alert('Error resending: ' + error.message);
+                    } else {
+                        alert('Confirmation email resent! Please check your inbox.');
+                    }
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                } finally {
+                    resendBtn.disabled = false;
+                    resendBtn.innerHTML = '<i class="fas fa-redo-alt"></i> Resend Confirmation';
+                }
+            });
+
+            // Enter key submits
+            confirmInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    signupBtn.click();
+                }
+            });
+
+            // Check URL for confirmation status
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('confirmed') === 'true') {
+                signupForm.style.display = 'none';
+                successMessage.style.display = 'none';
+                
+                const tempMessage = document.createElement('div');
+                tempMessage.className = 'success-message';
+                tempMessage.style.display = 'block';
+                tempMessage.innerHTML = `
+                    <i class="fas fa-check-circle"></i>
+                    <h3>Email Confirmed!</h3>
+                    <p>Your email has been verified. You can now log in.</p>
+                    <a href="login.html" class="btn" style="text-decoration: none; margin-top: 15px;">Go to Login</a>
+                `;
+                document.querySelector('.container').appendChild(tempMessage);
+            }
+            
+            // Check for any pending usernames that failed to save
+            async function checkPendingUsernames() {
+                console.log('Checking for pending usernames...');
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                if (user) {
+                    const pendingKey = 'pendingUser';
+                    const pending = localStorage.getItem(pendingKey);
+                    if (pending) {
+                        const data = JSON.parse(pending);
+                        console.log('Found pending user data for', user.id);
+                        
+                        // Check if username exists
+                        const { data: existing } = await supabaseClient
+                            .from('usernames')
+                            .select('*')
+                            .eq('user_id', user.id);
+                            
+                        if (!existing || existing.length === 0) {
+                            console.log('No username found, attempting to save pending data...');
+                            
+                            const { error } = await supabaseClient
+                                .from('usernames')
+                                .upsert({
+                                    username: data.username,
+                                    user_id: user.id,
+                                    email: data.email,
+                                    role: data.role
+                                });
+                                
+                            if (error) {
+                                console.error('Failed to save pending username:', error);
+                            } else {
+                                console.log('✅ Pending username saved successfully');
+                                localStorage.removeItem(pendingKey);
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Check for pending usernames on page load
+            setTimeout(checkPendingUsernames, 1000);
+        });
+    </script>
+</body>
+</html>

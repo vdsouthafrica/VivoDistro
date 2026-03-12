@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TechList · Vivo Distro</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      background: #0f0f13;
+      color: #e5e5e5;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #2c2c3a;
+    }
+
+    .header h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .header h1 i {
+      color: #4f46e5;
+      margin-right: 0.5rem;
+    }
+
+    .back-btn {
+      background: transparent;
+      border: 1px solid #4f46e5;
+      color: #4f46e5;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .back-btn:hover {
+      background: #4f46e5;
+      color: #fff;
+    }
+
+    .btn {
+      background: #2a2a35;
+      border: none;
+      color: #fff;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: background 0.2s;
+    }
+
+    .btn-primary {
+      background: #4f46e5;
+    }
+
+    .btn-primary:hover {
+      background: #6366f1;
+    }
+
+    .action-bar {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .techlist-name-section {
+      background: #1a1a24;
+      border: 1px solid #2c2c3a;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .techlist-name-section label {
+      color: #a0a0b0;
+      font-weight: 500;
+    }
+
+    .techlist-name-input {
+      flex: 1;
+      background: #2a2a35;
+      border: 1px solid #3a3a4a;
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+    .techlist-name-input:focus {
+      outline: none;
+      border-color: #4f46e5;
+    }
+
+    .save-name-btn {
+      background: #4f46e5;
+    }
+
+    .groups-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .group-card {
+      background: #1a1a24;
+      border: 1px solid #2c2c3a;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .group-header {
+      background: #22222e;
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #2c2c3a;
+    }
+
+    .group-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .group-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      color: #a0a0b0;
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 0.25rem 0.5rem;
+      transition: color 0.2s;
+    }
+
+    .icon-btn:hover {
+      color: #fff;
+    }
+
+    .items-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .items-table th {
+      text-align: left;
+      padding: 1rem 1.5rem;
+      background: #1e1e28;
+      color: #a0a0b0;
+      font-weight: 500;
+      font-size: 0.9rem;
+      border-bottom: 1px solid #2c2c3a;
+    }
+
+    .items-table td {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid #2c2c3a;
+    }
+
+    .quantity-badge {
+      background: #4f46e5;
+      color: #fff;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      display: inline-block;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: #666;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: #1e1e28;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 500px;
+      padding: 2rem;
+      border: 1px solid #3a3a4a;
+    }
+
+    .modal-content h3 {
+      margin-bottom: 1.5rem;
+      color: #fff;
+    }
+
+    .modal-content input {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      background: #2a2a35;
+      border: 1px solid #3a3a4a;
+      border-radius: 4px;
+      color: #fff;
+      font-size: 1rem;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 3rem;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1><i class="fas fa-microchip"></i> TechList</h1>
+      <button class="back-btn" onclick="javascript:history.back()">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+      </button>
+    </div>
+
+    <div class="techlist-name-section">
+      <label for="techlistName">Techlist Name:</label>
+      <input type="text" id="techlistName" class="techlist-name-input" placeholder="e.g. Divan Techlist" value="Divan Techlist">
+      <button class="btn save-name-btn" id="saveTechlistNameBtn">
+        <i class="fas fa-save"></i> Save
+      </button>
+    </div>
+
+    <div class="action-bar">
+      <button class="btn btn-primary" id="downloadPDF">
+        <i class="fas fa-download"></i> Download Techlist
+      </button>
+      <button class="btn btn-primary" id="addGroupBtn">
+        <i class="fas fa-plus"></i> New Group
+      </button>
+    </div>
+
+    <div id="groupsContainer" class="groups-container">
+      <div class="loading">Loading your gear...</div>
+    </div>
+  </div>
+
+  <div class="modal" id="groupModal">
+    <div class="modal-content">
+      <h3 id="groupModalTitle">Add Group</h3>
+      <input type="text" id="groupName" placeholder="Group name (e.g. Speakers)" autocomplete="off">
+      <div class="modal-actions">
+        <button class="btn" id="cancelGroupBtn">Cancel</button>
+        <button class="btn btn-primary" id="saveGroupBtn">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="itemModal">
+    <div class="modal-content">
+      <h3 id="itemModalTitle">Add Item</h3>
+      <input type="text" id="itemName" placeholder="Item name (e.g. JBL SRX828)" autocomplete="off">
+      <input type="number" id="itemQuantity" placeholder="Quantity" value="1" min="1">
+      <input type="number" id="itemWattage" placeholder="Wattage (optional)">
+      <div class="modal-actions">
+        <button class="btn" id="cancelItemBtn">Cancel</button>
+        <button class="btn btn-primary" id="saveItemBtn">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const SUPABASE_URL = 'https://msjinuumxmezrijqemmp.supabase.co';
+      const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zamludXVteG1lenJpanFlbW1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwOTAyNjMsImV4cCI6MjA4NzY2NjI2M30.ic50fSC7MQfhSkhfE5E8B0R5-BGCQStMRZNHiy6Zakw';
+      
+      const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      
+      let currentUser = null;
+      let groups = [];
+      let editingGroupId = null;
+      let editingItemId = null;
+      let currentGroupId = null;
+      let techlistName = 'Divan Techlist';
+
+      // Load saved techlist name from localStorage
+      const savedName = localStorage.getItem('techlistName');
+      if (savedName) {
+        techlistName = savedName;
+        document.getElementById('techlistName').value = techlistName;
+      }
+
+      // Save techlist name
+      document.getElementById('saveTechlistNameBtn').addEventListener('click', function() {
+        techlistName = document.getElementById('techlistName').value.trim() || 'Divan Techlist';
+        localStorage.setItem('techlistName', techlistName);
+        
+        const btn = this;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check"></i> Saved!';
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+        }, 2000);
+      });
+
+      async function init() {
+        try {
+          const { data: { user }, error } = await supabaseClient.auth.getUser();
+          
+          if (error || !user) {
+            console.log('No user found, redirecting to login');
+            window.location.href = 'login.html';
+            return;
+          }
+          
+          currentUser = user;
+          console.log('Logged in user:', user.id);
+          
+          await loadTechList();
+          
+        } catch (err) {
+          console.error('Auth error:', err);
+          window.location.href = 'login.html';
+        }
+      }
+
+      async function loadTechList() {
+        const container = document.getElementById('groupsContainer');
+        container.innerHTML = '<div class="loading">Loading your gear...</div>';
+
+        try {
+          const { data, error } = await supabaseClient
+            .from('techlist_groups')
+            .select('*, techlist_items(*)')
+            .eq('performer_id', currentUser.id)
+            .order('order_index');
+
+          if (error) {
+            console.error('Supabase error:', error);
+            container.innerHTML = `<div class="loading" style="color: #f00;">Error: ${error.message}</div>`;
+            return;
+          }
+
+          groups = data || [];
+          console.log('Groups loaded:', groups);
+          renderGroups();
+          
+        } catch (err) {
+          console.error('Error:', err);
+          container.innerHTML = '<div class="loading" style="color: #f00;">Failed to load data</div>';
+        }
+      }
+
+      function renderGroups() {
+        const container = document.getElementById('groupsContainer');
+        
+        if (!groups.length) {
+          container.innerHTML = '<div class="empty-state">No groups yet. Click "New Group" to start.</div>';
+          return;
+        }
+
+        container.innerHTML = groups.map(group => `
+          <div class="group-card" data-group-id="${group.id}">
+            <div class="group-header">
+              <span class="group-title">${escapeHtml(group.group_name)}</span>
+              <div class="group-actions">
+                <button class="icon-btn edit-group" title="Edit group">
+                  <i class="fas fa-pen"></i>
+                </button>
+                <button class="icon-btn delete-group" title="Delete group">
+                  <i class="fas fa-trash"></i>
+                </button>
+                <button class="icon-btn add-item" title="Add item">
+                  <i class="fas fa-plus-circle"></i>
+                </button>
+              </div>
+            </div>
+            ${renderItems(group)}
+          </div>
+        `).join('');
+
+        attachEventListeners();
+      }
+
+      function renderItems(group) {
+        if (!group.techlist_items || !group.techlist_items.length) {
+          return '<div style="padding: 1.5rem; color: #666; text-align: center;">No items in this group. Click + to add.</div>';
+        }
+
+        return `
+          <table class="items-table">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Qty</th>
+                <th>Wattage</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              ${group.techlist_items.map(item => `
+                <tr data-item-id="${item.id}">
+                  <td>${escapeHtml(item.name)}</td>
+                  <td><span class="quantity-badge">${item.quantity || 1}x</span></td>
+                  <td>${item.wattage ? item.wattage + ' W' : '-'}</td>
+                  <td>
+                    <button class="icon-btn edit-item" title="Edit item">
+                      <i class="fas fa-pen"></i>
+                    </button>
+                    <button class="icon-btn delete-item" title="Delete item">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+      }
+
+      function attachEventListeners() {
+        document.querySelectorAll('.edit-group').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const groupId = e.target.closest('.group-card').dataset.groupId;
+            const group = groups.find(g => g.id === groupId);
+            if (group) openGroupModal(group.id, group.group_name);
+          });
+        });
+
+        document.querySelectorAll('.delete-group').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const groupId = e.target.closest('.group-card').dataset.groupId;
+            if (confirm('Delete this group and all its items?')) {
+              deleteGroup(groupId);
+            }
+          });
+        });
+
+        document.querySelectorAll('.add-item').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            currentGroupId = e.target.closest('.group-card').dataset.groupId;
+            openItemModal();
+          });
+        });
+
+        document.querySelectorAll('.edit-item').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const row = e.target.closest('tr');
+            const itemId = row.dataset.itemId;
+            const groupCard = row.closest('.group-card');
+            const groupId = groupCard.dataset.groupId;
+            const group = groups.find(g => g.id === groupId);
+            const item = group.techlist_items.find(i => i.id === itemId);
+            if (item) {
+              openItemModal(item.id, groupId, item.name, item.wattage, item.quantity);
+            }
+          });
+        });
+
+        document.querySelectorAll('.delete-item').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const itemId = e.target.closest('tr').dataset.itemId;
+            if (confirm('Delete this item?')) {
+              deleteItem(itemId);
+            }
+          });
+        });
+      }
+
+      const groupModal = document.getElementById('groupModal');
+      const groupNameInput = document.getElementById('groupName');
+
+      function openGroupModal(id = null, name = '') {
+        editingGroupId = id;
+        document.getElementById('groupModalTitle').textContent = id ? 'Edit Group' : 'Add Group';
+        groupNameInput.value = name;
+        groupModal.style.display = 'flex';
+      }
+
+      function closeGroupModal() {
+        groupModal.style.display = 'none';
+        editingGroupId = null;
+        groupNameInput.value = '';
+      }
+
+      async function saveGroup() {
+        const name = groupNameInput.value.trim();
+        if (!name) return;
+
+        if (editingGroupId) {
+          const { error } = await supabaseClient
+            .from('techlist_groups')
+            .update({ group_name: name })
+            .eq('id', editingGroupId);
+          
+          if (error) console.error('Update error:', error);
+        } else {
+          const { error } = await supabaseClient
+            .from('techlist_groups')
+            .insert({
+              performer_id: currentUser.id,
+              group_name: name,
+              order_index: groups.length
+            });
+          
+          if (error) console.error('Insert error:', error);
+        }
+
+        closeGroupModal();
+        loadTechList();
+      }
+
+      async function deleteGroup(groupId) {
+        const { error } = await supabaseClient
+          .from('techlist_groups')
+          .delete()
+          .eq('id', groupId);
+        
+        if (error) console.error('Delete error:', error);
+        loadTechList();
+      }
+
+      const itemModal = document.getElementById('itemModal');
+      const itemName = document.getElementById('itemName');
+      const itemQuantity = document.getElementById('itemQuantity');
+      const itemWattage = document.getElementById('itemWattage');
+
+      function openItemModal(itemId = null, groupId = null, name = '', wattage = '', quantity = 1) {
+        editingItemId = itemId;
+        currentGroupId = groupId || currentGroupId;
+        document.getElementById('itemModalTitle').textContent = itemId ? 'Edit Item' : 'Add Item';
+        itemName.value = name;
+        itemQuantity.value = quantity || 1;
+        itemWattage.value = wattage || '';
+        itemModal.style.display = 'flex';
+      }
+
+      function closeItemModal() {
+        itemModal.style.display = 'none';
+        editingItemId = null;
+        currentGroupId = null;
+        itemName.value = '';
+        itemQuantity.value = '1';
+        itemWattage.value = '';
+      }
+
+      async function saveItem() {
+        const name = itemName.value.trim();
+        if (!name || !currentGroupId) return;
+
+        const quantity = parseInt(itemQuantity.value) || 1;
+        const wattage = itemWattage.value ? parseInt(itemWattage.value) : null;
+
+        if (editingItemId) {
+          const { error } = await supabaseClient
+            .from('techlist_items')
+            .update({ name, wattage, quantity })
+            .eq('id', editingItemId);
+          
+          if (error) console.error('Update item error:', error);
+        } else {
+          const group = groups.find(g => g.id === currentGroupId);
+          const order = group?.techlist_items?.length || 0;
+          
+          const { error } = await supabaseClient
+            .from('techlist_items')
+            .insert({
+              group_id: currentGroupId,
+              name,
+              wattage,
+              quantity,
+              order_index: order
+            });
+          
+          if (error) console.error('Insert item error:', error);
+        }
+
+        closeItemModal();
+        loadTechList();
+      }
+
+      async function deleteItem(itemId) {
+        const { error } = await supabaseClient
+          .from('techlist_items')
+          .delete()
+          .eq('id', itemId);
+        
+        if (error) console.error('Delete item error:', error);
+        loadTechList();
+      }
+
+      // Professional PDF Generation
+      document.getElementById('downloadPDF').addEventListener('click', async function() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        
+        // Professional color scheme
+        const primaryColor = [41, 98, 255]; // Bright blue
+        const secondaryColor = [30, 30, 40]; // Dark gray
+        const accentColor = [255, 255, 255]; // White
+        const textColor = [50, 50, 50]; // Dark gray for text
+        const lightBg = [248, 249, 250]; // Light gray for alternating rows
+        
+        let y = 20;
+        
+        
+        
+       
+        
+        // Techlist name
+        doc.setFontSize(28);
+        doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+        doc.setFont('helvetica', 'bold');
+        doc.text(techlistName, 20, 45);
+        
+        // === METADATA SECTION ===
+        y = 60;
+        doc.setFontSize(10);
+        doc.setTextColor(100, 100, 100);
+        doc.setFont('helvetica', 'normal');
+        
+        // Format date nicely
+        const date = new Date();
+        const formattedDate = date.toLocaleDateString('en-US', { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        });
+        
+        doc.text(`Generated: ${formattedDate}`, 20, y);
+        doc.text(`Prepared by: ${currentUser.email || 'Performer'}`, 20, y + 5);
+        
+        // Separator line
+        y += 15;
+        doc.setDrawColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+        doc.setLineWidth(0.5);
+        doc.line(20, y, 190, y);
+        y += 10;
+        
+        // === GROUPS AND ITEMS ===
+        for (const group of groups) {
+          // Check if we need a new page
+          if (y > 250) {
+            doc.addPage();
+            y = 30;
+            
+            // Add header on new page
+            doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+            doc.rect(0, 0, 210, 15, 'F');
+            doc.setFontSize(12);
+            doc.setTextColor(accentColor[0], accentColor[1], accentColor[2]);
+            doc.setFont('helvetica', 'bold');
+            doc.text(techlistName, 20, 10);
+          }
+          
+          // Group header with background
+          doc.setFillColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
+          doc.rect(20, y-5, 170, 10, 'F');
+          
+          doc.setFontSize(14);
+          doc.setTextColor(accentColor[0], accentColor[1], accentColor[2]);
+          doc.setFont('helvetica', 'bold');
+          doc.text(group.group_name, 25, y);
+          y += 8;
+          
+          // Table headers
+          doc.setFillColor(240, 240, 245);
+          doc.rect(20, y-5, 170, 8, 'F');
+          
+          doc.setFontSize(10);
+          doc.setTextColor(80, 80, 80);
+          doc.setFont('helvetica', 'bold');
+          doc.text('Item', 25, y);
+          doc.text('Qty', 120, y);
+          doc.text('Wattage', 150, y);
+          y += 5;
+          
+          // Items
+          doc.setFont('helvetica', 'normal');
+          doc.setTextColor(textColor[0], textColor[1], textColor[2]);
+          
+          if (group.techlist_items && group.techlist_items.length > 0) {
+            group.techlist_items.forEach((item, index) => {
+              // Check for page break
+              if (y > 270) {
+                doc.addPage();
+                y = 30;
+                
+                // Add header on new page
+                doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+                doc.rect(0, 0, 210, 15, 'F');
+                doc.setFontSize(12);
+                doc.setTextColor(accentColor[0], accentColor[1], accentColor[2]);
+                doc.setFont('helvetica', 'bold');
+                doc.text(techlistName + ' (continued)', 20, 10);
+                
+                // Re-add group header
+                doc.setFillColor(secondaryColor[0], secondaryColor[1], secondaryColor[2]);
+                doc.rect(20, y-5, 170, 10, 'F');
+                doc.setFontSize(14);
+                doc.setTextColor(accentColor[0], accentColor[1], accentColor[2]);
+                doc.setFont('helvetica', 'bold');
+                doc.text(group.group_name + ' (continued)', 25, y);
+                y += 8;
+                
+                // Re-add table headers
+                doc.setFillColor(240, 240, 245);
+                doc.rect(20, y-5, 170, 8, 'F');
+                doc.setFontSize(10);
+                doc.setTextColor(80, 80, 80);
+                doc.setFont('helvetica', 'bold');
+                doc.text('Item', 25, y);
+                doc.text('Qty', 120, y);
+                doc.text('Wattage', 150, y);
+                y += 5;
+              }
+              
+              // Alternate row background
+              if (index % 2 === 0) {
+                doc.setFillColor(lightBg[0], lightBg[1], lightBg[2]);
+                doc.rect(20, y-4, 170, 7, 'F');
+              }
+              
+              doc.setFont('helvetica', 'normal');
+              doc.setTextColor(textColor[0], textColor[1], textColor[2]);
+              doc.text(item.name, 25, y);
+              doc.text(`${item.quantity || 1}`, 120, y);
+              doc.text(item.wattage ? `${item.wattage}W` : '—', 150, y);
+              y += 6;
+            });
+          } else {
+            doc.setTextColor(150, 150, 150);
+            doc.text('No items in this group', 25, y);
+            y += 6;
+          }
+          
+          y += 5;
+        }
+        
+        // === FOOTER ===
+        const pageCount = doc.internal.getNumberOfPages();
+        for (let i = 1; i <= pageCount; i++) {
+          doc.setPage(i);
+          
+          // Footer line
+          doc.setDrawColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+          doc.setLineWidth(0.3);
+          doc.line(20, 280, 190, 280);
+          
+          doc.setFontSize(8);
+          doc.setTextColor(150, 150, 150);
+          doc.setFont('helvetica', 'normal');
+          doc.text(`Page ${i} of ${pageCount}`, 170, 287);
+          doc.text(`© ${new Date().getFullYear()} Vivo Distro · ${techlistName}`, 20, 287);
+        }
+        
+        // Generate filename
+        const filename = techlistName.replace(/\s+/g, '_').toLowerCase() + '.pdf';
+        doc.save(filename);
+      });
+
+      document.getElementById('addGroupBtn').addEventListener('click', () => openGroupModal());
+      document.getElementById('cancelGroupBtn').addEventListener('click', closeGroupModal);
+      document.getElementById('saveGroupBtn').addEventListener('click', saveGroup);
+      document.getElementById('cancelItemBtn').addEventListener('click', closeItemModal);
+      document.getElementById('saveItemBtn').addEventListener('click', saveItem);
+
+      window.addEventListener('click', (e) => {
+        if (e.target === groupModal) closeGroupModal();
+        if (e.target === itemModal) closeItemModal();
+      });
+
+      function escapeHtml(unsafe) {
+        return unsafe
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      init();
+    });
+  </script>
+</body>
+</html>

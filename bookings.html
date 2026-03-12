@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vivo Distro | My Bookings</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons@6.6.6/css/flag-icons.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="responsive.css">
+    <script src="global-fullscreen.js" defer></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: #0a0e1a;
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: rgba(10, 14, 26, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .back-btn {
+            background: rgba(108, 99, 255, 0.1);
+            color: #6C63FF;
+            border: 1px solid rgba(108, 99, 255, 0.3);
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: rgba(108, 99, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .logo i {
+            color: #6C63FF;
+        }
+
+        .logo-highlight {
+            color: #6C63FF;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-id {
+            background: rgba(108, 99, 255, 0.1);
+            padding: 0.5rem 1.2rem;
+            border-radius: 30px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            border: 1px solid rgba(108, 99, 255, 0.2);
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #6C63FF, #9d8cff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: #94a3b8;
+            font-size: 1rem;
+        }
+
+        /* Tabs */
+        .tabs-container {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 0.5rem;
+        }
+
+        .tab-btn {
+            padding: 0.8rem 2rem;
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+        }
+
+        .tab-btn:hover {
+            color: #fff;
+        }
+
+        .tab-btn.active {
+            color: #6C63FF;
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -0.5rem;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #6C63FF;
+            border-radius: 2px;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(20, 25, 40, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(5px);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #6C63FF;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Bookings Grid */
+        .bookings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        /* Booking Card */
+        .booking-card {
+            background: #151a2c;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .booking-card:hover {
+            transform: translateY(-5px);
+            border-color: #6C63FF;
+            box-shadow: 0 20px 30px rgba(108, 99, 255, 0.15);
+        }
+
+        .booking-status {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-pending {
+            background: rgba(237, 137, 54, 0.15);
+            color: #ED8936;
+            border: 1px solid rgba(237, 137, 54, 0.3);
+        }
+
+        .status-accepted {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-declined {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .status-cancelled {
+            background: rgba(100, 116, 139, 0.15);
+            color: #64748b;
+            border: 1px solid rgba(100, 116, 139, 0.3);
+        }
+
+        .booking-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .booking-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 0.5rem;
+            padding-right: 80px;
+        }
+
+        .booking-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        .booking-meta i {
+            color: #6C63FF;
+            width: 16px;
+        }
+
+        .booking-body {
+            padding: 1.5rem;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            margin-bottom: 0.8rem;
+            color: #cbd5e0;
+            font-size: 0.9rem;
+        }
+
+        .info-row i {
+            color: #6C63FF;
+            width: 18px;
+            margin-top: 3px;
+        }
+
+        .info-row .label {
+            color: #94a3b8;
+            width: 100px;
+            flex-shrink: 0;
+        }
+
+        .info-row .value {
+            flex: 1;
+        }
+
+        .contact-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(108, 99, 255, 0.1);
+            border: 1px solid rgba(108, 99, 255, 0.2);
+            border-radius: 30px;
+            padding: 0.3rem 1rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            color: #fff;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .contact-badge:hover {
+            background: rgba(108, 99, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .contact-badge i {
+            color: #6C63FF;
+        }
+
+        .whatsapp-btn {
+            background: rgba(37, 211, 102, 0.15);
+            color: #25D366;
+            border: 1px solid rgba(37, 211, 102, 0.3);
+        }
+
+        .whatsapp-btn:hover {
+            background: rgba(37, 211, 102, 0.25);
+        }
+
+        .copy-btn {
+            background: rgba(108, 99, 255, 0.15);
+            color: #6C63FF;
+            border: 1px solid rgba(108, 99, 255, 0.3);
+        }
+
+        .email-btn {
+            background: rgba(108, 99, 255, 0.15);
+            color: #6C63FF;
+            border: 1px solid rgba(108, 99, 255, 0.3);
+        }
+
+        .phone-number {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 0.3rem 1rem;
+            margin-left: 0.5rem;
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        .booking-footer {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .action-btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: none;
+        }
+
+        .accept-btn {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .accept-btn:hover {
+            background: rgba(16, 185, 129, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .decline-btn {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .decline-btn:hover {
+            background: rgba(239, 68, 68, 0.25);
+            transform: translateY(-2px);
+        }
+
+        /* Copy Toast */
+        .copy-toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #10b981;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            z-index: 10002;
+            animation: slideUp 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translate(-50%, 20px);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+        }
+
+        /* Empty State */
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #94a3b8;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 20px;
+            border: 2px dashed rgba(255, 255, 255, 0.05);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+            color: #6C63FF;
+        }
+
+        .empty-state h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+
+        .empty-state p {
+            font-size: 0.95rem;
+            max-width: 500px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Loading */
+        .loading {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 3rem;
+            color: #94a3b8;
+        }
+
+        .loading i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #6C63FF;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            color: white;
+            z-index: 10001;
+            animation: slideInRight 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .toast.success { background: #10b981; }
+        .toast.error { background: #ef4444; }
+        .toast.info { background: #6C63FF; }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            to { opacity: 0; transform: translateX(30px); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-container { padding: 1rem; }
+            .page-title { font-size: 2rem; }
+            .tabs-container { flex-direction: column; }
+            .tab-btn { width: 100%; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .bookings-grid { grid-template-columns: 1fr; }
+            .booking-footer { flex-direction: column; }
+            .action-btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <button class="back-btn" onclick="window.history.back()">
+                    <i class="fas fa-arrow-left"></i>
+                    Back
+                </button>
+                <div class="logo">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>VIVO <span class="logo-highlight">BOOKINGS</span></span>
+                </div>
+            </div>
+            <div class="user-menu">
+                <div class="user-id" id="user-id-display">Loading...</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">My Bookings</h1>
+            <p class="page-subtitle">Manage all your booking requests in one place</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="totalBookings">0</div>
+                <div class="stat-label">Total Bookings</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="pendingBookings">0</div>
+                <div class="stat-label">Pending</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="acceptedBookings">0</div>
+                <div class="stat-label">Accepted</div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs-container">
+            <button class="tab-btn active" data-tab="received">
+                <i class="fas fa-inbox"></i> Received
+            </button>
+            <button class="tab-btn" data-tab="sent">
+                <i class="fas fa-paper-plane"></i> Sent
+            </button>
+        </div>
+
+        <!-- Bookings Container -->
+        <div id="bookingsContainer">
+            <div class="loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Loading your bookings...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Supabase config
+            const supabaseUrl = 'https://msjinuumxmezrijqemmp.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zamludXVteG1lenJpanFlbW1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwOTAyNjMsImV4cCI6MjA4NzY2NjI2M30.ic50fSC7MQfhSkhfE5E8B0R5-BGCQStMRZNHiy6Zakw';
+            const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+            // State
+            let currentUser = null;
+            let receivedBookings = [];
+            let sentBookings = [];
+            let currentTab = 'received';
+
+            // DOM elements
+            const userDisplay = document.getElementById('user-id-display');
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const bookingsContainer = document.getElementById('bookingsContainer');
+            const totalBookingsEl = document.getElementById('totalBookings');
+            const pendingBookingsEl = document.getElementById('pendingBookings');
+            const acceptedBookingsEl = document.getElementById('acceptedBookings');
+
+            // Initialize
+            loadCurrentUser();
+
+            async function loadCurrentUser() {
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                currentUser = user;
+                
+                if (!user) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const { data: username } = await supabaseClient
+                    .from('usernames')
+                    .select('username')
+                    .eq('user_id', user.id)
+                    .single();
+                
+                userDisplay.textContent = username?.username || user.email?.split('@')[0] || 'User';
+                
+                // Load bookings after we have user
+                loadBookings();
+            }
+
+            async function loadBookings() {
+                if (!currentUser) return;
+
+                try {
+                    // Load received bookings (where current user is recipient)
+                    const { data: received, error: receivedError } = await supabaseClient
+                        .from('bookings')
+                        .select('*')
+                        .eq('recipient_id', currentUser.id)
+                        .order('created_at', { ascending: false });
+
+                    if (receivedError) throw receivedError;
+                    receivedBookings = received || [];
+
+                    // Load sent bookings (where current user is sender)
+                    const { data: sent, error: sentError } = await supabaseClient
+                        .from('bookings')
+                        .select('*')
+                        .eq('sender_id', currentUser.id)
+                        .order('created_at', { ascending: false });
+
+                    if (sentError) throw sentError;
+                    sentBookings = sent || [];
+
+                    // Update stats
+                    updateStats();
+                    
+                    // Render current tab
+                    renderBookings();
+
+                } catch (error) {
+                    console.error('Error loading bookings:', error);
+                    showToast('Failed to load bookings', 'error');
+                    bookingsContainer.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <h3>Error Loading Bookings</h3>
+                            <p>Please try refreshing the page</p>
+                        </div>
+                    `;
+                }
+            }
+
+            function updateStats() {
+                const total = receivedBookings.length + sentBookings.length;
+                const pending = [...receivedBookings, ...sentBookings].filter(b => b.status === 'pending').length;
+                const accepted = [...receivedBookings, ...sentBookings].filter(b => b.status === 'accepted').length;
+
+                totalBookingsEl.textContent = total;
+                pendingBookingsEl.textContent = pending;
+                acceptedBookingsEl.textContent = accepted;
+            }
+
+            // Tab switching
+            tabButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    tabButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentTab = btn.dataset.tab;
+                    renderBookings();
+                });
+            });
+
+            function renderBookings() {
+                const bookings = currentTab === 'received' ? receivedBookings : sentBookings;
+                
+                if (bookings.length === 0) {
+                    bookingsContainer.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-calendar-times"></i>
+                            <h3>No ${currentTab} bookings</h3>
+                            <p>When you ${currentTab === 'received' ? 'receive' : 'send'} booking requests, they will appear here</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                bookingsContainer.innerHTML = `
+                    <div class="bookings-grid">
+                        ${bookings.map(booking => renderBookingCard(booking)).join('')}
+                    </div>
+                `;
+            }
+
+            // Copy to clipboard function
+            window.copyToClipboard = async function(text, type) {
+                try {
+                    await navigator.clipboard.writeText(text);
+                    
+                    // Show custom copy toast
+                    const toast = document.createElement('div');
+                    toast.className = 'copy-toast';
+                    toast.innerHTML = `<i class="fas fa-check-circle"></i> ${type} copied to clipboard!`;
+                    document.body.appendChild(toast);
+                    
+                    setTimeout(() => {
+                        toast.style.animation = 'fadeOut 0.3s ease';
+                        setTimeout(() => toast.remove(), 300);
+                    }, 2000);
+                    
+                } catch (err) {
+                    console.error('Failed to copy:', err);
+                    showToast('Failed to copy to clipboard', 'error');
+                }
+            };
+
+            function renderBookingCard(booking) {
+                const isReceived = currentTab === 'received';
+                const date = new Date(booking.event_date).toLocaleDateString('en-US', {
+                    weekday: 'short',
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+
+                const statusClass = `status-${booking.status}`;
+                const statusText = booking.status.charAt(0).toUpperCase() + booking.status.slice(1);
+
+                // Clean phone number for display
+                const displayPhone = booking.sender_phone;
+                const cleanPhone = booking.sender_phone.replace(/\D/g, '');
+
+                return `
+                    <div class="booking-card" data-id="${booking.id}">
+                        <div class="booking-status ${statusClass}">${statusText}</div>
+                        
+                        <div class="booking-header">
+                            <div class="booking-title">${booking.event_name}</div>
+                            <div class="booking-meta">
+                                <span><i class="fas fa-user"></i> ${booking.recipient_name}</span>
+                                <span><i class="fas fa-tag"></i> ${booking.recipient_type}</span>
+                            </div>
+                        </div>
+
+                        <div class="booking-body">
+                            <div class="info-row">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span class="label">Date:</span>
+                                <span class="value">${date}</span>
+                            </div>
+                            <div class="info-row">
+                                <i class="fas fa-clock"></i>
+                                <span class="label">Time:</span>
+                                <span class="value">${booking.start_time} - ${booking.end_time}</span>
+                            </div>
+                            <div class="info-row">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span class="label">Venue:</span>
+                                <span class="value">${booking.venue}</span>
+                            </div>
+                            ${booking.audience ? `
+                            <div class="info-row">
+                                <i class="fas fa-users"></i>
+                                <span class="label">Audience:</span>
+                                <span class="value">${booking.audience}</span>
+                            </div>
+                            ` : ''}
+                            ${booking.event_type ? `
+                            <div class="info-row">
+                                <i class="fas fa-tag"></i>
+                                <span class="label">Type:</span>
+                                <span class="value">${booking.event_type}</span>
+                            </div>
+                            ` : ''}
+                            <div class="info-row">
+                                <i class="fas fa-calendar-week"></i>
+                                <span class="label">Days:</span>
+                                <span class="value">${booking.days}</span>
+                            </div>
+                            ${booking.budget ? `
+                            <div class="info-row">
+                                <i class="fas fa-money-bill-wave"></i>
+                                <span class="label">Budget:</span>
+                                <span class="value">R ${booking.budget}</span>
+                            </div>
+                            ` : ''}
+                            ${booking.requirements ? `
+                            <div class="info-row">
+                                <i class="fas fa-file-alt"></i>
+                                <span class="label">Requirements:</span>
+                                <span class="value">${booking.requirements}</span>
+                            </div>
+                            ` : ''}
+                            
+                            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.05);">
+                                <div style="color: #94a3b8; margin-bottom: 0.5rem; font-size: 0.85rem;">
+                                    <i class="fas fa-phone"></i> Contact:
+                                </div>
+                                
+                                <!-- Copy Phone Number Button -->
+                                <div class="contact-badge copy-btn" onclick="copyToClipboard('${displayPhone}', 'Phone number')">
+                                    <i class="fas fa-copy"></i> Copy Number
+                                    <span class="phone-number">${displayPhone}</span>
+                                </div>
+                                
+                                <!-- Open WhatsApp (manual entry) -->
+                                <a href="https://wa.me/" target="_blank" class="contact-badge whatsapp-btn">
+                                    <i class="fab fa-whatsapp"></i> Open WhatsApp
+                                </a>
+                                
+                                ${booking.sender_email ? `
+                                <div class="contact-badge copy-btn" onclick="copyToClipboard('${booking.sender_email}', 'Email address')">
+                                    <i class="fas fa-copy"></i> Copy Email
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+
+                        ${isReceived && booking.status === 'pending' ? `
+                        <div class="booking-footer">
+                            <button class="action-btn accept-btn" onclick="updateBookingStatus('${booking.id}', 'accepted')">
+                                <i class="fas fa-check"></i> Accept
+                            </button>
+                            <button class="action-btn decline-btn" onclick="updateBookingStatus('${booking.id}', 'declined')">
+                                <i class="fas fa-times"></i> Decline
+                            </button>
+                        </div>
+                        ` : ''}
+                        
+                        ${!isReceived && booking.status === 'pending' ? `
+                        <div class="booking-footer">
+                            <button class="action-btn decline-btn" onclick="updateBookingStatus('${booking.id}', 'cancelled')">
+                                <i class="fas fa-ban"></i> Cancel Request
+                            </button>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+
+            // Update booking status
+            window.updateBookingStatus = async function(bookingId, newStatus) {
+                try {
+                    const { error } = await supabaseClient
+                        .from('bookings')
+                        .update({ 
+                            status: newStatus,
+                            updated_at: new Date().toISOString()
+                        })
+                        .eq('id', bookingId);
+
+                    if (error) throw error;
+
+                    showToast(`Booking ${newStatus} successfully!`, 'success');
+                    
+                    // Reload bookings
+                    await loadBookings();
+
+                } catch (error) {
+                    console.error('Error updating booking:', error);
+                    showToast('Failed to update booking', 'error');
+                }
+            };
+
+            // Toast notification
+            function showToast(message, type) {
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.style.animation = 'fadeOut 0.3s ease';
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+
+            // Make functions global
+            window.showToast = showToast;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Performer Profile | Vivo Distro</title>
+    <link rel="stylesheet" href="style.css">
+     <link rel="stylesheet" href="responsive.css"> <!-- YOUR NEW RESPONSIVE CSS -->
+    <link rel="stylesheet" href="setup.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <script src="global-fullscreen.js" defer></script>
+</head>
+<body>
+    <!-- Progress Bar -->
+    <div class="setup-progress">
+        <div class="progress-bar">
+            <div class="progress-fill" style="width: 0%"></div>
+        </div>
+        <div class="progress-steps">
+            <span class="step active">1</span>
+            <span class="step">2</span>
+            <span class="step">3</span>
+        </div>
+    </div>
+
+    <div class="setup-container">
+        <!-- Setup Header -->
+        <header class="setup-header">
+            <div class="setup-title">
+                <h1>Create Your <span class="highlight">Performer Profile</span></h1>
+                <p>Tell us about yourself. This helps bookers find you.</p>
+            </div>
+        </header>
+
+        <!-- Setup Form -->
+        <form class="setup-form" id="performerForm">
+            <!-- Step 1: Basic Info -->
+            <div class="form-step active" data-step="1">
+                <div class="step-header">
+                    <h2><span class="step-number">01</span> Basic Information</h2>
+                    <p>Let's start with the essentials</p>
+                </div>
+
+                <!-- Profile Picture -->
+                <div class="form-group">
+                    <label class="form-label">Profile Picture</label>
+                    <div class="profile-upload">
+                        <div class="profile-preview" id="profilePreview">
+                            <i class="fas fa-user"></i>
+                            <div class="upload-overlay">
+                                <i class="fas fa-camera"></i>
+                                <span>Upload Photo</span>
+                            </div>
+                        </div>
+                        <input type="file" id="profileImage" accept="image/*" hidden>
+                        <p class="upload-hint">Recommended: 500x500px, max 2MB</p>
+                    </div>
+                </div>
+
+                <!-- Stage Name -->
+                <div class="form-group">
+                    <label class="form-label" for="stageName">Stage Name *</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="stageName" placeholder="Enter your performing name" required>
+                    </div>
+                    <div class="error-message" id="nameError"></div>
+                </div>
+
+                <!-- Location with Geolocation -->
+                <div class="form-group">
+                    <label class="form-label">Location *</label>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <div style="flex: 1; position: relative;">
+                            <i class="fas fa-map-marker-alt" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #6C63FF;"></i>
+                            <input type="text" id="location" placeholder="City, Country" style="width: 100%; padding: 15px 15px 15px 45px; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); border-radius: 12px; color: #fff;" required readonly>
+                            <input type="hidden" id="city">
+                            <input type="hidden" id="country">
+                            <input type="hidden" id="countryCode">
+                        </div>
+                        <button type="button" id="getLocationBtn" style="padding: 15px 25px; background: rgba(108,99,255,0.1); border: 1px solid rgba(108,99,255,0.3); border-radius: 12px; color: #6C63FF; cursor: pointer; white-space: nowrap;">
+                            <i class="fas fa-location-dot"></i> Detect Location
+                        </button>
+                    </div>
+                    <p class="input-hint" style="color: #8892b0; font-size: 0.85rem; margin-top: 5px;">
+                        Click the button to automatically detect your location
+                    </p>
+                    <div id="locationError" style="color: #F56565; font-size: 0.9rem; margin-top: 5px; display: none;"></div>
+                </div>
+
+                <!-- Next Button -->
+                <div class="form-actions">
+                    <button type="button" class="btn-next" data-next="2">
+                        Continue
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 2: Performer Type -->
+            <div class="form-step" data-step="2">
+                <div class="step-header">
+                    <h2><span class="step-number">02</span> Performer Type</h2>
+                    <p>Select all that apply to you</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">I am a...</label>
+                    <div class="type-grid" id="typeGrid">
+                        <div class="type-option" data-value="Solo Artist">
+                            <div class="type-icon"><i class="fas fa-user"></i></div>
+                            <span class="type-label">Solo Artist</span>
+                        </div>
+                        <div class="type-option" data-value="Duo">
+                            <div class="type-icon"><i class="fas fa-user-friends"></i></div>
+                            <span class="type-label">Duo</span>
+                        </div>
+                        <div class="type-option" data-value="Band">
+                            <div class="type-icon"><i class="fas fa-users"></i></div>
+                            <span class="type-label">Band</span>
+                        </div>
+                        <div class="type-option" data-value="DJ">
+                            <div class="type-icon"><i class="fas fa-sliders-h"></i></div>
+                            <span class="type-label">DJ</span>
+                        </div>
+                        <div class="type-option" data-value="Sound Engineer">
+                            <div class="type-icon"><i class="fas fa-volume-up"></i></div>
+                            <span class="type-label">Sound Engineer</span>
+                        </div>
+                        <div class="type-option" data-value="Music Producer">
+                            <div class="type-icon"><i class="fas fa-music"></i></div>
+                            <span class="type-label">Music Producer</span>
+                        </div>
+                        <div class="type-option" data-value="Songwriter">
+                            <div class="type-icon"><i class="fas fa-pen-fancy"></i></div>
+                            <span class="type-label">Songwriter</span>
+                        </div>
+                        <div class="type-option" data-value="Instrumentalist">
+                            <div class="type-icon"><i class="fas fa-guitar"></i></div>
+                            <span class="type-label">Instrumentalist</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Instrument Input -->
+                    <div class="instrument-input-container" id="instrumentContainer" style="display: none;">
+                        <label class="form-label">What instrument(s) do you play? *</label>
+                        <input type="text" id="instrumentInput" placeholder="e.g., Guitar, Piano, Drums, Saxophone..." class="form-input">
+                        <div class="selected-instruments" id="selectedInstruments"></div>
+                        <p class="input-hint">Type an instrument and press Enter to add it</p>
+                        <div class="error-message" id="instrumentError"></div>
+                    </div>
+                    
+                    <div class="selected-types" id="selectedTypes"></div>
+                    <div class="error-message" id="typeError"></div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-prev" data-prev="1">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                    <button type="button" class="btn-next" data-next="3">
+                        Continue
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 3: Review -->
+            <div class="form-step" data-step="3">
+                <div class="step-header">
+                    <h2><span class="step-number">03</span> Review & Create</h2>
+                    <p>Check your information before creating your profile</p>
+                </div>
+
+                <div class="review-card">
+                    <div class="review-profile">
+                        <div class="review-pic" id="reviewPic">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="review-info">
+                            <h3 id="reviewName">Stage Name</h3>
+                            <p id="reviewLocation">Location</p>
+                        </div>
+                    </div>
+                    
+                    <div class="review-details">
+                        <div class="review-item">
+                            <span class="review-label">Performer Types:</span>
+                            <span class="review-value" id="reviewTypes"></span>
+                        </div>
+                        <div class="review-item" id="reviewInstrumentsItem" style="display: none;">
+                            <span class="review-label">Instruments:</span>
+                            <span class="review-value" id="reviewInstruments"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-prev" data-prev="2">
+                        <i class="fas fa-arrow-left"></i> Edit
+                    </button>
+                    <button type="submit" class="btn-submit" id="createProfileBtn">
+                        <i class="fas fa-check"></i> Create Profile
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // ========== SUPABASE INIT ==========
+            const supabaseUrl = 'https://msjinuumxmezrijqemmp.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zamludXVteG1lenJpanFlbW1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwOTAyNjMsImV4cCI6MjA4NzY2NjI2M30.ic50fSC7MQfhSkhfE5E8B0R5-BGCQStMRZNHiy6Zakw';
+            const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+            // ========== GLOBAL VARIABLES ==========
+            window.selectedTypes = [];
+            window.selectedInstruments = [];
+            let profileImageData = null;
+
+            // ========== DOM ELEMENTS ==========
+            const form = document.getElementById('performerForm');
+            const profilePreview = document.getElementById('profilePreview');
+            const profileImageInput = document.getElementById('profileImage');
+            const stageNameInput = document.getElementById('stageName');
+            const locationInput = document.getElementById('location');
+            const cityInput = document.getElementById('city');
+            const countryInput = document.getElementById('country');
+            const countryCodeInput = document.getElementById('countryCode');
+            const getLocationBtn = document.getElementById('getLocationBtn');
+            const locationError = document.getElementById('locationError');
+            const typeOptions = document.querySelectorAll('.type-option');
+            const nextButtons = document.querySelectorAll('.btn-next');
+            const prevButtons = document.querySelectorAll('.btn-prev');
+            const submitButton = document.getElementById('createProfileBtn');
+            const progressFill = document.querySelector('.progress-fill');
+            const steps = document.querySelectorAll('.form-step');
+            const instrumentContainer = document.getElementById('instrumentContainer');
+            const instrumentInput = document.getElementById('instrumentInput');
+            const selectedInstruments = document.getElementById('selectedInstruments');
+
+            // ========== CHECK USER ==========
+            checkUser();
+
+            async function checkUser() {
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                if (!user) {
+                    showToast('Please sign in first', 'error');
+                    setTimeout(() => window.location.href = 'login.html', 2000);
+                    return;
+                }
+                window.currentUserId = user.id;
+            }
+
+            // ========== GEOLOCATION ==========
+            getLocationBtn.addEventListener('click', function() {
+                if (!navigator.geolocation) {
+                    locationError.textContent = 'Geolocation is not supported by your browser';
+                    locationError.style.display = 'block';
+                    return;
+                }
+
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Detecting...';
+                this.disabled = true;
+                locationError.style.display = 'none';
+
+                navigator.geolocation.getCurrentPosition(async function(position) {
+                    try {
+                        const { latitude, longitude } = position.coords;
+                        
+                        const response = await fetch(
+                            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1`
+                        );
+                        const data = await response.json();
+                        
+                        const address = data.address;
+                        const city = address.city || address.town || address.village || address.county || 'Unknown';
+                        const state = address.state || '';
+                        const country = address.country || 'Unknown';
+                        const countryCode = getCountryCode(address.country_code || '');
+                        
+                        let displayLocation = city;
+                        if (state) displayLocation += `, ${state}`;
+                        displayLocation += `, ${country}`;
+                        
+                        locationInput.value = displayLocation;
+                        cityInput.value = city;
+                        countryInput.value = country;
+                        countryCodeInput.value = countryCode;
+                        
+                        getLocationBtn.innerHTML = '<i class="fas fa-check"></i> Detected!';
+                        setTimeout(() => {
+                            getLocationBtn.innerHTML = '<i class="fas fa-location-dot"></i> Detect Location';
+                            getLocationBtn.disabled = false;
+                        }, 2000);
+                        
+                        updateReview();
+                        
+                    } catch (error) {
+                        console.error('Geocoding error:', error);
+                        locationError.textContent = 'Could not detect your location. Please enter manually.';
+                        locationError.style.display = 'block';
+                        getLocationBtn.innerHTML = '<i class="fas fa-location-dot"></i> Detect Location';
+                        getLocationBtn.disabled = false;
+                    }
+                }, function(error) {
+                    let message = 'Location access denied. Please enter manually.';
+                    if (error.code === 1) message = 'Please allow location access to use this feature.';
+                    else if (error.code === 2) message = 'Location unavailable. Please enter manually.';
+                    else if (error.code === 3) message = 'Location request timed out. Please try again.';
+                    
+                    locationError.textContent = message;
+                    locationError.style.display = 'block';
+                    getLocationBtn.innerHTML = '<i class="fas fa-location-dot"></i> Detect Location';
+                    getLocationBtn.disabled = false;
+                });
+            });
+
+            function getCountryCode(code) {
+                const countryCodes = {
+                    'za': 'ZA', 'us': 'US', 'gb': 'GB', 'ng': 'NG', 'ke': 'KE',
+                    'gh': 'GH', 'ca': 'CA', 'au': 'AU', 'de': 'DE', 'fr': 'FR',
+                    'br': 'BR', 'in': 'IN', 'jp': 'JP', 'cn': 'CN', 'mx': 'MX'
+                };
+                return countryCodes[code?.toLowerCase()] || code?.toUpperCase() || 'XX';
+            }
+
+            // ========== PROFILE IMAGE UPLOAD ==========
+            if (profilePreview) {
+                profilePreview.addEventListener('click', () => profileImageInput.click());
+            }
+
+            if (profileImageInput) {
+                profileImageInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (!file) return;
+
+                    if (!file.type.match('image.*')) {
+                        showToast('Please select an image file', 'error');
+                        return;
+                    }
+
+                    if (file.size > 2 * 1024 * 1024) {
+                        showToast('File size must be less than 2MB', 'error');
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        profilePreview.innerHTML = `
+                            <img src="${e.target.result}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">
+                            <div class="upload-overlay">
+                                <i class="fas fa-camera"></i>
+                                <span>Change Photo</span>
+                            </div>
+                        `;
+                        profileImageData = e.target.result;
+                        updateReview();
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            // ========== TYPE SELECTION ==========
+            typeOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const type = this.dataset.value;
+                    
+                    if (this.classList.contains('selected')) {
+                        this.classList.remove('selected');
+                        window.selectedTypes = window.selectedTypes.filter(t => t !== type);
+                        
+                        if (type === 'Instrumentalist') {
+                            instrumentContainer.style.display = 'none';
+                            window.selectedInstruments = [];
+                            updateInstrumentsDisplay();
+                        }
+                    } else {
+                        this.classList.add('selected');
+                        window.selectedTypes.push(type);
+                        
+                        if (type === 'Instrumentalist') {
+                            instrumentContainer.style.display = 'block';
+                        }
+                    }
+
+                    updateSelectedTypes();
+                    updateReview();
+                });
+            });
+
+            // ========== INSTRUMENT INPUT ==========
+            if (instrumentInput) {
+                instrumentInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const instrument = this.value.trim();
+                        if (instrument && !window.selectedInstruments.includes(instrument)) {
+                            window.selectedInstruments.push(instrument);
+                            this.value = '';
+                            updateInstrumentsDisplay();
+                            updateReview();
+                        }
+                    }
+                });
+            }
+
+            function updateInstrumentsDisplay() {
+                if (!selectedInstruments) return;
+                
+                if (window.selectedInstruments.length > 0) {
+                    selectedInstruments.innerHTML = window.selectedInstruments.map((instrument, index) => `
+                        <span class="instrument-tag">
+                            ${instrument}
+                            <button type="button" class="remove-instrument" onclick="removeInstrument(${index})">×</button>
+                        </span>
+                    `).join('');
+                } else {
+                    selectedInstruments.innerHTML = '';
+                }
+            }
+
+            window.removeInstrument = function(index) {
+                window.selectedInstruments.splice(index, 1);
+                updateInstrumentsDisplay();
+                updateReview();
+            };
+
+            function updateSelectedTypes() {
+                const container = document.getElementById('selectedTypes');
+                if (container) {
+                    container.innerHTML = window.selectedTypes.map(type => 
+                        `<span class="selected-type">${type}</span>`
+                    ).join('');
+                }
+            }
+
+            // ========== NAVIGATION ==========
+            nextButtons.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const currentStep = parseInt(document.querySelector('.form-step.active').dataset.step);
+                    const nextStep = parseInt(this.dataset.next);
+                    
+                    if (validateStep(currentStep)) {
+                        goToStep(nextStep);
+                    }
+                });
+            });
+
+            prevButtons.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const prevStep = parseInt(this.dataset.prev);
+                    goToStep(prevStep);
+                });
+            });
+
+            function validateStep(step) {
+                clearErrors();
+
+                switch(step) {
+                    case 1:
+                        if (!stageNameInput.value.trim()) {
+                            showError('nameError', 'Stage name is required');
+                            return false;
+                        }
+                        if (!locationInput.value.trim()) {
+                            showError('locationError', 'Location is required');
+                            return false;
+                        }
+                        return true;
+                    case 2:
+                        if (window.selectedTypes.length === 0) {
+                            showError('typeError', 'Select at least one performer type');
+                            return false;
+                        }
+                        if (window.selectedTypes.includes('Instrumentalist') && window.selectedInstruments.length === 0) {
+                            showError('instrumentError', 'Please add at least one instrument');
+                            return false;
+                        }
+                        return true;
+                    default:
+                        return true;
+                }
+            }
+
+            function showError(elementId, message) {
+                const el = document.getElementById(elementId);
+                if (el) {
+                    el.textContent = message;
+                    el.style.display = 'block';
+                }
+            }
+
+            function clearErrors() {
+                document.querySelectorAll('.error-message').forEach(el => {
+                    el.style.display = 'none';
+                });
+            }
+
+            function goToStep(step) {
+                steps.forEach(s => s.classList.remove('active'));
+                document.querySelector(`.form-step[data-step="${step}"]`).classList.add('active');
+                
+                if (progressFill) {
+                    progressFill.style.width = `${(step - 1) * 50}%`;
+                }
+                
+                document.querySelectorAll('.progress-steps .step').forEach((s, i) => {
+                    s.classList.toggle('active', i < step);
+                });
+                
+                if (step === 3) updateReview();
+            }
+
+            function updateReview() {
+                document.getElementById('reviewName').textContent = stageNameInput.value || 'Stage Name';
+                document.getElementById('reviewLocation').textContent = locationInput.value || 'Location';
+                
+                const reviewTypes = document.getElementById('reviewTypes');
+                reviewTypes.innerHTML = window.selectedTypes.length > 0 
+                    ? window.selectedTypes.join(', ') 
+                    : 'None selected';
+
+                const reviewInstrumentsItem = document.getElementById('reviewInstrumentsItem');
+                const reviewInstruments = document.getElementById('reviewInstruments');
+                
+                if (window.selectedTypes.includes('Instrumentalist') && window.selectedInstruments.length > 0) {
+                    reviewInstrumentsItem.style.display = 'block';
+                    reviewInstruments.textContent = window.selectedInstruments.join(', ');
+                } else {
+                    reviewInstrumentsItem.style.display = 'none';
+                }
+
+                const reviewPic = document.getElementById('reviewPic');
+                if (profileImageData) {
+                    reviewPic.innerHTML = `<img src="${profileImageData}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
+                }
+            }
+
+            // ========== FORM SUBMISSION ==========
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                if (!validateStep(2)) return;
+
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                if (!user) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+                submitButton.disabled = true;
+
+                const profile = {
+                    auth_id: user.id,
+                    name: stageNameInput.value.trim(),
+                    location: locationInput.value,
+                    city: cityInput.value || '',
+                    country: countryInput.value || '',
+                    country_code: countryCodeInput.value || '',
+                    types: window.selectedTypes,
+                    instruments: window.selectedInstruments,
+                    image_url: profileImageData || '',
+                    bio: '',
+                    fans: 0
+                };
+
+                const { error } = await supabaseClient
+                    .from('performers')
+                    .insert([profile]);
+
+                if (error) {
+                    console.error('Error:', error);
+                    showToast('Error: ' + error.message, 'error');
+                    submitButton.innerHTML = 'Create Profile';
+                    submitButton.disabled = false;
+                } else {
+                    showToast('Performer profile created!', 'success');
+                    setTimeout(() => window.location.href = 'performer-hub.html', 1500);
+                }
+            });
+
+            // ========== TOAST FUNCTION ==========
+            function showToast(message, type) {
+                const toast = document.createElement('div');
+                toast.textContent = message;
+                toast.style.cssText = `
+                    position: fixed; top: 20px; right: 20px; padding: 15px 25px;
+                    background: ${type === 'success' ? '#48BB78' : '#F56565'};
+                    color: white; border-radius: 10px; z-index: 10000;
+                    animation: slideInRight 0.3s ease;
+                `;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
+            }
+        });
+    </script>
+
+    <style>
+        .instrument-tag {
+            display: inline-block;
+            background: rgba(108,99,255,0.15);
+            color: #6C63FF;
+            padding: 5px 12px;
+            border-radius: 20px;
+            margin: 0 5px 5px 0;
+            font-size: 0.9rem;
+        }
+        .instrument-tag button {
+            background: none;
+            border: none;
+            color: #6C63FF;
+            margin-left: 5px;
+            cursor: pointer;
+        }
+        .selected-type {
+            display: inline-block;
+            background: rgba(108,99,255,0.15);
+            color: #6C63FF;
+            padding: 5px 12px;
+            border-radius: 20px;
+            margin: 0 5px 5px 0;
+        }
+    </style>
+</body>
+</html>

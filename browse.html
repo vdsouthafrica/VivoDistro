@@ -1,0 +1,2249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vivo Distro | Browse & Connect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons@6.6.6/css/flag-icons.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="responsive.css">
+    <script src="global-fullscreen.js" defer></script>
+    <style>
+        /* ===== PROFESSIONAL BROWSE PAGE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        
+        body {
+            background: #0a0e1a;
+            color: #fff;
+            min-height: 100vh;
+        }
+        
+        /* Header & Navigation */
+        .navbar {
+            background: rgba(10, 14, 26, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .back-btn {
+            background: rgba(108, 99, 255, 0.1);
+            color: #6C63FF;
+            border: 1px solid rgba(108, 99, 255, 0.3);
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+        
+        .back-btn:hover {
+            background: rgba(108, 99, 255, 0.2);
+            transform: translateY(-1px);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+        
+        .logo i {
+            color: #6C63FF;
+        }
+        
+        .logo-highlight {
+            color: #6C63FF;
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .user-id {
+            background: rgba(108, 99, 255, 0.1);
+            padding: 0.5rem 1.2rem;
+            border-radius: 30px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            border: 1px solid rgba(108, 99, 255, 0.2);
+        }
+        
+        /* Main Container */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* Page Header */
+        .page-header {
+            margin-bottom: 2rem;
+        }
+        
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #6C63FF, #9d8cff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-subtitle {
+            color: #94a3b8;
+            font-size: 1rem;
+        }
+        
+        /* Tabs - In Header */
+        .tabs-container {
+            display: flex;
+            gap: 0.5rem;
+            margin: 1.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 0.5rem;
+        }
+        
+        .tab-btn {
+            padding: 0.8rem 2rem;
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+        }
+        
+        .tab-btn:hover {
+            color: #fff;
+        }
+        
+        .tab-btn.active {
+            color: #6C63FF;
+        }
+        
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -0.5rem;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #6C63FF;
+            border-radius: 2px;
+        }
+        
+        /* Search & Filter Section - Clean Design */
+        .search-filter-section {
+            background: rgba(20, 25, 40, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(5px);
+        }
+        
+        .search-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .search-input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #6C63FF;
+            background: rgba(0, 0, 0, 0.4);
+        }
+        
+        .search-input-wrapper i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6C63FF;
+            font-size: 1.1rem;
+            opacity: 0.7;
+        }
+        
+        .search-btn {
+            padding: 0 2.5rem;
+            background: linear-gradient(135deg, #6C63FF, #5a52d5);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+        }
+        
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(108, 99, 255, 0.3);
+        }
+        
+        /* Filter Row - Professional Layout */
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 0.3rem 1rem 0.3rem 0.8rem;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .filter-label {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .filter-label i {
+            color: #6C63FF;
+            font-size: 0.8rem;
+        }
+        
+        .filter-select {
+            padding: 0.5rem 2rem 0.5rem 1rem;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 0.9rem;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236C63FF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            background-size: 0.8rem;
+            min-width: 140px;
+        }
+        
+        .filter-select option {
+            background: #1a1f35;
+            color: white;
+        }
+        
+        .filter-select:focus {
+            outline: none;
+        }
+        
+        /* Results Count */
+        .results-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .results-count {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        
+        .results-count span {
+            color: #6C63FF;
+            font-weight: 600;
+        }
+        
+        /* Cards Grid - 3 per row */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-top: 1rem;
+        }
+
+        /* Profile Card - Clean & Professional */
+        .profile-card {
+            background: #151a2c;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            height: fit-content;
+        }
+
+        .profile-card:hover {
+            transform: translateY(-5px);
+            border-color: #6C63FF;
+            box-shadow: 0 20px 30px rgba(108, 99, 255, 0.15);
+        }
+
+        /* Expanded Card Modal Style */
+        .profile-card.expanded {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(1);
+            width: 800px;
+            max-width: 90vw;
+            max-height: 85vh;
+            overflow-y: auto;
+            z-index: 1000;
+            cursor: default;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+            border: 2px solid #6C63FF;
+        }
+
+        .profile-card.expanded:hover {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* Overlay when card is expanded */
+        body.modal-open::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 999;
+        }
+
+        /* Card Inner */
+        .card-inner {
+            padding: 1.5rem;
+        }
+
+        /* Expanded card inner padding */
+        .profile-card.expanded .card-inner {
+            padding: 2rem;
+        }
+
+        /* Country Flag Badge */
+        .card-flag-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            z-index: 5;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            border-radius: 30px;
+            padding: 0.3rem 0.8rem 0.3rem 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-flag-badge .fi {
+            font-size: 1rem;
+            border-radius: 3px;
+        }
+
+        .card-flag-badge .fi-circle {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+        }
+
+        .card-flag-badge .country-name {
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 500;
+            max-width: 70px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Card Header */
+        .card-header {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+            align-items: center;
+        }
+
+        .avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6C63FF, #9d8cff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: #fff;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .title-info {
+            flex: 1;
+        }
+
+        .title-info h2 {
+            font-size: 1.3rem;
+            margin-bottom: 0.3rem;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .location-display {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        .location-display i {
+            color: #6C63FF;
+            font-size: 0.75rem;
+        }
+
+        /* Role Tags */
+        .role-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .role-tag {
+            background: rgba(108, 99, 255, 0.1);
+            color: #6C63FF;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            border: 1px solid rgba(108, 99, 255, 0.2);
+        }
+
+        /* Bio - Truncated by default */
+        .bio {
+            color: #cbd5e0;
+            line-height: 1.6;
+            margin-bottom: 1.2rem;
+            font-size: 0.85rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .profile-card.expanded .bio {
+            -webkit-line-clamp: unset;
+            max-height: none;
+        }
+
+        /* Expand Hint */
+        .expand-hint {
+            color: #6C63FF;
+            font-size: 0.7rem;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            opacity: 0.7;
+        }
+
+        .expand-hint i {
+            font-size: 0.6rem;
+        }
+
+        /* Social Links */
+        .social-links {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.2rem;
+            flex-wrap: wrap;
+        }
+
+        .social-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            transition: all 0.2s;
+            text-decoration: none;
+            font-size: 0.85rem;
+        }
+
+        .social-icon:hover {
+            background: #6C63FF;
+            color: #fff;
+            border-color: #6C63FF;
+            transform: translateY(-2px);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 0.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 1.2rem;
+            margin-top: 0.5rem;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 0.7rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            border: none;
+        }
+
+        .book-btn {
+            background: #6C63FF;
+            color: white;
+        }
+
+        .book-btn:hover {
+            background: #5a52d5;
+            transform: translateY(-2px);
+        }
+
+        .book-btn-disabled {
+            background: rgba(108, 99, 255, 0.2);
+            color: #94a3b8;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .roster-btn {
+            background: rgba(108, 99, 255, 0.1);
+            color: #6C63FF;
+            border: 1px solid rgba(108, 99, 255, 0.2);
+        }
+
+        .roster-btn:hover {
+            background: rgba(108, 99, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .events-btn {
+            background: rgba(237, 137, 54, 0.1);
+            color: #ED8936;
+            border: 1px solid rgba(237, 137, 54, 0.2);
+        }
+
+        .events-btn:hover {
+            background: rgba(237, 137, 54, 0.15);
+            transform: translateY(-2px);
+        }
+
+        /* Close expanded button */
+        .close-expanded {
+            display: none;
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: all 0.2s;
+        }
+
+        .close-expanded:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+
+        .profile-card.expanded .close-expanded {
+            display: flex;
+        }
+
+        /* Expanded Content */
+        .expanded-content {
+            display: none;
+            margin-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 1.5rem;
+        }
+
+        .profile-card.expanded .expanded-content {
+            display: block;
+        }
+
+        .expanded-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .expanded-section h4 {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.8rem;
+        }
+
+        .expanded-section p {
+            color: #fff;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .detail-item {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 1rem;
+        }
+
+        .detail-label {
+            color: #94a3b8;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            margin-bottom: 0.3rem;
+        }
+
+        .detail-value {
+            color: #fff;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        /* Location hierarchy styling */
+        .location-hierarchy {
+            margin-top: 0.5rem;
+        }
+
+        .location-breadcrumb {
+            color: #94a3b8;
+            font-size: 0.8rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .location-breadcrumb i {
+            color: #6C63FF;
+            margin: 0 0.3rem;
+        }
+
+        /* Empty State */
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #94a3b8;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 20px;
+            border: 2px dashed rgba(255, 255, 255, 0.05);
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+            color: #6C63FF;
+        }
+        
+        .empty-state h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+        
+        .empty-state p {
+            font-size: 0.95rem;
+            max-width: 500px;
+            margin: 0 auto;
+            line-height: 1.6;
+            color: #94a3b8;
+        }
+
+        /* Booking Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .booking-modal {
+            width: 600px;
+            max-width: 95%;
+            max-height: 90vh;
+            background: #151a2c;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            animation: modalSlideUp 0.3s ease;
+        }
+
+        @keyframes modalSlideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 1.3rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-header h3 i {
+            color: #6C63FF;
+        }
+
+        .close-modal {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .close-modal:hover {
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+            max-height: calc(90vh - 140px);
+            overflow-y: auto;
+        }
+
+        .booking-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .form-group label i {
+            color: #6C63FF;
+            font-size: 0.8rem;
+        }
+
+        .form-group label span.required {
+            color: #ef4444;
+            margin-left: 0.2rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 0.8rem 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #6C63FF;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            padding: 0.5rem 0;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #6C63FF;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            color: #94a3b8;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .btn-send {
+            flex: 2;
+            padding: 0.8rem;
+            background: #6C63FF;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-send:hover {
+            background: #5a52d5;
+            transform: translateY(-2px);
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            color: white;
+            z-index: 10001;
+            animation: slideInRight 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .toast.success { background: #10b981; }
+        .toast.error { background: #ef4444; }
+        .toast.info { background: #6C63FF; }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            to { opacity: 0; transform: translateX(30px); }
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-container { padding: 1rem; }
+            .page-title { font-size: 2rem; }
+            .tabs-container { flex-direction: column; }
+            .tab-btn { width: 100%; }
+            .search-row { flex-direction: column; }
+            .filter-row { flex-direction: column; align-items: stretch; }
+            .filter-group { width: 100%; }
+            .filter-select { width: 100%; }
+            .cards-grid { grid-template-columns: 1fr; }
+            .form-row { grid-template-columns: 1fr; }
+            .profile-card.expanded { width: 95%; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <button class="back-btn" id="backButton">
+                    <i class="fas fa-arrow-left"></i>
+                    Back
+                </button>
+                <div class="logo">
+                    <i class="fas fa-music"></i>
+                    <span>VIVO <span class="logo-highlight">DISTRO</span></span>
+                </div>
+            </div>
+            <div class="user-menu">
+                <div class="user-id" id="user-id-display">Loading...</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">Browse & Connect</h1>
+            <p class="page-subtitle">Discover talent, find agents, and explore opportunities</p>
+        </div>
+
+        <!-- Tabs - In Header -->
+        <div class="tabs-container">
+            <button class="tab-btn active" data-tab="performers">
+                <i class="fas fa-microphone"></i> Performers
+            </button>
+            <button class="tab-btn" data-tab="agents">
+                <i class="fas fa-user-tie"></i> Agents
+            </button>
+            <button class="tab-btn" data-tab="bookers">
+                <i class="fas fa-building"></i> Bookers
+            </button>
+        </div>
+
+        <!-- Search & Filter Section -->
+        <div class="search-filter-section">
+            <div class="search-row">
+                <div class="search-input-wrapper">
+                    <i class="fas fa-search"></i>
+                    <input type="text" class="search-input" id="searchInput" placeholder="Search by name, location, or bio...">
+                </div>
+                <button class="search-btn" id="searchBtn">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </div>
+            
+            <div class="filter-row">
+                <!-- Location Filter - Hierarchical -->
+                <div class="filter-group">
+                    <span class="filter-label"><i class="fas fa-globe"></i> Country</span>
+                    <select class="filter-select" id="countryFilter">
+                        <option value="">All Countries</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <span class="filter-label"><i class="fas fa-map-marker-alt"></i> State/Province</span>
+                    <select class="filter-select" id="stateFilter" disabled>
+                        <option value="">Select Country First</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <span class="filter-label"><i class="fas fa-city"></i> City</span>
+                    <select class="filter-select" id="cityFilter" disabled>
+                        <option value="">Select State First</option>
+                    </select>
+                </div>
+
+                <!-- Type Filter - Tab Specific -->
+                <div class="filter-group" id="typeFilterGroup">
+                    <span class="filter-label"><i class="fas fa-tag"></i> Type</span>
+                    <select class="filter-select" id="typeFilter">
+                        <option value="">All Types</option>
+                    </select>
+                </div>
+
+                <!-- Reset Filters -->
+                <button class="filter-group" id="resetFilters" style="background: transparent; border: 1px solid rgba(108,99,255,0.2); cursor: pointer;">
+                    <i class="fas fa-undo-alt" style="color: #6C63FF;"></i>
+                    <span style="color: #94a3b8;">Reset</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Info -->
+        <div class="results-info">
+            <div class="results-count">
+                Showing <span id="resultsCount">0</span> results
+            </div>
+        </div>
+
+        <!-- Performers Tab -->
+        <div class="tab-content active" id="performers-tab">
+            <div class="cards-grid" id="performersGrid"></div>
+        </div>
+
+        <!-- Agents Tab -->
+        <div class="tab-content" id="agents-tab">
+            <div class="cards-grid" id="agentsGrid"></div>
+        </div>
+
+        <!-- Bookers Tab -->
+        <div class="tab-content" id="bookers-tab">
+            <div class="cards-grid" id="bookersGrid"></div>
+        </div>
+    </div>
+
+    <!-- Booking Modal -->
+    <div class="modal-overlay" id="bookingModal">
+        <div class="booking-modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-calendar-check"></i> Send Booking Request</h3>
+                <button class="close-modal" id="closeBookingModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="booking-form" id="bookingForm">
+                    <input type="hidden" id="bookingRecipientId">
+                    <input type="hidden" id="bookingRecipientName">
+                    <input type="hidden" id="bookingRecipientType">
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar-alt"></i> Event Name <span class="required">*</span></label>
+                        <input type="text" id="bookingEventName" placeholder="e.g. Summer Festival 2026" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-calendar-day"></i> Date <span class="required">*</span></label>
+                            <input type="date" id="bookingDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-clock"></i> Start Time <span class="required">*</span></label>
+                            <input type="time" id="bookingStartTime" value="20:00" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-clock"></i> End Time <span class="required">*</span></label>
+                            <input type="time" id="bookingEndTime" value="23:00" required>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-map-marker-alt"></i> Venue Location <span class="required">*</span></label>
+                            <input type="text" id="bookingVenue" placeholder="Full venue address" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-phone"></i> Your Contact Number <span class="required">*</span></label>
+                        <input type="tel" id="bookingPhone" placeholder="e.g. +27 12 345 6789" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope"></i> Your Email (optional)</label>
+                        <input type="email" id="bookingEmail" placeholder="e.g. you@example.com">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-users"></i> Expected Audience</label>
+                            <input type="number" id="bookingAudience" placeholder="e.g. 500" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-tag"></i> Event Type</label>
+                            <select id="bookingEventType">
+                                <option value="">Select type</option>
+                                <option value="wedding">Wedding</option>
+                                <option value="corporate">Corporate Event</option>
+                                <option value="sporting">Sporting Event</option>
+                                <option value="festival">Festival</option>
+                                <option value="concert">Live Concert</option>
+                                <option value="club">Club Night</option>
+                                <option value="private">Private Party</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="bookingIndoor"> Indoor
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="bookingOutdoor"> Outdoor
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-moon"></i> Number of Days</label>
+                            <input type="number" id="bookingDays" placeholder="e.g. 1, 2, 3" min="1" value="1">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-tag"></i> Budget Range (R)</label>
+                            <input type="text" id="bookingBudget" placeholder="e.g. 5000-10000">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-file-alt"></i> Additional Requirements</label>
+                        <textarea id="bookingRequirements" placeholder="Technical requirements, special requests, accommodation needs, etc." rows="4"></textarea>
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button type="button" class="btn-cancel" id="cancelBooking">Cancel</button>
+                        <button type="submit" class="btn-send">
+                            <i class="fas fa-paper-plane"></i> Send Booking Request
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Browse page loaded - Professional version');
+
+            // Supabase config
+            const supabaseUrl = 'https://msjinuumxmezrijqemmp.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zamludXVteG1lenJpanFlbW1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwOTAyNjMsImV4cCI6MjA4NzY2NjI2M30.ic50fSC7MQfhSkhfE5E8B0R5-BGCQStMRZNHiy6Zakw';
+            const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+            // Global state
+            let currentUser = null;
+            let performers = [];
+            let agents = [];
+            let bookers = [];
+            let currentTab = 'performers';
+            let searchTerm = '';
+            let countryFilter = '';
+            let stateFilter = '';
+            let cityFilter = '';
+            let typeFilter = '';
+
+            // Location hierarchy data
+            let locationData = {
+                countries: new Set(),
+                statesByCountry: {},
+                citiesByState: {}
+            };
+
+            // DOM elements
+            const backButton = document.getElementById('backButton');
+            const userDisplay = document.getElementById('user-id-display');
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const searchInput = document.getElementById('searchInput');
+            const searchBtn = document.getElementById('searchBtn');
+            const countryFilterEl = document.getElementById('countryFilter');
+            const stateFilterEl = document.getElementById('stateFilter');
+            const cityFilterEl = document.getElementById('cityFilter');
+            const typeFilterEl = document.getElementById('typeFilter');
+            const resetFiltersBtn = document.getElementById('resetFilters');
+            const resultsCountEl = document.getElementById('resultsCount');
+            const performersGrid = document.getElementById('performersGrid');
+            const agentsGrid = document.getElementById('agentsGrid');
+            const bookersGrid = document.getElementById('bookersGrid');
+            
+            // Booking modal
+            const bookingModal = document.getElementById('bookingModal');
+            const closeBookingModal = document.getElementById('closeBookingModal');
+            const cancelBooking = document.getElementById('cancelBooking');
+            const bookingForm = document.getElementById('bookingForm');
+
+            // Initialize
+            loadCurrentUser();
+            loadAllProfiles();
+
+            // Setup event listeners
+            setupEventListeners();
+
+            async function loadCurrentUser() {
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                currentUser = user;
+                
+                if (user) {
+                    const { data: username } = await supabaseClient
+                        .from('usernames')
+                        .select('username')
+                        .eq('user_id', user.id)
+                        .single();
+                    
+                    userDisplay.textContent = username?.username || user.email?.split('@')[0] || 'User';
+                } else {
+                    userDisplay.textContent = 'Guest';
+                }
+            }
+
+            async function loadAllProfiles() {
+                try {
+                    // Load performers
+                    const { data: perfData, error: perfError } = await supabaseClient
+                        .from('performers')
+                        .select('*')
+                        .order('created_at', { ascending: false });
+                    
+                    if (!perfError && perfData) {
+                        performers = perfData;
+                        console.log(`Loaded ${performers.length} performers`);
+                    }
+
+                    // Load agents
+                    const { data: agentData, error: agentError } = await supabaseClient
+                        .from('agents')
+                        .select('*')
+                        .order('created_at', { ascending: false });
+                    
+                    if (!agentError && agentData) {
+                        agents = agentData;
+                        console.log(`Loaded ${agents.length} agents`);
+                    }
+
+                    // Load bookers
+                    const { data: bookerData, error: bookerError } = await supabaseClient
+                        .from('bookers')
+                        .select('*')
+                        .order('created_at', { ascending: false });
+                    
+                    if (!bookerError && bookerData) {
+                        bookers = bookerData;
+                        console.log(`Loaded ${bookers.length} bookers`);
+                    }
+
+                    // Build location hierarchy
+                    buildLocationHierarchy();
+                    
+                    // Populate type filter based on current tab
+                    populateTypeFilter();
+                    
+                    // Render current tab
+                    renderCurrentTab();
+                    
+                } catch (error) {
+                    console.error('Error loading profiles:', error);
+                }
+            }
+
+            function buildLocationHierarchy() {
+                const allProfiles = [...performers, ...agents, ...bookers];
+                
+                allProfiles.forEach(profile => {
+                    if (!profile.location) return;
+                    
+                    // Parse location string
+                    const parts = profile.location.split(',').map(p => p.trim());
+                    
+                    if (parts.length >= 3) {
+                        const city = parts[0];
+                        const state = parts[1];
+                        const country = parts[2];
+                        
+                        locationData.countries.add(country);
+                        
+                        if (!locationData.statesByCountry[country]) {
+                            locationData.statesByCountry[country] = new Set();
+                        }
+                        locationData.statesByCountry[country].add(state);
+                        
+                        if (!locationData.citiesByState[state]) {
+                            locationData.citiesByState[state] = new Set();
+                        }
+                        locationData.citiesByState[state].add(city);
+                    }
+                });
+
+                // Populate country filter
+                const sortedCountries = Array.from(locationData.countries).sort();
+                countryFilterEl.innerHTML = '<option value="">All Countries</option>';
+                sortedCountries.forEach(country => {
+                    const option = document.createElement('option');
+                    option.value = country;
+                    option.textContent = country;
+                    countryFilterEl.appendChild(option);
+                });
+            }
+
+            function populateTypeFilter() {
+                let options = '<option value="">All Types</option>';
+                
+                if (currentTab === 'performers') {
+                    const types = ['Solo Artist', 'Duo', 'Band', 'DJ', 'Sound Engineer', 'Music Producer', 'Songwriter', 'Instrumentalist'];
+                    types.forEach(type => {
+                        options += `<option value="${type}">${type}</option>`;
+                    });
+                } else if (currentTab === 'agents') {
+                    const types = ['Booking Agent', 'Talent Agent', 'Management Agency', 'Promoter'];
+                    types.forEach(type => {
+                        options += `<option value="${type}">${type}</option>`;
+                    });
+                } else if (currentTab === 'bookers') {
+                    const types = ['Venue Booker', 'Event Organizer', 'Festival Booker', 'Club Booker'];
+                    types.forEach(type => {
+                        options += `<option value="${type}">${type}</option>`;
+                    });
+                }
+                
+                typeFilterEl.innerHTML = options;
+            }
+
+            function updateStateFilter() {
+                stateFilterEl.innerHTML = '<option value="">All States/Provinces</option>';
+                stateFilterEl.disabled = !countryFilter;
+                
+                if (countryFilter && locationData.statesByCountry[countryFilter]) {
+                    const states = Array.from(locationData.statesByCountry[countryFilter]).sort();
+                    states.forEach(state => {
+                        const option = document.createElement('option');
+                        option.value = state;
+                        option.textContent = state;
+                        stateFilterEl.appendChild(option);
+                    });
+                    stateFilterEl.disabled = false;
+                }
+            }
+
+            function updateCityFilter() {
+                cityFilterEl.innerHTML = '<option value="">All Cities</option>';
+                cityFilterEl.disabled = !stateFilter;
+                
+                if (stateFilter && locationData.citiesByState[stateFilter]) {
+                    const cities = Array.from(locationData.citiesByState[stateFilter]).sort();
+                    cities.forEach(city => {
+                        const option = document.createElement('option');
+                        option.value = city;
+                        option.textContent = city;
+                        cityFilterEl.appendChild(option);
+                    });
+                    cityFilterEl.disabled = false;
+                }
+            }
+
+            function setupEventListeners() {
+                // Back button - FIXED: use history.back()
+                backButton.addEventListener('click', () => window.history.back());
+
+                // Tab switching
+                tabButtons.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        tabButtons.forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        
+                        currentTab = btn.dataset.tab;
+                        
+                        tabContents.forEach(content => content.classList.remove('active'));
+                        document.getElementById(`${currentTab}-tab`).classList.add('active');
+                        
+                        // Clear existing content
+                        performersGrid.innerHTML = '';
+                        agentsGrid.innerHTML = '';
+                        bookersGrid.innerHTML = '';
+                        
+                        // Reset type filter for new tab
+                        typeFilter = '';
+                        populateTypeFilter();
+                        
+                        // Render the new tab
+                        renderCurrentTab();
+                    });
+                });
+
+                // Search
+                searchBtn.addEventListener('click', performSearch);
+
+                searchInput.addEventListener('keyup', (e) => {
+                    if (e.key === 'Enter') {
+                        performSearch();
+                    }
+                });
+
+                // Location filters
+                countryFilterEl.addEventListener('change', () => {
+                    countryFilter = countryFilterEl.value;
+                    stateFilter = '';
+                    cityFilter = '';
+                    updateStateFilter();
+                    updateCityFilter();
+                    renderCurrentTab();
+                });
+
+                stateFilterEl.addEventListener('change', () => {
+                    stateFilter = stateFilterEl.value;
+                    cityFilter = '';
+                    updateCityFilter();
+                    renderCurrentTab();
+                });
+
+                cityFilterEl.addEventListener('change', () => {
+                    cityFilter = cityFilterEl.value;
+                    renderCurrentTab();
+                });
+
+                // Type filter
+                typeFilterEl.addEventListener('change', () => {
+                    typeFilter = typeFilterEl.value;
+                    renderCurrentTab();
+                });
+
+                // Reset filters
+                resetFiltersBtn.addEventListener('click', () => {
+                    searchInput.value = '';
+                    countryFilterEl.value = '';
+                    stateFilterEl.value = '';
+                    stateFilterEl.disabled = true;
+                    cityFilterEl.value = '';
+                    cityFilterEl.disabled = true;
+                    typeFilterEl.value = '';
+                    
+                    searchTerm = '';
+                    countryFilter = '';
+                    stateFilter = '';
+                    cityFilter = '';
+                    typeFilter = '';
+                    
+                    renderCurrentTab();
+                });
+
+                // Booking modal
+                closeBookingModal.addEventListener('click', () => bookingModal.classList.remove('active'));
+                cancelBooking.addEventListener('click', () => bookingModal.classList.remove('active'));
+                
+                bookingModal.addEventListener('click', (e) => {
+                    if (e.target === bookingModal) {
+                        bookingModal.classList.remove('active');
+                    }
+                });
+
+                // Booking form submit
+                bookingForm.addEventListener('submit', handleBookingSubmit);
+
+                // Close expanded cards when clicking outside
+                document.addEventListener('click', (e) => {
+                    const expandedCards = document.querySelectorAll('.profile-card.expanded');
+                    if (expandedCards.length > 0 && !e.target.closest('.profile-card.expanded')) {
+                        expandedCards.forEach(card => {
+                            card.classList.remove('expanded');
+                        });
+                        document.body.classList.remove('modal-open');
+                    }
+                });
+            }
+
+            function performSearch() {
+                searchTerm = searchInput.value.toLowerCase();
+                
+                // Search across all tabs
+                const allProfiles = [...performers, ...agents, ...bookers];
+                const matchingProfiles = allProfiles.filter(profile => 
+                    profile.name?.toLowerCase().includes(searchTerm) ||
+                    profile.location?.toLowerCase().includes(searchTerm) ||
+                    profile.bio?.toLowerCase().includes(searchTerm)
+                );
+
+                if (matchingProfiles.length > 0) {
+                    // Find which tab the first match belongs to
+                    const firstMatch = matchingProfiles[0];
+                    if (performers.includes(firstMatch)) {
+                        currentTab = 'performers';
+                    } else if (agents.includes(firstMatch)) {
+                        currentTab = 'agents';
+                    } else if (bookers.includes(firstMatch)) {
+                        currentTab = 'bookers';
+                    }
+
+                    // Update active tab UI
+                    tabButtons.forEach(btn => {
+                        btn.classList.remove('active');
+                        if (btn.dataset.tab === currentTab) {
+                            btn.classList.add('active');
+                        }
+                    });
+                    
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    document.getElementById(`${currentTab}-tab`).classList.add('active');
+                    
+                    // Clear existing content
+                    performersGrid.innerHTML = '';
+                    agentsGrid.innerHTML = '';
+                    bookersGrid.innerHTML = '';
+                    
+                    // Update type filter for new tab
+                    populateTypeFilter();
+                    
+                    // Render with search term
+                    renderCurrentTab();
+                    
+                    showToast(`Found results in ${currentTab} tab`, 'info');
+                } else {
+                    renderCurrentTab();
+                    if (searchTerm) {
+                        showToast('No results found', 'info');
+                    }
+                }
+            }
+
+            function renderCurrentTab() {
+                if (currentTab === 'performers') {
+                    renderPerformers();
+                } else if (currentTab === 'agents') {
+                    renderAgents();
+                } else if (currentTab === 'bookers') {
+                    renderBookers();
+                }
+            }
+
+            function filterProfiles(profiles) {
+                let filtered = profiles.filter(profile => {
+                    const matchesSearch = !searchTerm || 
+                        profile.name?.toLowerCase().includes(searchTerm) ||
+                        profile.location?.toLowerCase().includes(searchTerm) ||
+                        profile.bio?.toLowerCase().includes(searchTerm);
+                    
+                    // Location hierarchy matching
+                    let matchesLocation = true;
+                    if (profile.location) {
+                        const parts = profile.location.split(',').map(p => p.trim());
+                        if (parts.length >= 3) {
+                            const city = parts[0];
+                            const state = parts[1];
+                            const country = parts[2];
+                            
+                            if (countryFilter && country !== countryFilter) matchesLocation = false;
+                            if (stateFilter && state !== stateFilter) matchesLocation = false;
+                            if (cityFilter && city !== cityFilter) matchesLocation = false;
+                        }
+                    } else {
+                        matchesLocation = !countryFilter && !stateFilter && !cityFilter;
+                    }
+                    
+                    // Type matching
+                    let matchesType = true;
+                    if (typeFilter && profile.types) {
+                        matchesType = profile.types.includes(typeFilter);
+                    }
+                    
+                    return matchesSearch && matchesLocation && matchesType;
+                });
+
+                return filtered;
+            }
+
+            function parseLocation(profile) {
+                if (!profile.location) return null;
+                
+                const parts = profile.location.split(',').map(p => p.trim());
+                if (parts.length >= 3) {
+                    return {
+                        city: parts[0],
+                        state: parts[1],
+                        country: parts[2]
+                    };
+                }
+                return null;
+            }
+
+            // Get just the city for display
+            function getCityOnly(location) {
+                if (!location) return 'Location not set';
+                const parts = location.split(',').map(p => p.trim());
+                return parts[0] || location;
+            }
+
+            function renderCountryFlag(profile) {
+                if (!profile.country_code) return '';
+                
+                const code = profile.country_code.toLowerCase();
+                const countryName = profile.country || '';
+                
+                return `
+                    <div class="card-flag-badge" title="${countryName}">
+                        <span class="fi fi-${code} fi-circle"></span>
+                        <span class="country-name">${countryName}</span>
+                    </div>
+                `;
+            }
+
+            function renderSocialLinks(links) {
+                if (!links || links.length === 0) return '';
+                
+                const socialIcons = {
+                    'whatsapp': 'fab fa-whatsapp',
+                    'email': 'fas fa-envelope',
+                    'instagram': 'fab fa-instagram',
+                    'facebook': 'fab fa-facebook',
+                    'twitter': 'fab fa-twitter',
+                    'tiktok': 'fab fa-tiktok',
+                    'youtube': 'fab fa-youtube',
+                    'spotify': 'fab fa-spotify',
+                    'soundcloud': 'fab fa-soundcloud',
+                    'linkedin': 'fab fa-linkedin',
+                    'website': 'fas fa-globe'
+                };
+
+                return links.map(link => {
+                    const icon = socialIcons[link.platform] || 'fas fa-link';
+                    return `<a href="${link.url}" target="_blank" class="social-icon"><i class="${icon}"></i></a>`;
+                }).join('');
+            }
+
+            function closeAllExpanded() {
+                document.querySelectorAll('.profile-card.expanded').forEach(card => {
+                    card.classList.remove('expanded');
+                });
+                document.body.classList.remove('modal-open');
+            }
+
+            function renderPerformers() {
+                const filtered = filterProfiles(performers);
+                resultsCountEl.textContent = filtered.length;
+                
+                if (filtered.length === 0) {
+                    performersGrid.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-microphone"></i>
+                            <h3>No performers found</h3>
+                            <p>Try adjusting your search or filters</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                performersGrid.innerHTML = filtered.map(performer => {
+                    const location = parseLocation(performer);
+                    const cityOnly = getCityOnly(performer.location);
+                    const isOwnProfile = currentUser && performer.auth_id === currentUser.id;
+                    
+                    return `
+                    <div class="profile-card" data-id="${performer.id}">
+                        <div class="close-expanded" onclick="event.stopPropagation(); this.closest('.profile-card').classList.remove('expanded'); document.body.classList.remove('modal-open');">
+                            <i class="fas fa-times"></i>
+                        </div>
+                        <div class="card-inner">
+                            ${renderCountryFlag(performer)}
+                            
+                            <div class="card-header">
+                                <div class="avatar">
+                                    ${performer.image_url 
+                                        ? `<img src="${performer.image_url}" alt="${performer.name}">` 
+                                        : '<i class="fas fa-user"></i>'
+                                    }
+                                </div>
+                                <div class="title-info">
+                                    <h2>${performer.name}</h2>
+                                    <div class="location-display">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span>${cityOnly}</span>
+                                    </div>
+                                    ${location ? `
+                                    <div class="location-breadcrumb">
+                                        <i class="fas fa-globe"></i> ${location.country}
+                                        <i class="fas fa-chevron-right"></i> ${location.state}
+                                    </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+
+                            <div class="role-tags">
+                                ${performer.types?.map(type => 
+                                    `<span class="role-tag">${type}</span>`
+                                ).join('') || '<span class="role-tag">Performer</span>'}
+                            </div>
+
+                            <div class="bio">
+                                ${performer.bio || 'No bio added yet'}
+                            </div>
+
+                            <div class="expand-hint">
+                                <i class="fas fa-chevron-down"></i> Click to expand for more details
+                            </div>
+
+                            <div class="social-links">
+                                ${renderSocialLinks(performer.social_links)}
+                            </div>
+
+                            <div class="action-buttons">
+                                <button class="action-btn book-btn ${isOwnProfile ? 'book-btn-disabled' : ''}" 
+                                    ${isOwnProfile ? 'disabled' : ''}
+                                    onclick="event.stopPropagation(); ${isOwnProfile ? '' : `openBookingModal('${performer.auth_id}', '${performer.name.replace(/'/g, "\\'")}', 'performer')`}">
+                                    <i class="fas fa-calendar-check"></i> ${isOwnProfile ? 'Your Profile' : 'Book'}
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Expanded Content -->
+                        <div class="expanded-content">
+                            <div class="expanded-section">
+                                <h4>Full Bio</h4>
+                                <p>${performer.bio || 'No bio provided'}</p>
+                            </div>
+                            
+                            <div class="details-grid">
+                                <div class="detail-item">
+                                    <div class="detail-label">Member Since</div>
+                                    <div class="detail-value">${new Date(performer.created_at).toLocaleDateString()}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Location</div>
+                                    <div class="detail-value">${performer.location || 'Not specified'}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Country</div>
+                                    <div class="detail-value">${performer.country || 'Not specified'}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Genres</div>
+                                    <div class="detail-value">${performer.types?.join(', ') || 'Not specified'}</div>
+                                </div>
+                                ${performer.phone ? `
+                                <div class="detail-item">
+                                    <div class="detail-label">Contact</div>
+                                    <div class="detail-value">${performer.phone}</div>
+                                </div>
+                                ` : ''}
+                                ${performer.email ? `
+                                <div class="detail-item">
+                                    <div class="detail-label">Email</div>
+                                    <div class="detail-value">${performer.email}</div>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `}).join('');
+
+                // Add click handlers for expansion
+                document.querySelectorAll('#performers-tab .profile-card').forEach(card => {
+                    card.addEventListener('click', function(e) {
+                        // Don't expand if clicking on a button or close button
+                        if (e.target.closest('button') || e.target.closest('a') || e.target.closest('.close-expanded')) return;
+                        
+                        closeAllExpanded();
+                        this.classList.add('expanded');
+                        document.body.classList.add('modal-open');
+                        
+                        // Scroll to the expanded card
+                        setTimeout(() => this.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+                    });
+                });
+            }
+
+            function renderAgents() {
+                const filtered = filterProfiles(agents);
+                resultsCountEl.textContent = filtered.length;
+                
+                if (filtered.length === 0) {
+                    agentsGrid.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-user-tie"></i>
+                            <h3>No agents found</h3>
+                            <p>Try adjusting your search or filters</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                agentsGrid.innerHTML = filtered.map(agent => {
+                    const location = parseLocation(agent);
+                    const cityOnly = getCityOnly(agent.location);
+                    const isOwnProfile = currentUser && agent.auth_id === currentUser.id;
+                    
+                    return `
+                    <div class="profile-card" data-id="${agent.id}">
+                        <div class="close-expanded" onclick="event.stopPropagation(); this.closest('.profile-card').classList.remove('expanded'); document.body.classList.remove('modal-open');">
+                            <i class="fas fa-times"></i>
+                        </div>
+                        <div class="card-inner">
+                            ${renderCountryFlag(agent)}
+                            
+                            <div class="card-header">
+                                <div class="avatar">
+                                    ${agent.logo_url 
+                                        ? `<img src="${agent.logo_url}" alt="${agent.name}">` 
+                                        : '<i class="fas fa-user-tie"></i>'
+                                    }
+                                </div>
+                                <div class="title-info">
+                                    <h2>${agent.name}</h2>
+                                    <div class="location-display">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span>${cityOnly}</span>
+                                    </div>
+                                    ${location ? `
+                                    <div class="location-breadcrumb">
+                                        <i class="fas fa-globe"></i> ${location.country}
+                                        <i class="fas fa-chevron-right"></i> ${location.state}
+                                    </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+
+                            <div class="role-tags">
+                                <span class="role-tag">Agent</span>
+                                ${agent.specialties?.map(s => 
+                                    `<span class="role-tag">${s}</span>`
+                                ).join('') || ''}
+                            </div>
+
+                            <div class="bio">
+                                ${agent.bio || 'No bio added yet'}
+                            </div>
+
+                            <div class="expand-hint">
+                                <i class="fas fa-chevron-down"></i> Click to expand for more details
+                            </div>
+
+                            <div class="social-links">
+                                ${renderSocialLinks(agent.social_links)}
+                            </div>
+
+                            <div class="action-buttons">
+                                <button class="action-btn roster-btn" onclick="event.stopPropagation(); viewRoster('${agent.id}', '${agent.name.replace(/'/g, "\\'")}')">
+                                    <i class="fas fa-users"></i> Roster
+                                </button>
+                                <button class="action-btn book-btn ${isOwnProfile ? 'book-btn-disabled' : ''}" 
+                                    ${isOwnProfile ? 'disabled' : ''}
+                                    onclick="event.stopPropagation(); ${isOwnProfile ? '' : `openBookingModal('${agent.auth_id}', '${agent.name.replace(/'/g, "\\'")}', 'agent')`}">
+                                    <i class="fas fa-calendar-check"></i> ${isOwnProfile ? 'Your Profile' : 'Book'}
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Expanded Content -->
+                        <div class="expanded-content">
+                            <div class="expanded-section">
+                                <h4>About the Agency</h4>
+                                <p>${agent.bio || 'No bio provided'}</p>
+                            </div>
+                            
+                            <div class="details-grid">
+                                <div class="detail-item">
+                                    <div class="detail-label">Member Since</div>
+                                    <div class="detail-value">${new Date(agent.created_at).toLocaleDateString()}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Location</div>
+                                    <div class="detail-value">${agent.location || 'Not specified'}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Country</div>
+                                    <div class="detail-value">${agent.country || 'Not specified'}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Specialties</div>
+                                    <div class="detail-value">${agent.specialties?.join(', ') || 'Not specified'}</div>
+                                </div>
+                                ${agent.phone ? `
+                                <div class="detail-item">
+                                    <div class="detail-label">Contact</div>
+                                    <div class="detail-value">${agent.phone}</div>
+                                </div>
+                                ` : ''}
+                                ${agent.email ? `
+                                <div class="detail-item">
+                                    <div class="detail-label">Email</div>
+                                    <div class="detail-value">${agent.email}</div>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `}).join('');
+
+                // Add click handlers for expansion
+                document.querySelectorAll('#agents-tab .profile-card').forEach(card => {
+                    card.addEventListener('click', function(e) {
+                        if (e.target.closest('button') || e.target.closest('a') || e.target.closest('.close-expanded')) return;
+                        
+                        closeAllExpanded();
+                        this.classList.add('expanded');
+                        document.body.classList.add('modal-open');
+                        
+                        setTimeout(() => this.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+                    });
+                });
+            }
+
+            function renderBookers() {
+                const filtered = filterProfiles(bookers);
+                resultsCountEl.textContent = filtered.length;
+                
+                if (filtered.length === 0) {
+                    bookersGrid.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-building"></i>
+                            <h3>No bookers found</h3>
+                            <p>Try adjusting your search or filters</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                bookersGrid.innerHTML = filtered.map(booker => {
+                    const location = parseLocation(booker);
+                    const cityOnly = getCityOnly(booker.location);
+                    const isOwnProfile = currentUser && booker.auth_id === currentUser.id;
+                    
+                    return `
+                    <div class="profile-card" data-id="${booker.id}">
+                        <div class="close-expanded" onclick="event.stopPropagation(); this.closest('.profile-card').classList.remove('expanded'); document.body.classList.remove('modal-open');">
+                            <i class="fas fa-times"></i>
+                        </div>
+                        <div class="card-inner">
+                            ${renderCountryFlag(booker)}
+                            
+                            <div class="card-header">
+                                <div class="avatar">
+                                    ${booker.logo_url 
+                                        ? `<img src="${booker.logo_url}" alt="${booker.name}">` 
+                                        : '<i class="fas fa-building"></i>'
+                                    }
+                                </div>
+                                <div class="title-info">
+                                    <h2>${booker.name}</h2>
+                                    <div class="location-display">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span>${cityOnly}</span>
+                                    </div>
+                                    ${location ? `
+                                    <div class="location-breadcrumb">
+                                        <i class="fas fa-globe"></i> ${location.country}
+                                        <i class="fas fa-chevron-right"></i> ${location.state}
+                                    </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+
+                            <div class="role-tags">
+                                ${booker.types?.map(type => 
+                                    `<span class="role-tag">${type}</span>`
+                                ).join('') || '<span class="role-tag">Booker</span>'}
+                            </div>
+
+                            <div class="bio">
+                                ${booker.bio || 'No bio added yet'}
+                            </div>
+
+                            <div class="expand-hint">
+                                <i class="fas fa-chevron-down"></i> Click to expand for more details
+                            </div>
+
+                            <div class="social-links">
+                                ${renderSocialLinks(booker.social_links)}
+                            </div>
+
+                            <div class="action-buttons">
+                                <button class="action-btn events-btn" onclick="event.stopPropagation(); viewEvents('${booker.id}')">
+                                    <i class="fas fa-calendar-alt"></i> Events
+                                </button>
+                                <button class="action-btn book-btn ${isOwnProfile ? 'book-btn-disabled' : ''}" 
+                                    ${isOwnProfile ? 'disabled' : ''}
+                                    onclick="event.stopPropagation(); ${isOwnProfile ? '' : `openBookingModal('${booker.auth_id}', '${booker.name.replace(/'/g, "\\'")}', 'booker')`}">
+                                    <i class="fas fa-calendar-check"></i> ${isOwnProfile ? 'Your Profile' : 'Book'}
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Expanded Content -->
+                        <div class="expanded-content">
+                            <div class="expanded-section">
+                                <h4>About the Venue</h4>
+                                <p>${booker.bio || 'No bio provided'}</p>
+                            </div>
+                            
+                            <div class="details-grid">
+                                <div class="detail-item">
+                                    <div class="detail-label">Member Since</div>
+                                    <div class="detail-value">${new Date(booker.created_at).toLocaleDateString()}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Location</div>
+                                    <div class="detail-value">${booker.location || 'Not specified'}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Country</div>
+                                    <div class="detail-value">${booker.country || 'Not specified'}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Venue Types</div>
+                                    <div class="detail-value">${booker.types?.join(', ') || 'Not specified'}</div>
+                                </div>
+                                ${booker.phone ? `
+                                <div class="detail-item">
+                                    <div class="detail-label">Contact</div>
+                                    <div class="detail-value">${booker.phone}</div>
+                                </div>
+                                ` : ''}
+                                ${booker.email ? `
+                                <div class="detail-item">
+                                    <div class="detail-label">Email</div>
+                                    <div class="detail-value">${booker.email}</div>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `}).join('');
+
+                // Add click handlers for expansion
+                document.querySelectorAll('#bookers-tab .profile-card').forEach(card => {
+                    card.addEventListener('click', function(e) {
+                        if (e.target.closest('button') || e.target.closest('a') || e.target.closest('.close-expanded')) return;
+                        
+                        closeAllExpanded();
+                        this.classList.add('expanded');
+                        document.body.classList.add('modal-open');
+                        
+                        setTimeout(() => this.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+                    });
+                });
+            }
+
+            // Booking functions
+            function openBookingModal(recipientId, recipientName, recipientType) {
+                if (!currentUser) {
+                    showToast('Please log in to send a booking request', 'error');
+                    setTimeout(() => window.location.href = 'login.html', 1500);
+                    return;
+                }
+
+                // Prevent booking yourself
+                if (recipientId === currentUser.id) {
+                    showToast('You cannot book yourself', 'error');
+                    return;
+                }
+
+                document.getElementById('bookingRecipientId').value = recipientId;
+                document.getElementById('bookingRecipientName').value = recipientName;
+                document.getElementById('bookingRecipientType').value = recipientType;
+                
+                // Set default date
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                document.getElementById('bookingDate').value = tomorrow.toISOString().split('T')[0];
+                
+                bookingModal.classList.add('active');
+            }
+
+            async function handleBookingSubmit(e) {
+                e.preventDefault();
+
+                const recipientId = document.getElementById('bookingRecipientId').value;
+                const recipientName = document.getElementById('bookingRecipientName').value;
+                const recipientType = document.getElementById('bookingRecipientType').value;
+                const eventName = document.getElementById('bookingEventName').value;
+                const bookingDate = document.getElementById('bookingDate').value;
+                const startTime = document.getElementById('bookingStartTime').value;
+                const endTime = document.getElementById('bookingEndTime').value;
+                const venue = document.getElementById('bookingVenue').value;
+                const phone = document.getElementById('bookingPhone').value;
+                const email = document.getElementById('bookingEmail').value;
+                const audience = document.getElementById('bookingAudience').value;
+                const eventType = document.getElementById('bookingEventType').value;
+                const indoor = document.getElementById('bookingIndoor').checked;
+                const outdoor = document.getElementById('bookingOutdoor').checked;
+                const days = document.getElementById('bookingDays').value;
+                const budget = document.getElementById('bookingBudget').value;
+                const requirements = document.getElementById('bookingRequirements').value;
+
+                if (!eventName || !bookingDate || !startTime || !endTime || !venue || !phone) {
+                    showToast('Please fill in all required fields', 'error');
+                    return;
+                }
+
+                showToast('Sending booking request...', 'info');
+
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('bookings')
+                        .insert({
+                            sender_id: currentUser.id,
+                            recipient_id: recipientId,
+                            recipient_name: recipientName,
+                            recipient_type: recipientType,
+                            event_name: eventName,
+                            event_date: bookingDate,
+                            start_time: startTime,
+                            end_time: endTime,
+                            venue: venue,
+                            sender_phone: phone,
+                            sender_email: email || null,
+                            audience: audience || null,
+                            event_type: eventType || null,
+                            indoor: indoor,
+                            outdoor: outdoor,
+                            days: days || 1,
+                            budget: budget || null,
+                            requirements: requirements || null,
+                            status: 'pending',
+                            created_at: new Date().toISOString(),
+                            updated_at: new Date().toISOString()
+                        })
+                        .select()
+                        .single();
+
+                    if (error) throw error;
+
+                    showToast('Booking request sent successfully!', 'success');
+                    bookingModal.classList.remove('active');
+                    bookingForm.reset();
+
+                } catch (error) {
+                    console.error('Error sending booking:', error);
+                    showToast('Failed to send booking request', 'error');
+                }
+            }
+
+            function showToast(message, type) {
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.style.animation = 'fadeOut 0.3s ease';
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+
+            // Global functions
+            window.openBookingModal = openBookingModal;
+            window.viewRoster = (agentId, agentName) => {
+                window.location.href = `agent-roster-view.html?id=${agentId}&name=${encodeURIComponent(agentName)}`;
+            };
+            window.viewEvents = (bookerId) => {
+                window.location.href = `booker-events-view.html?id=${bookerId}`;
+            };
+        });
+    </script>
+</body>
+</html>

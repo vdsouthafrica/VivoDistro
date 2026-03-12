@@ -1,0 +1,1728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quote Builder | Vivo Distro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        /* Professional Quote Builder Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0a0c14;
+            --bg-card: #12141c;
+            --bg-sidebar: #0e1018;
+            --border-light: rgba(255, 255, 255, 0.05);
+            --border-medium: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: #a0a8c0;
+            --text-muted: #6b7280;
+            --accent: #2b5f8a;
+            --accent-light: rgba(43, 95, 138, 0.15);
+            --success: #10b981;
+            --success-light: rgba(16, 185, 129, 0.1);
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --primary: #3b82f6;
+        }
+
+        body {
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .quote-header {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-medium);
+            padding: 1.5rem 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-btn {
+            background: transparent;
+            border: 1px solid var(--border-medium);
+            color: var(--text-secondary);
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            border-color: var(--primary);
+            color: var(--text-primary);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            letter-spacing: 1px;
+        }
+
+        .logo i {
+            color: var(--primary);
+            margin-right: 0.5rem;
+        }
+
+        /* Main Layout */
+        .quote-container {
+            display: flex;
+            height: calc(100vh - 80px);
+            overflow: hidden;
+        }
+
+        /* Left Panel - Fee Selection */
+        .fee-panel {
+            width: 450px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border-medium);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .fee-panel-header {
+            padding: 1.8rem 1.8rem 1rem;
+            border-bottom: 1px solid var(--border-medium);
+            flex-shrink: 0;
+        }
+
+        .fee-panel-header h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .fee-panel-header p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .fee-types-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        /* Custom scrollbar */
+        .fee-types-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .fee-types-container::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        .fee-types-container::-webkit-scrollbar-thumb {
+            background: var(--border-medium);
+            border-radius: 3px;
+        }
+
+        .fee-types-container::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        .fee-category {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 10px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .fee-category-header {
+            padding: 1.2rem 1.5rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid var(--border-light);
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .fee-category-header i {
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .fee-items {
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .fee-item-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .fee-item-card:hover {
+            background: var(--accent-light);
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .fee-item-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .fee-item-content {
+            flex: 1;
+        }
+
+        .fee-item-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.2rem;
+        }
+
+        .fee-item-desc {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        /* Right Panel - Quote Builder */
+        .quote-panel {
+            flex: 1;
+            background: var(--bg-dark);
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        .quote-panel::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .quote-panel::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        .quote-panel::-webkit-scrollbar-thumb {
+            background: var(--border-medium);
+            border-radius: 3px;
+        }
+
+        .quote-sheet {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            border-radius: 20px;
+            border: 1px solid var(--border-medium);
+            overflow: hidden;
+        }
+
+        .quote-header-section {
+            padding: 2rem;
+            background: linear-gradient(145deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 100%);
+            border-bottom: 1px solid var(--border-medium);
+        }
+
+        .quote-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .quote-info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .info-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .info-field label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-field input {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 0.8rem 1rem;
+            color: var(--text-primary);
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        .info-field input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .info-field input::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* Quote Items Table */
+        .quote-items-section {
+            padding: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .items-table th {
+            text-align: left;
+            padding: 1rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.9rem;
+            border-bottom: 1px solid var(--border-medium);
+        }
+
+        .items-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-light);
+            color: var(--text-primary);
+        }
+
+        .item-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 0.2rem;
+        }
+
+        .item-amount {
+            font-weight: 600;
+            color: var(--text-primary);
+            text-align: right;
+        }
+
+        .remove-item {
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.2s;
+            font-size: 1.1rem;
+        }
+
+        .remove-item:hover {
+            color: var(--danger);
+        }
+
+        .empty-items {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+            border: 2px dashed var(--border-light);
+            border-radius: 12px;
+        }
+
+        .empty-items i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Adjustments Section */
+        .adjustments-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 2rem;
+        }
+
+        .adjustment-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .adjustment-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .adjustment-input-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            align-items: center;
+        }
+
+        .adjustment-input-group input {
+            flex: 1;
+            padding: 0.6rem 0.8rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        .adjustment-input-group select {
+            width: 70px;
+            padding: 0.6rem;
+            background: #1e1e2a;
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+
+        .adjustment-input-group select option {
+            background: #1e1e2a;
+            color: var(--text-primary);
+        }
+
+        .adjustment-input-group button {
+            padding: 0.6rem 1rem;
+            background: var(--primary);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .adjustment-input-group button:hover {
+            background: #2563eb;
+        }
+
+        .adjustment-preview {
+            color: var(--success);
+            font-size: 0.9rem;
+            min-height: 1.5rem;
+        }
+
+        /* Quote Summary */
+        .quote-summary {
+            margin: 2rem;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            border: 1px solid var(--border-light);
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+
+        .summary-label {
+            color: var(--text-secondary);
+        }
+
+        .summary-value {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .grand-total {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px solid var(--border-medium);
+        }
+
+        /* Quote Actions */
+        .quote-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-medium);
+            border-radius: 8px;
+            padding: 0.8rem 1.5rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--text-primary);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .btn-success {
+            background: var(--success);
+            border: none;
+            border-radius: 8px;
+            padding: 0.8rem 2rem;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-success:hover {
+            background: #0d9668;
+            transform: translateY(-2px);
+        }
+
+        /* Fee Form Modal */
+        .fee-form-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .fee-form-modal.active {
+            display: flex;
+        }
+
+        .fee-form-content {
+            background: var(--bg-card);
+            border-radius: 16px;
+            width: 500px;
+            max-width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid var(--border-medium);
+        }
+
+        .fee-form-header {
+            padding: 1.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid var(--border-medium);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: var(--bg-card);
+            z-index: 10;
+        }
+
+        .fee-form-header h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .close-form-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .close-form-btn:hover {
+            border-color: var(--danger);
+            color: var(--danger);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .fee-form-body {
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .form-group select option {
+            background: #1e1e2a;
+            color: var(--text-primary);
+        }
+
+        .fee-preview {
+            background: var(--accent-light);
+            border: 1px solid rgba(43, 95, 138, 0.3);
+            border-radius: 10px;
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+        }
+
+        .fee-preview-label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .fee-preview-amount {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .fee-preview-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 0.8rem 1.5rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            border: none;
+            border-radius: 8px;
+            padding: 0.8rem 1.5rem;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        /* Preview Modal */
+        .preview-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .preview-modal.active {
+            display: flex;
+        }
+
+        .preview-content {
+            width: 900px;
+            max-width: 95%;
+            max-height: 90vh;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            color: #1a1a1a;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .preview-header {
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .preview-header h2 {
+            color: #0f172a;
+            font-size: 1.3rem;
+        }
+
+        .close-modal {
+            background: transparent;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #64748b;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+        }
+
+        .close-modal:hover {
+            background: #e2e8f0;
+        }
+
+        .preview-body {
+            padding: 2rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .preview-footer {
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        .btn-preview {
+            padding: 0.8rem 2rem;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-preview-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+        }
+
+        .btn-preview-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-preview-secondary {
+            background: transparent;
+            border: 1px solid #cbd5e1;
+            color: #475569;
+        }
+
+        .btn-preview-secondary:hover {
+            background: #f1f5f9;
+        }
+    </style>
+</head>
+<body>
+    <header class="quote-header">
+        <button class="back-btn" onclick="javascript:history.back()">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </button>
+        <div class="logo">
+            <i class="fas fa-file-invoice"></i> QUOTE BUILDER
+        </div>
+    </header>
+
+    <div class="quote-container">
+        <!-- Left Panel - Fee Selection -->
+        <div class="fee-panel">
+            <div class="fee-panel-header">
+                <h2>Add Services</h2>
+                <p>Select from the categories below to build your quote</p>
+            </div>
+            <div class="fee-types-container" id="feeTypesContainer"></div>
+        </div>
+
+        <!-- Right Panel - Quote Builder -->
+        <div class="quote-panel">
+            <div class="quote-sheet">
+                <div class="quote-header-section">
+                    <div class="quote-title" id="quoteTitleDisplay">New Quote</div>
+                    <div class="quote-info-grid">
+                        <div class="info-field">
+                            <label>Client Name</label>
+                            <input type="text" id="clientName" placeholder="e.g. John Smith">
+                        </div>
+                        <div class="info-field">
+                            <label>Client Email</label>
+                            <input type="email" id="clientEmail" placeholder="client@example.com">
+                        </div>
+                        <div class="info-field">
+                            <label>Event Name</label>
+                            <input type="text" id="eventName" placeholder="e.g. Summer Festival 2026">
+                        </div>
+                        <div class="info-field">
+                            <label>Event Date</label>
+                            <input type="date" id="eventDate">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quote-items-section">
+                    <div class="section-title">
+                        <i class="fas fa-list"></i> Fee Breakdown
+                    </div>
+                    <div id="itemsList" class="items-table-container"></div>
+                </div>
+
+                <div class="adjustments-section">
+                    <div class="adjustment-card">
+                        <div class="adjustment-title">
+                            <i class="fas fa-percent"></i> Discount
+                        </div>
+                        <div class="adjustment-input-group">
+                            <input type="number" id="discountInput" placeholder="0" min="0" max="100" step="0.1">
+                            <select id="discountType">
+                                <option value="percent">%</option>
+                                <option value="fixed">R</option>
+                            </select>
+                            <button id="applyDiscountBtn">Apply</button>
+                        </div>
+                        <div class="adjustment-preview" id="discountPreview"></div>
+                    </div>
+                    <div class="adjustment-card">
+                        <div class="adjustment-title">
+                            <i class="fas fa-hand-holding-usd"></i> Deposit
+                        </div>
+                        <div class="adjustment-input-group">
+                            <input type="number" id="depositInput" placeholder="0" min="0" step="0.01">
+                            <select id="depositType">
+                                <option value="percent">%</option>
+                                <option value="fixed">R</option>
+                            </select>
+                            <button id="applyDepositBtn">Apply</button>
+                        </div>
+                        <div class="adjustment-preview" id="depositPreview"></div>
+                    </div>
+                </div>
+
+                <div class="quote-summary">
+                    <div class="summary-row">
+                        <span class="summary-label">Subtotal</span>
+                        <span class="summary-value" id="subtotal">R 0.00</span>
+                    </div>
+                    <div class="summary-row" id="discountRow" style="display: none;">
+                        <span class="summary-label">Discount</span>
+                        <span class="summary-value" id="discountAmount">-R 0.00</span>
+                    </div>
+                    <div class="summary-row grand-total">
+                        <span class="summary-label">Total</span>
+                        <span class="summary-value" id="grandTotal">R 0.00</span>
+                    </div>
+                    <div class="summary-row" id="depositRow" style="display: none;">
+                        <span class="summary-label">Deposit Required</span>
+                        <span class="summary-value" id="depositAmount">R 0.00</span>
+                    </div>
+                </div>
+
+                <div class="quote-actions">
+                    <button class="btn-outline" id="clearQuoteBtn">
+                        <i class="fas fa-trash"></i> Clear
+                    </button>
+                    <button class="btn-outline" id="saveQuoteBtn">
+                        <i class="fas fa-save"></i> Save Draft
+                    </button>
+                    <button class="btn-success" id="previewQuoteBtn">
+                        <i class="fas fa-eye"></i> Preview Quote
+                    </button>
+                    <button class="btn-success" id="downloadQuoteBtn">
+                        <i class="fas fa-download"></i> Download PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fee Form Modal -->
+    <div class="fee-form-modal" id="feeFormModal">
+        <div class="fee-form-content">
+            <div class="fee-form-header">
+                <h3 id="feeFormTitle">Add Fee</h3>
+                <div class="close-form-btn" id="closeFeeForm">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+            <div class="fee-form-body" id="feeFormBody"></div>
+        </div>
+    </div>
+
+    <!-- Quote Preview Modal -->
+    <div class="preview-modal" id="previewModal">
+        <div class="preview-content" id="previewContent"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // ========== FEE TYPES CONFIGURATION ==========
+            const feeCategories = [
+                {
+                    name: 'Performance Services',
+                    icon: 'fas fa-microphone-alt',
+                    items: [
+                        {
+                            id: 'performance',
+                            name: 'Live Performance',
+                            description: 'Solo or band performance fee',
+                            fields: [
+                                { id: 'hours', label: 'Performance Hours', type: 'number', min: 0.5, step: 0.5, default: 2 },
+                                { id: 'rate', label: 'Hourly Rate (R)', type: 'number', min: 0, step: 100, default: 1000 }
+                            ],
+                            calculate: (data) => parseFloat(data.hours) * parseFloat(data.rate),
+                            format: (data, amount) => `Live Performance: ${data.hours}h × R${data.rate}/hour`
+                        },
+                        {
+                            id: 'dj',
+                            name: 'DJ Services',
+                            description: 'Professional DJ setup and performance',
+                            fields: [
+                                { id: 'hours', label: 'Performance Hours', type: 'number', min: 1, step: 1, default: 4 },
+                                { id: 'rate', label: 'Hourly Rate (R)', type: 'number', min: 0, step: 100, default: 800 }
+                            ],
+                            calculate: (data) => parseFloat(data.hours) * parseFloat(data.rate),
+                            format: (data, amount) => `DJ Services: ${data.hours}h × R${data.rate}/hour`
+                        }
+                    ]
+                },
+                {
+                    name: 'Equipment & Technical',
+                    icon: 'fas fa-volume-up',
+                    items: [
+                        {
+                            id: 'sound',
+                            name: 'Sound System',
+                            description: 'PA system, speakers, mixing console',
+                            fields: [
+                                { id: 'system', label: 'System Type', type: 'select', options: ['Small (up to 100)', 'Medium (100-300)', 'Large (300-1000)', 'Festival (1000+)'] },
+                                { id: 'days', label: 'Number of Days', type: 'number', min: 1, step: 1, default: 1 },
+                                { id: 'rate', label: 'Daily Rate (R)', type: 'number', min: 0, step: 500, default: 2500 }
+                            ],
+                            calculate: (data) => parseFloat(data.days) * parseFloat(data.rate),
+                            format: (data, amount) => `${data.system} Sound System: ${data.days} days × R${data.rate}/day`
+                        },
+                        {
+                            id: 'lighting',
+                            name: 'Lighting Package',
+                            description: 'Stage lighting, effects, control',
+                            fields: [
+                                { id: 'package', label: 'Package', type: 'select', options: ['Basic', 'Standard', 'Premium', 'Festival'] },
+                                { id: 'days', label: 'Number of Days', type: 'number', min: 1, step: 1, default: 1 },
+                                { id: 'rate', label: 'Daily Rate (R)', type: 'number', min: 0, step: 500, default: 1800 }
+                            ],
+                            calculate: (data) => parseFloat(data.days) * parseFloat(data.rate),
+                            format: (data, amount) => `${data.package} Lighting Package: ${data.days} days × R${data.rate}/day`
+                        },
+                        {
+                            id: 'backline',
+                            name: 'Backline Equipment',
+                            description: 'Drums, amps, keyboards, etc.',
+                            fields: [
+                                { id: 'type', label: 'Equipment Type', type: 'text', placeholder: 'e.g. Drum kit, Guitar amp' },
+                                { id: 'qty', label: 'Quantity', type: 'number', min: 1, step: 1, default: 1 },
+                                { id: 'rate', label: 'Rental Rate (R)', type: 'number', min: 0, step: 200, default: 500 }
+                            ],
+                            calculate: (data) => parseFloat(data.qty) * parseFloat(data.rate),
+                            format: (data, amount) => `${data.qty}x ${data.type} @ R${data.rate} each`
+                        }
+                    ]
+                },
+                {
+                    name: 'Travel & Logistics',
+                    icon: 'fas fa-truck',
+                    items: [
+                        {
+                            id: 'travel',
+                            name: 'Travel Distance',
+                            description: 'Round trip travel (auto ×2)',
+                            fields: [
+                                { id: 'distance', label: 'One-way Distance (km)', type: 'number', min: 0, step: 1, default: 50 },
+                                { id: 'rate', label: 'Rate per km (R)', type: 'number', min: 0, step: 0.5, default: 5 }
+                            ],
+                            calculate: (data) => parseFloat(data.distance) * parseFloat(data.rate) * 2,
+                            format: (data, amount) => `Travel: ${data.distance}km × R${data.rate}/km × 2 (round trip)`
+                        },
+                        {
+                            id: 'accommodation',
+                            name: 'Accommodation',
+                            description: 'Hotel or lodging',
+                            fields: [
+                                { id: 'nights', label: 'Number of Nights', type: 'number', min: 1, step: 1, default: 1 },
+                                { id: 'rooms', label: 'Rooms', type: 'number', min: 1, step: 1, default: 1 },
+                                { id: 'rate', label: 'Rate per night (R)', type: 'number', min: 0, step: 500, default: 1200 }
+                            ],
+                            calculate: (data) => parseFloat(data.nights) * parseFloat(data.rooms) * parseFloat(data.rate),
+                            format: (data, amount) => `Accommodation: ${data.nights} nights × ${data.rooms} rooms × R${data.rate}/night`
+                        },
+                        {
+                            id: 'perdiem',
+                            name: 'Per Diem',
+                            description: 'Daily food & expenses',
+                            fields: [
+                                { id: 'days', label: 'Number of Days', type: 'number', min: 1, step: 1, default: 1 },
+                                { id: 'people', label: 'People', type: 'number', min: 1, step: 1, default: 1 },
+                                { id: 'rate', label: 'Daily Rate per person (R)', type: 'number', min: 0, step: 100, default: 350 }
+                            ],
+                            calculate: (data) => parseFloat(data.days) * parseFloat(data.people) * parseFloat(data.rate),
+                            format: (data, amount) => `Per Diem: ${data.days} days × ${data.people} people × R${data.rate}/day`
+                        }
+                    ]
+                },
+                {
+                    name: 'Additional Services',
+                    icon: 'fas fa-plus-circle',
+                    items: [
+                        {
+                            id: 'setup',
+                            name: 'Setup & Rehearsal',
+                            description: 'Additional setup or rehearsal time',
+                            fields: [
+                                { id: 'hours', label: 'Hours', type: 'number', min: 0.5, step: 0.5, default: 2 },
+                                { id: 'rate', label: 'Hourly Rate (R)', type: 'number', min: 0, step: 100, default: 500 }
+                            ],
+                            calculate: (data) => parseFloat(data.hours) * parseFloat(data.rate),
+                            format: (data, amount) => `Setup/Rehearsal: ${data.hours}h × R${data.rate}/hour`
+                        },
+                        {
+                            id: 'flat',
+                            name: 'Flat Fee',
+                            description: 'Custom flat fee amount',
+                            fields: [
+                                { id: 'description', label: 'Description', type: 'text', placeholder: 'e.g. Special request' },
+                                { id: 'amount', label: 'Amount (R)', type: 'number', min: 0, step: 100, default: 1000 }
+                            ],
+                            calculate: (data) => parseFloat(data.amount),
+                            format: (data, amount) => `${data.description || 'Flat Fee'}: R${amount}`
+                        }
+                    ]
+                }
+            ];
+
+            // ========== STATE ==========
+            let quoteItems = [];
+            let discountValue = 0;
+            let discountType = 'percent';
+            let depositValue = 0;
+            let depositType = 'percent';
+            let subtotal = 0;
+            let discountAmount = 0;
+            let total = 0;
+            let depositAmount = 0;
+
+            // ========== INITIALIZATION ==========
+            loadFeeTypes();
+            loadSavedQuote();
+            updateQuoteDisplay();
+
+            // Load fee types into left panel
+            function loadFeeTypes() {
+                const container = document.getElementById('feeTypesContainer');
+                container.innerHTML = feeCategories.map(category => `
+                    <div class="fee-category">
+                        <div class="fee-category-header">
+                            <i class="${category.icon}"></i> ${category.name}
+                        </div>
+                        <div class="fee-items">
+                            ${category.items.map(item => `
+                                <div class="fee-item-card" data-item-id="${item.id}">
+                                    <div class="fee-item-icon">
+                                        <i class="${category.icon}"></i>
+                                    </div>
+                                    <div class="fee-item-content">
+                                        <div class="fee-item-title">${item.name}</div>
+                                        <div class="fee-item-desc">${item.description}</div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `).join('');
+
+                // Add click handlers using a simpler approach
+                document.querySelectorAll('.fee-item-card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        const categoryIndex = Array.from(document.querySelectorAll('.fee-category')).findIndex(cat => 
+                            cat.contains(card)
+                        );
+                        const itemIndex = Array.from(card.parentElement.children).indexOf(card);
+                        
+                        if (categoryIndex >= 0 && itemIndex >= 0) {
+                            const item = feeCategories[categoryIndex].items[itemIndex];
+                            openFeeForm(item);
+                        }
+                    });
+                });
+            }
+
+            // ========== FEE FORM ==========
+            const feeFormModal = document.getElementById('feeFormModal');
+            const feeFormBody = document.getElementById('feeFormBody');
+            const feeFormTitle = document.getElementById('feeFormTitle');
+            let currentFeeItem = null;
+
+            function openFeeForm(item) {
+                currentFeeItem = item;
+                feeFormTitle.textContent = `Add ${item.name}`;
+                
+                // Build form
+                let formHtml = '';
+                item.fields.forEach(field => {
+                    if (field.type === 'select') {
+                        formHtml += `
+                            <div class="form-group">
+                                <label>${field.label}</label>
+                                <select id="field_${field.id}" class="fee-field">
+                                    ${field.options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
+                                </select>
+                            </div>
+                        `;
+                    } else {
+                        formHtml += `
+                            <div class="form-group">
+                                <label>${field.label}</label>
+                                <input type="${field.type}" id="field_${field.id}" class="fee-field" 
+                                    value="${field.default || ''}" min="${field.min || 0}" step="${field.step || 1}"
+                                    placeholder="${field.placeholder || ''}">
+                            </div>
+                        `;
+                    }
+                });
+
+                // Add preview and actions
+                formHtml += `
+                    <div class="fee-preview">
+                        <div class="fee-preview-label">Calculated Amount:</div>
+                        <div class="fee-preview-amount" id="feePreviewAmount">R 0.00</div>
+                        <div class="fee-preview-description" id="feePreviewDesc"></div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn-secondary" id="cancelFeeBtn">Cancel</button>
+                        <button class="btn-primary" id="addFeeBtn">Add to Quote</button>
+                    </div>
+                `;
+
+                feeFormBody.innerHTML = formHtml;
+                feeFormModal.classList.add('active');
+
+                // Add input listeners for preview
+                document.querySelectorAll('.fee-field').forEach(field => {
+                    field.addEventListener('input', updateFeePreview);
+                    field.addEventListener('change', updateFeePreview);
+                });
+
+                // Initial preview
+                updateFeePreview();
+
+                // Cancel button
+                document.getElementById('cancelFeeBtn').addEventListener('click', closeFeeForm);
+
+                // Add button
+                document.getElementById('addFeeBtn').addEventListener('click', addFeeToQuote);
+            }
+
+            function updateFeePreview() {
+                if (!currentFeeItem) return;
+                
+                const data = {};
+                currentFeeItem.fields.forEach(field => {
+                    const input = document.getElementById(`field_${field.id}`);
+                    if (input) data[field.id] = input.value;
+                });
+
+                const amount = currentFeeItem.calculate(data);
+                document.getElementById('feePreviewAmount').textContent = `R ${amount.toFixed(2)}`;
+                
+                const description = currentFeeItem.format(data, amount.toFixed(2));
+                document.getElementById('feePreviewDesc').textContent = description;
+            }
+
+            function addFeeToQuote() {
+                if (!currentFeeItem) return;
+
+                const data = {};
+                currentFeeItem.fields.forEach(field => {
+                    const input = document.getElementById(`field_${field.id}`);
+                    if (input) data[field.id] = input.value;
+                });
+
+                const amount = currentFeeItem.calculate(data);
+                const description = currentFeeItem.format(data, amount.toFixed(2));
+
+                quoteItems.push({
+                    id: Date.now() + Math.random(),
+                    name: currentFeeItem.name,
+                    description: description,
+                    amount: amount
+                });
+
+                closeFeeForm();
+                updateQuoteDisplay();
+                saveQuoteToStorage();
+            }
+
+            function closeFeeForm() {
+                feeFormModal.classList.remove('active');
+                currentFeeItem = null;
+            }
+
+            document.getElementById('closeFeeForm').addEventListener('click', closeFeeForm);
+
+            // ========== QUOTE DISPLAY ==========
+            function updateQuoteDisplay() {
+                // Calculate subtotal
+                subtotal = quoteItems.reduce((sum, item) => sum + item.amount, 0);
+
+                // Calculate discount
+                if (discountType === 'percent') {
+                    discountAmount = (subtotal * discountValue) / 100;
+                } else {
+                    discountAmount = discountValue;
+                }
+                if (discountAmount > subtotal) discountAmount = subtotal;
+
+                // Calculate total after discount
+                total = subtotal - discountAmount;
+
+                // Calculate deposit
+                if (depositType === 'percent') {
+                    depositAmount = (total * depositValue) / 100;
+                } else {
+                    depositAmount = depositValue;
+                }
+                if (depositAmount > total) depositAmount = total;
+
+                // Update items list
+                const itemsList = document.getElementById('itemsList');
+                if (quoteItems.length === 0) {
+                    itemsList.innerHTML = '<div class="empty-items"><i class="fas fa-calculator"></i><p>No items added yet</p><small>Select from the left panel to add services</small></div>';
+                } else {
+                    itemsList.innerHTML = `
+                        <table class="items-table">
+                            <thead>
+                                <tr>
+                                    <th>Description</th>
+                                    <th style="text-align: right">Amount</th>
+                                    <th style="width: 50px"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${quoteItems.map(item => `
+                                    <tr>
+                                        <td>
+                                            <div>${item.name}</div>
+                                            <div class="item-description">${item.description}</div>
+                                        </td>
+                                        <td class="item-amount">R ${item.amount.toFixed(2)}</td>
+                                        <td style="text-align: center">
+                                            <i class="fas fa-times remove-item" data-id="${item.id}"></i>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+
+                    // Add remove handlers
+                    document.querySelectorAll('.remove-item').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            const id = e.target.dataset.id;
+                            quoteItems = quoteItems.filter(item => item.id != id);
+                            updateQuoteDisplay();
+                            saveQuoteToStorage();
+                        });
+                    });
+                }
+
+                // Update summary
+                document.getElementById('subtotal').textContent = `R ${subtotal.toFixed(2)}`;
+
+                const discountRow = document.getElementById('discountRow');
+                if (discountAmount > 0) {
+                    discountRow.style.display = 'flex';
+                    document.getElementById('discountAmount').textContent = `-R ${discountAmount.toFixed(2)}`;
+                } else {
+                    discountRow.style.display = 'none';
+                }
+
+                document.getElementById('grandTotal').textContent = `R ${total.toFixed(2)}`;
+
+                const depositRow = document.getElementById('depositRow');
+                if (depositAmount > 0) {
+                    depositRow.style.display = 'flex';
+                    document.getElementById('depositAmount').textContent = `R ${depositAmount.toFixed(2)}`;
+                } else {
+                    depositRow.style.display = 'none';
+                }
+
+                // Update quote title based on event name
+                const eventName = document.getElementById('eventName').value || 'New Quote';
+                document.getElementById('quoteTitleDisplay').textContent = eventName;
+            }
+
+            // ========== DISCOUNT & DEPOSIT ==========
+            document.getElementById('applyDiscountBtn').addEventListener('click', () => {
+                discountValue = parseFloat(document.getElementById('discountInput').value) || 0;
+                discountType = document.getElementById('discountType').value;
+                
+                const preview = document.getElementById('discountPreview');
+                if (discountValue > 0) {
+                    preview.textContent = discountType === 'percent' 
+                        ? `Discount: ${discountValue}%` 
+                        : `Discount: R ${discountValue.toFixed(2)}`;
+                } else {
+                    preview.textContent = '';
+                }
+                
+                updateQuoteDisplay();
+                saveQuoteToStorage();
+            });
+
+            document.getElementById('applyDepositBtn').addEventListener('click', () => {
+                depositValue = parseFloat(document.getElementById('depositInput').value) || 0;
+                depositType = document.getElementById('depositType').value;
+                
+                const preview = document.getElementById('depositPreview');
+                if (depositValue > 0) {
+                    preview.textContent = depositType === 'percent' 
+                        ? `Deposit: ${depositValue}%` 
+                        : `Deposit: R ${depositValue.toFixed(2)}`;
+                } else {
+                    preview.textContent = '';
+                }
+                
+                updateQuoteDisplay();
+                saveQuoteToStorage();
+            });
+
+            // ========== QUOTE ACTIONS ==========
+            document.getElementById('clearQuoteBtn').addEventListener('click', () => {
+                if (confirm('Clear all items?')) {
+                    quoteItems = [];
+                    discountValue = 0;
+                    discountType = 'percent';
+                    depositValue = 0;
+                    depositType = 'percent';
+                    document.getElementById('discountInput').value = '';
+                    document.getElementById('depositInput').value = '';
+                    document.getElementById('discountPreview').textContent = '';
+                    document.getElementById('depositPreview').textContent = '';
+                    updateQuoteDisplay();
+                    saveQuoteToStorage();
+                }
+            });
+
+            document.getElementById('saveQuoteBtn').addEventListener('click', () => {
+                saveQuoteToStorage();
+                alert('Quote saved as draft');
+            });
+
+            function saveQuoteToStorage() {
+                const quote = {
+                    items: quoteItems,
+                    discount: { value: discountValue, type: discountType },
+                    deposit: { value: depositValue, type: depositType },
+                    clientName: document.getElementById('clientName').value,
+                    clientEmail: document.getElementById('clientEmail').value,
+                    eventName: document.getElementById('eventName').value,
+                    eventDate: document.getElementById('eventDate').value
+                };
+                localStorage.setItem('professionalQuote', JSON.stringify(quote));
+            }
+
+            function loadSavedQuote() {
+                const saved = localStorage.getItem('professionalQuote');
+                if (saved) {
+                    try {
+                        const quote = JSON.parse(saved);
+                        quoteItems = quote.items || [];
+                        discountValue = quote.discount?.value || 0;
+                        discountType = quote.discount?.type || 'percent';
+                        depositValue = quote.deposit?.value || 0;
+                        depositType = quote.deposit?.type || 'percent';
+                        document.getElementById('clientName').value = quote.clientName || '';
+                        document.getElementById('clientEmail').value = quote.clientEmail || '';
+                        document.getElementById('eventName').value = quote.eventName || '';
+                        document.getElementById('eventDate').value = quote.eventDate || '';
+                        
+                        if (discountValue > 0) {
+                            document.getElementById('discountInput').value = discountValue;
+                            document.getElementById('discountType').value = discountType;
+                        }
+                        if (depositValue > 0) {
+                            document.getElementById('depositInput').value = depositValue;
+                            document.getElementById('depositType').value = depositType;
+                        }
+                        
+                        updateQuoteDisplay();
+                    } catch (e) {
+                        console.error('Error loading saved quote', e);
+                    }
+                }
+            }
+
+            // ========== PREVIEW MODAL ==========
+            const previewModal = document.getElementById('previewModal');
+            const previewContent = document.getElementById('previewContent');
+
+            document.getElementById('previewQuoteBtn').addEventListener('click', showPreview);
+
+            function showPreview() {
+                const clientName = document.getElementById('clientName').value || 'Client Name';
+                const clientEmail = document.getElementById('clientEmail').value || '';
+                const eventName = document.getElementById('eventName').value || 'Event Name';
+                const eventDate = document.getElementById('eventDate').value || new Date().toISOString().split('T')[0];
+                
+                const formattedDate = new Date(eventDate).toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+
+                // Generate items HTML
+                const itemsHtml = quoteItems.map(item => `
+                    <tr style="border-bottom: 1px solid #e5e7eb;">
+                        <td style="padding: 12px 0; color: #1a1a1a;">${item.description}</td>
+                        <td style="padding: 12px 0; text-align: right; color: #1a1a1a; font-weight: 500;">R ${item.amount.toFixed(2)}</td>
+                    </tr>
+                `).join('');
+
+                previewContent.innerHTML = `
+                    <div class="preview-header">
+                        <h2>${eventName}</h2>
+                        <button class="close-modal" onclick="document.getElementById('previewModal').classList.remove('active')">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="preview-body">
+                        <div style="max-width: 800px; margin: 0 auto;">
+                            <!-- Professional Quote Template -->
+                            <div style="text-align: center; margin-bottom: 40px;">
+                                <h1 style="color: #1a1a1a; font-size: 32px; margin-bottom: 10px;">${eventName}</h1>
+                                <p style="color: #666; font-size: 16px;">Professional Quote</p>
+                            </div>
+
+                            <div style="margin-bottom: 40px; padding: 25px; background: #f8fafc; border-radius: 10px;">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                                    <div>
+                                        <p style="color: #666; font-size: 14px; margin-bottom: 5px;">Prepared for:</p>
+                                        <p style="color: #1a1a1a; font-size: 18px; font-weight: 600;">${clientName}</p>
+                                        ${clientEmail ? `<p style="color: #666; font-size: 14px;">${clientEmail}</p>` : ''}
+                                    </div>
+                                    <div>
+                                        <p style="color: #666; font-size: 14px; margin-bottom: 5px;">Event Date:</p>
+                                        <p style="color: #1a1a1a; font-size: 18px; font-weight: 600;">${formattedDate}</p>
+                                        <p style="color: #666; font-size: 14px;">Quote ID: Q-${Date.now().toString().slice(-6)}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <table style="width: 100%; border-collapse: collapse; margin-bottom: 40px;">
+                                <thead>
+                                    <tr style="border-bottom: 2px solid #1a1a1a;">
+                                        <th style="text-align: left; padding: 15px 0; color: #1a1a1a;">Description</th>
+                                        <th style="text-align: right; padding: 15px 0; color: #1a1a1a;">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${itemsHtml || '<tr><td colspan="2" style="text-align: center; padding: 40px; color: #666;">No items added</td></tr>'}
+                                </tbody>
+                            </table>
+
+                            <div style="width: 300px; margin-left: auto; margin-bottom: 40px;">
+                                <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e5e7eb;">
+                                    <span style="color: #666;">Subtotal:</span>
+                                    <span style="color: #1a1a1a; font-weight: 500;">R ${subtotal.toFixed(2)}</span>
+                                </div>
+                                ${discountAmount > 0 ? `
+                                <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e5e7eb;">
+                                    <span style="color: #666;">Discount:</span>
+                                    <span style="color: #10b981;">-R ${discountAmount.toFixed(2)}</span>
+                                </div>
+                                ` : ''}
+                                <div style="display: flex; justify-content: space-between; padding: 15px 0; font-size: 18px;">
+                                    <span style="color: #1a1a1a; font-weight: 600;">Total:</span>
+                                    <span style="color: #1a1a1a; font-weight: 700;">R ${total.toFixed(2)}</span>
+                                </div>
+                                ${depositAmount > 0 ? `
+                                <div style="margin-top: 20px; padding: 15px; background: #f0f9ff; border-radius: 8px;">
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span style="color: #0284c7;">Deposit Required:</span>
+                                        <span style="color: #0284c7; font-weight: 600;">R ${depositAmount.toFixed(2)}</span>
+                                    </div>
+                                    <p style="color: #666; font-size: 13px; margin-top: 8px;">Remaining: R ${(total - depositAmount).toFixed(2)} due before event</p>
+                                </div>
+                                ` : ''}
+                            </div>
+
+                            <div style="margin-top: 40px; padding: 20px; background: #f8fafc; border-radius: 8px;">
+                                <p style="color: #666; font-size: 14px; margin-bottom: 10px;">Terms & Conditions:</p>
+                                <p style="color: #666; font-size: 13px; line-height: 1.6;">This quote is valid for 30 days. ${depositAmount > 0 ? 'A deposit of R ' + depositAmount.toFixed(2) + ' is required' : 'No deposit required'} to secure the booking. Full payment is due before the event date. Cancellation policy applies.</p>
+                            </div>
+
+                            <div style="margin-top: 40px; text-align: center; color: #999; font-size: 12px;">
+                                <p>Generated on ${new Date().toLocaleDateString()} · Professional Quote Builder</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="preview-footer">
+                        <button class="btn-preview btn-preview-secondary" onclick="document.getElementById('previewModal').classList.remove('active')">
+                            Close
+                        </button>
+                        <button class="btn-preview btn-preview-primary" id="downloadFromPreview">
+                            <i class="fas fa-download"></i> Download PDF
+                        </button>
+                    </div>
+                `;
+
+                previewModal.classList.add('active');
+
+                // Add download handler for preview
+                document.getElementById('downloadFromPreview')?.addEventListener('click', downloadPDF);
+            }
+
+            // Close preview when clicking outside
+            previewModal.addEventListener('click', (e) => {
+                if (e.target === previewModal) {
+                    previewModal.classList.remove('active');
+                }
+            });
+
+            // ========== PDF DOWNLOAD ==========
+            document.getElementById('downloadQuoteBtn').addEventListener('click', downloadPDF);
+
+            function downloadPDF() {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                const clientName = document.getElementById('clientName').value || 'Client';
+                const clientEmail = document.getElementById('clientEmail').value || '';
+                const eventName = document.getElementById('eventName').value || 'Quote';
+                const eventDate = document.getElementById('eventDate').value || new Date().toISOString().split('T')[0];
+                const formattedDate = new Date(eventDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+                let y = 20;
+
+                // Header
+                doc.setFontSize(28);
+                doc.setTextColor(20, 20, 30);
+                doc.setFont('helvetica', 'bold');
+                doc.text(eventName, 20, y);
+                y += 15;
+
+                // Quote details
+                doc.setFontSize(10);
+                doc.setTextColor(100, 100, 100);
+                doc.setFont('helvetica', 'normal');
+                doc.text(`Prepared for: ${clientName}`, 20, y);
+                y += 6;
+                if (clientEmail) {
+                    doc.text(`Email: ${clientEmail}`, 20, y);
+                    y += 6;
+                }
+                doc.text(`Event Date: ${formattedDate}`, 20, y);
+                y += 6;
+                doc.text(`Quote ID: Q-${Date.now().toString().slice(-6)}`, 20, y);
+                y += 6;
+                doc.text(`Generated: ${new Date().toLocaleDateString()}`, 20, y);
+                y += 15;
+
+                // Items table header
+                doc.setFillColor(240, 240, 245);
+                doc.rect(20, y-5, 170, 8, 'F');
+                doc.setFontSize(10);
+                doc.setTextColor(50, 50, 50);
+                doc.setFont('helvetica', 'bold');
+                doc.text('Description', 25, y);
+                doc.text('Amount', 160, y, { align: 'right' });
+                y += 8;
+
+                // Items
+                doc.setFont('helvetica', 'normal');
+                doc.setTextColor(50, 50, 50);
+                
+                if (quoteItems.length === 0) {
+                    doc.text('No items added', 25, y);
+                    y += 8;
+                } else {
+                    quoteItems.forEach((item, index) => {
+                        if (y > 250) {
+                            doc.addPage();
+                            y = 20;
+                        }
+                        
+                        // Alternate row background
+                        if (index % 2 === 0) {
+                            doc.setFillColor(248, 249, 250);
+                            doc.rect(20, y-4, 170, 8, 'F');
+                        }
+                        
+                        // Split long descriptions
+                        const desc = item.description;
+                        if (desc.length > 60) {
+                            doc.text(desc.substring(0, 57) + '...', 25, y);
+                        } else {
+                            doc.text(desc, 25, y);
+                        }
+                        doc.text(`R ${item.amount.toFixed(2)}`, 160, y, { align: 'right' });
+                        y += 8;
+                    });
+                }
+
+                y += 5;
+
+                // Summary
+                if (y > 240) {
+                    doc.addPage();
+                    y = 20;
+                }
+
+                doc.setFillColor(240, 240, 245);
+                doc.rect(20, y-5, 170, 35, 'F');
+                
+                doc.setFont('helvetica', 'normal');
+                doc.text('Subtotal:', 25, y);
+                doc.text(`R ${subtotal.toFixed(2)}`, 160, y, { align: 'right' });
+                y += 7;
+
+                if (discountAmount > 0) {
+                    doc.text('Discount:', 25, y);
+                    doc.text(`-R ${discountAmount.toFixed(2)}`, 160, y, { align: 'right' });
+                    y += 7;
+                }
+
+                doc.setFont('helvetica', 'bold');
+                doc.text('TOTAL:', 25, y);
+                doc.text(`R ${total.toFixed(2)}`, 160, y, { align: 'right' });
+                y += 7;
+
+                if (depositAmount > 0) {
+                    doc.setFont('helvetica', 'normal');
+                    doc.setTextColor(0, 100, 200);
+                    doc.text(`Deposit required: R ${depositAmount.toFixed(2)}`, 25, y);
+                    y += 5;
+                    doc.text(`Balance due: R ${(total - depositAmount).toFixed(2)}`, 25, y);
+                }
+
+                // Footer
+                y = 270;
+                doc.setFontSize(8);
+                doc.setTextColor(150, 150, 150);
+                doc.text('This is a professional quote generated by Vivo Distro', 20, y);
+                doc.text(`Page 1 of 1`, 160, y, { align: 'right' });
+
+                // Generate filename
+                const filename = eventName.replace(/\s+/g, '_').toLowerCase() + '_quote.pdf';
+                doc.save(filename);
+            }
+        });
+    </script>
+</body>
+</html>

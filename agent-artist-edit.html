@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Artist | Agent</title>
+    <link rel="stylesheet" href="style.css">
+     <link rel="stylesheet" href="responsive.css"> <!-- YOUR NEW RESPONSIVE CSS -->
+    <link rel="stylesheet" href="edit.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <script src="global-fullscreen.js" defer></script>
+</head>
+<body>
+    <header class="edit-header">
+        <a href="agent-artists.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i> <span>Back to Artists</span>
+        </a>
+        <div class="logo">
+            <i class="fas fa-user-edit"></i> <span>EDIT <span class="logo-highlight">ARTIST PROFILE</span></span>
+        </div>
+    </header>
+
+    <main class="edit-main">
+        <div class="edit-container" style="grid-template-columns: 1fr;">
+            <div class="form-column" style="max-width: 800px; margin: 0 auto;">
+                <div class="edit-form-container">
+                    <h2><i class="fas fa-edit"></i> Edit Artist Profile</h2>
+                    
+                    <form id="editArtistForm">
+                        <!-- Basic Info -->
+                        <div class="form-section">
+                            <h3><span class="section-number">01</span> Basic Information</h3>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Profile Picture</label>
+                                <div class="image-upload">
+                                    <div class="image-preview" id="editAvatarPreview">
+                                        <i class="fas fa-user"></i>
+                                        <div class="upload-overlay">
+                                            <i class="fas fa-camera"></i> <span>Change Photo</span>
+                                        </div>
+                                    </div>
+                                    <input type="file" id="editAvatar" accept="image/*" hidden>
+                                    <p class="upload-note">Square image, max 2MB</p>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Stage Name *</label>
+                                <input type="text" id="editName" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Location *</label>
+                                <input type="text" id="editLocation" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Bio</label>
+                                <textarea id="editBio" rows="4"></textarea>
+                                <p class="char-count"><span id="bioChars">0</span>/500</p>
+                            </div>
+                        </div>
+
+                        <!-- Performer Type -->
+                        <div class="form-section">
+                            <h3><span class="section-number">02</span> Performer Type</h3>
+                            <div class="form-group">
+                                <p class="form-description">Select all that apply</p>
+                                <div class="type-checkboxes" id="typeContainer">
+                                    <label class="type-checkbox"><input type="checkbox" value="Solo Artist"><span class="checkmark"></span><span class="type-label">Solo Artist</span></label>
+                                    <label class="type-checkbox"><input type="checkbox" value="Duo"><span class="checkmark"></span><span class="type-label">Duo</span></label>
+                                    <label class="type-checkbox"><input type="checkbox" value="Band"><span class="checkmark"></span><span class="type-label">Band</span></label>
+                                    <label class="type-checkbox"><input type="checkbox" value="DJ"><span class="checkmark"></span><span class="type-label">DJ</span></label>
+                                    <label class="type-checkbox"><input type="checkbox" value="Sound Engineer"><span class="checkmark"></span><span class="type-label">Sound Engineer</span></label>
+                                    <label class="type-checkbox"><input type="checkbox" value="Music Producer"><span class="checkmark"></span><span class="type-label">Music Producer</span></label>
+                                    <label class="type-checkbox"><input type="checkbox" value="Songwriter"><span class="checkmark"></span><span class="type-label">Songwriter</span></label>
+                                    <label class="type-checkbox"><input type="checkbox" value="Instrumentalist"><span class="checkmark"></span><span class="type-label">Instrumentalist</span></label>
+                                </div>
+                            </div>
+
+                            <!-- Instruments (shown if Instrumentalist) -->
+                            <div class="instrument-container" id="instrumentContainer" style="display: none;">
+                                <label class="form-label">Instruments</label>
+                                <input type="text" id="instrumentInput" placeholder="Type and press Enter">
+                                <div class="selected-instruments" id="selectedInstruments"></div>
+                                <p class="input-hint">Type an instrument and press Enter to add</p>
+                            </div>
+                        </div>
+
+                        <!-- Contact Info -->
+                        <div class="form-section">
+                            <h3><span class="section-number">03</span> Contact Information</h3>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Phone</label>
+                                <input type="tel" id="editPhone">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Email</label>
+                                <input type="email" id="editEmail">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Website</label>
+                                <input type="url" id="editWebsite">
+                            </div>
+                        </div>
+
+                        <!-- Social Media -->
+                        <div class="form-section">
+                            <h3><span class="section-number">04</span> Social Media</h3>
+                            <div class="form-group">
+                                <p class="form-description">Add social media profiles</p>
+                                <div class="social-inputs" id="socialInputs"></div>
+                                <button type="button" class="add-social-btn" id="addSocialBtn">
+                                    <i class="fas fa-plus"></i> Add Social Media
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="form-actions">
+                            <button type="button" class="btn-cancel" onclick="window.location.href='agent-artists.html'">Cancel</button>
+                            <button type="submit" class="btn-save"><i class="fas fa-save"></i> Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const supabaseUrl = 'https://msjinuumxmezrijqemmp.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zamludXVteG1lenJpanFlbW1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwOTAyNjMsImV4cCI6MjA4NzY2NjI2M30.ic50fSC7MQfhSkhfE5E8B0R5-BGCQStMRZNHiy6Zakw';
+            const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+            // Get artist ID from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const artistId = urlParams.get('id');
+            
+            if (!artistId) {
+                alert('No artist selected');
+                window.location.href = 'agent-artists.html';
+                return;
+            }
+
+            let selectedInstruments = [];
+            let currentArtist = null;
+            let profileImageData = null;
+
+            // Load artist data
+            loadArtist();
+
+            async function loadArtist() {
+                const { data: artist, error } = await supabaseClient
+                    .from('roster_artists')
+                    .select('*')
+                    .eq('id', artistId)
+                    .single();
+
+                if (error || !artist) {
+                    alert('Artist not found');
+                    window.location.href = 'agent-artists.html';
+                    return;
+                }
+
+                currentArtist = artist;
+                
+                // Fill form
+                document.getElementById('editName').value = artist.name || '';
+                document.getElementById('editLocation').value = artist.location || '';
+                document.getElementById('editBio').value = artist.bio || '';
+                document.getElementById('editPhone').value = artist.phone || '';
+                document.getElementById('editEmail').value = artist.email || '';
+                document.getElementById('editWebsite').value = artist.website || '';
+
+                // Set types
+                if (artist.types) {
+                    document.querySelectorAll('#typeContainer input[type="checkbox"]').forEach(cb => {
+                        cb.checked = artist.types.includes(cb.value);
+                        if (cb.value === 'Instrumentalist' && cb.checked) {
+                            document.getElementById('instrumentContainer').style.display = 'block';
+                        }
+                    });
+                }
+
+                // Set instruments
+                if (artist.instruments) {
+                    selectedInstruments = artist.instruments;
+                    updateInstrumentsDisplay();
+                }
+
+                // Set profile picture
+                if (artist.image_url) {
+                    const preview = document.getElementById('editAvatarPreview');
+                    preview.innerHTML = `
+                        <img src="${artist.image_url}" style="width:100%; height:100%; object-fit:cover;">
+                        <div class="upload-overlay">
+                            <i class="fas fa-camera"></i> <span>Change Photo</span>
+                        </div>
+                    `;
+                    profileImageData = artist.image_url;
+                }
+
+                // Set social links
+                if (artist.social_links) {
+                    artist.social_links.forEach(link => addSocialInput(link.platform, link.url));
+                }
+
+                updateBioCharCount();
+            }
+
+            // Profile picture upload
+            const avatarPreview = document.getElementById('editAvatarPreview');
+            const avatarInput = document.getElementById('editAvatar');
+            
+            avatarPreview.addEventListener('click', () => avatarInput.click());
+            
+            avatarInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                if (!file.type.match('image.*')) {
+                    alert('Please select an image file');
+                    return;
+                }
+
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('File size must be less than 2MB');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    avatarPreview.innerHTML = `
+                        <img src="${e.target.result}" style="width:100%; height:100%; object-fit:cover;">
+                        <div class="upload-overlay">
+                            <i class="fas fa-camera"></i> <span>Change Photo</span>
+                        </div>
+                    `;
+                    profileImageData = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+
+            // Bio counter
+            const bioField = document.getElementById('editBio');
+            bioField.addEventListener('input', updateBioCharCount);
+
+            function updateBioCharCount() {
+                const count = bioField.value.length;
+                document.getElementById('bioChars').textContent = count;
+            }
+
+            // Type selection - show/hide instruments
+            document.querySelectorAll('#typeContainer input[type="checkbox"]').forEach(cb => {
+                cb.addEventListener('change', function() {
+                    if (this.value === 'Instrumentalist') {
+                        document.getElementById('instrumentContainer').style.display = 
+                            this.checked ? 'block' : 'none';
+                    }
+                });
+            });
+
+            // Instrument input
+            const instrumentInput = document.getElementById('instrumentInput');
+            instrumentInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const instrument = this.value.trim();
+                    if (instrument && !selectedInstruments.includes(instrument)) {
+                        selectedInstruments.push(instrument);
+                        this.value = '';
+                        updateInstrumentsDisplay();
+                    }
+                }
+            });
+
+            function updateInstrumentsDisplay() {
+                const container = document.getElementById('selectedInstruments');
+                container.innerHTML = selectedInstruments.map((inst, index) => 
+                    `<span class="instrument-tag">${inst} <button onclick="removeInstrument(${index})">×</button></span>`
+                ).join('');
+            }
+
+            window.removeInstrument = function(index) {
+                selectedInstruments.splice(index, 1);
+                updateInstrumentsDisplay();
+            };
+
+            // Social inputs
+            document.getElementById('addSocialBtn').addEventListener('click', () => addSocialInput());
+
+            function addSocialInput(platform = '', url = '') {
+                const container = document.getElementById('socialInputs');
+                const row = document.createElement('div');
+                row.className = 'social-input-row';
+
+                const select = document.createElement('select');
+                select.className = 'social-select';
+                select.innerHTML = `
+                    <option value="">Select Platform</option>
+                    <option value="instagram" ${platform==='instagram'?'selected':''}>Instagram</option>
+                    <option value="facebook" ${platform==='facebook'?'selected':''}>Facebook</option>
+                    <option value="twitter" ${platform==='twitter'?'selected':''}>Twitter</option>
+                    <option value="tiktok" ${platform==='tiktok'?'selected':''}>TikTok</option>
+                    <option value="youtube" ${platform==='youtube'?'selected':''}>YouTube</option>
+                    <option value="spotify" ${platform==='spotify'?'selected':''}>Spotify</option>
+                    <option value="soundcloud" ${platform==='soundcloud'?'selected':''}>SoundCloud</option>
+                    <option value="website" ${platform==='website'?'selected':''}>Website</option>
+                `;
+
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'social-url';
+                input.placeholder = 'URL';
+                input.value = url;
+
+                const removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.className = 'remove-social';
+                removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+                removeBtn.onclick = () => row.remove();
+
+                row.appendChild(select);
+                row.appendChild(input);
+                row.appendChild(removeBtn);
+                container.appendChild(row);
+            }
+
+            // Form submission
+            document.getElementById('editArtistForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const name = document.getElementById('editName').value.trim();
+                const location = document.getElementById('editLocation').value.trim();
+
+                if (!name || !location) {
+                    alert('Name and location are required');
+                    return;
+                }
+
+                const types = [];
+                document.querySelectorAll('#typeContainer input[type="checkbox"]:checked').forEach(cb => {
+                    types.push(cb.value);
+                });
+
+                if (types.length === 0) {
+                    alert('Select at least one performer type');
+                    return;
+                }
+
+                // Get social links
+                const socialLinks = [];
+                document.querySelectorAll('.social-input-row').forEach(row => {
+                    const select = row.querySelector('select');
+                    const input = row.querySelector('input');
+                    if (select?.value && input?.value) {
+                        socialLinks.push({ platform: select.value, url: input.value });
+                    }
+                });
+
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+                submitBtn.disabled = true;
+
+                const { error } = await supabaseClient
+                    .from('roster_artists')
+                    .update({
+                        name,
+                        location,
+                        types,
+                        instruments: selectedInstruments,
+                        bio: bioField.value,
+                        phone: document.getElementById('editPhone').value,
+                        email: document.getElementById('editEmail').value,
+                        website: document.getElementById('editWebsite').value,
+                        image_url: profileImageData,
+                        social_links: socialLinks,
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', artistId);
+
+                if (error) {
+                    alert('Error: ' + error.message);
+                    submitBtn.innerHTML = 'Save Changes';
+                    submitBtn.disabled = false;
+                } else {
+                    alert('Artist updated!');
+                    window.location.href = 'agent-artists.html';
+                }
+            });
+
+            // Add CSS for instrument tags
+            const style = document.createElement('style');
+            style.textContent = `
+                .instrument-tag {
+                    display: inline-block;
+                    background: rgba(108,99,255,0.15);
+                    color: #6C63FF;
+                    padding: 5px 12px;
+                    border-radius: 20px;
+                    margin: 0 5px 5px 0;
+                    font-size: 0.9rem;
+                }
+                .instrument-tag button {
+                    background: none;
+                    border: none;
+                    color: #6C63FF;
+                    margin-left: 5px;
+                    cursor: pointer;
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard | Vivo Distro</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="responsive.css">
+    <link rel="stylesheet" href="hub.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons@6.6.6/css/flag-icons.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <script src="global-fullscreen.js" defer></script>
+    <style>
+        /* Dropdown & badge styles */
+        .nav-item.dropdown-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .dropdown-toggle .chevron {
+            transition: transform 0.3s;
+            font-size: 0.8rem;
+        }
+        .dropdown-toggle.open .chevron {
+            transform: rotate(180deg);
+        }
+        .dropdown-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding-left: 1.5rem;
+        }
+        .dropdown-menu.show {
+            max-height: 200px; /* enough for 4-5 items */
+        }
+        .dropdown-menu .nav-item {
+            padding-left: 2.5rem !important;
+            font-size: 0.9rem;
+        }
+        .calendar-days-badge {
+            background: #4f46e5;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            margin-left: 0.5rem;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        /* Settings panels */
+        .settings-panel {
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            margin: 0.5rem 0 0.5rem 2rem;
+            padding: 1rem;
+            display: none;
+            color: white;
+        }
+        .settings-panel.show {
+            display: block;
+        }
+        .theme-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin: 0.5rem 0;
+        }
+        .theme-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            background: transparent;
+            color: inherit;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .theme-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        .placement-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+        .placement-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            background: transparent;
+            color: inherit;
+            cursor: pointer;
+        }
+        /* Slideshow background */
+        body.slideshow-bg {
+            background-size: cover;
+            background-position: center;
+            transition: background-image 1s ease-in-out;
+        }
+        /* Navbar placement classes (basic) */
+        body.nav-left .hub-sidebar { order: 0; }
+        body.nav-right .hub-sidebar { order: 2; }
+        body.nav-top .hub-sidebar { width: 100%; height: auto; flex-direction: row; }
+        body.nav-bottom .hub-sidebar { order: 2; width: 100%; height: auto; flex-direction: row; }
+        /* Add more CSS as needed */
+    </style>
+</head>
+<body>
+    
+    <!-- Sidebar -->
+    <aside class="hub-sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fas fa-music"></i>
+                <span>VIVO <span class="logo-highlight">DISTRO</span></span>
+            </div>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="browse.html" class="nav-item">
+                <i class="fas fa-search"></i>
+                <span>Browse</span>
+            </a>
+            <a href="performer-edit.html" class="nav-item">
+                <i class="fas fa-edit"></i>
+                <span>Edit Profile</span>
+            </a>
+
+            <!-- BOOKINGS (placed above Tools) -->
+            <a href="bookings.html" class="nav-item">
+                <i class="fas fa-calendar-check"></i>
+                <span>Bookings</span>
+            </a>
+            
+            <!-- TOOLS DROPDOWN (with Calendar badge) -->
+            <div class="dropdown-container">
+                <a href="#" class="nav-item dropdown-toggle" id="toolsDropdownToggle">
+                    <span style="display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-tools"></i>
+                        <span>Tools</span>
+                    </span>
+                    <i class="fas fa-chevron-down chevron"></i>
+                </a>
+                <div class="dropdown-menu" id="toolsDropdownMenu">
+                    <a href="calculator.html" class="nav-item dropdown-item">
+                        <i class="fas fa-calculator"></i>
+                        <span>Vivo Calculator</span>
+                    </a>
+                    <a href="calendar.html" class="nav-item dropdown-item" id="calendarNavItem">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>
+                            Vivo Calendar
+                            <span class="calendar-days-badge" id="calendarDaysBadge" style="display: none;"></span>
+                        </span>
+                    </a>
+                    <a href="techlist.html" class="nav-item dropdown-item">
+                        <i class="fas fa-microchip"></i>
+                        <span>TechList</span>
+                    </a>
+                    <a href="checklist.html" class="nav-item dropdown-item">
+                        <i class="fas fa-check-square"></i>
+                        <span>CheckList</span>
+                    </a>
+                </div>
+            </div>
+            
+           
+                <!-- Navbar Placement Panel (hidden by default) -->
+                <div class="settings-panel" id="placementPanel">
+                    <h4 style="margin-top:0;">Navbar Position</h4>
+                    <div class="placement-buttons">
+                        <button class="placement-btn" data-placement="left">Left</button>
+                        <button class="placement-btn" data-placement="top">Top</button>
+                        <button class="placement-btn" data-placement="bottom">Bottom</button>
+                        <button class="placement-btn" data-placement="right">Right</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="user-avatar" id="userAvatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-info">
+                    <h4 id="userName">Stage Name</h4>
+                    <p id="userRole">Performer</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="hub-main">
+        <header class="hub-header">
+            <!-- Empty header as requested -->
+        </header>
+
+        <div class="dashboard-content">
+            <!-- Profile Card (same as before) -->
+            <div class="profile-card extended-profile" id="profileCard">
+                <div class="profile-header">
+                    <h2><i class="fas fa-user"></i> Your Profile</h2>
+                </div>
+                <div class="country-flag-badge" id="countryFlagBadge" style="display: none;">
+                    <span class="fi" id="countryFlag"></span>
+                    <span class="country-name" id="countryName"></span>
+                </div>
+                <div class="profile-content extended-content">
+                    <div class="profile-avatar-large" id="profileAvatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="profile-details extended-details">
+                        <h3 id="profileName">Stage Name</h3>
+                        <p class="profile-location" id="profileLocation">
+                            <i class="fas fa-map-marker-alt"></i> Location
+                        </p>
+                        <div class="profile-bio" id="profileBio"></div>
+                        <div class="profile-types" id="profileTypes"></div>
+                        <div class="profile-instruments" id="profileInstruments" style="display: none;"></div>
+                        <div class="profile-contact" id="profileContact"></div>
+                        <div class="profile-social" id="profileSocial"></div>
+                        <div class="profile-stats">
+                            <div class="stat">
+                                <div class="stat-number" id="fansCount">0</div>
+                                <div class="stat-label">FANS</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="push-service.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            const supabaseUrl = 'https://msjinuumxmezrijqemmp.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zamludXVteG1lenJpanFlbW1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwOTAyNjMsImV4cCI6MjA4NzY2NjI2M30.ic50fSC7MQfhSkhfE5E8B0R5-BGCQStMRZNHiy6Zakw';
+            const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+            if (typeof PushService !== 'undefined') {
+                PushService.init(supabaseClient);
+            }
+
+            await loadProfile();
+
+            async function loadProfile() {
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                if (!user) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                const { data: profile, error } = await supabaseClient
+                    .from('performers')
+                    .select('*')
+                    .eq('auth_id', user.id)
+                    .single();
+                if (error) {
+                    if (error.code === 'PGRST116') {
+                        window.location.href = 'performer-setup.html';
+                    }
+                    return;
+                }
+                if (profile) {
+                    updateDashboard(profile);
+                    checkUpcomingEvent(profile.id);
+                }
+            }
+
+            function updateDashboard(profile) {
+                // (keep existing updateDashboard code as before)
+                updateCountryFlag(profile.country_code, profile.country);
+                const avatarElements = document.querySelectorAll('#userAvatar, #profileAvatar');
+                avatarElements.forEach(element => {
+                    if (profile.image_url) {
+                        element.innerHTML = `<img src="${profile.image_url}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">`;
+                    } else {
+                        element.innerHTML = '<i class="fas fa-user"></i>';
+                    }
+                });
+                const nameElements = document.querySelectorAll('#userName, #profileName');
+                nameElements.forEach(element => { if (element) element.textContent = profile.name || 'Stage Name'; });
+                document.getElementById('profileLocation').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${profile.location || 'Location not set'}`;
+                document.getElementById('userRole').textContent = 'Performer';
+                const bioElement = document.getElementById('profileBio');
+                if (bioElement) {
+                    if (profile.bio && profile.bio.trim()) {
+                        bioElement.innerHTML = `<p>${profile.bio}</p>`;
+                        bioElement.classList.remove('empty');
+                    } else {
+                        bioElement.innerHTML = '<p class="bio-placeholder">Add a bio to tell people about yourself...</p>';
+                        bioElement.classList.add('empty');
+                    }
+                }
+                const typesElement = document.getElementById('profileTypes');
+                if (typesElement && profile.types && profile.types.length > 0) {
+                    typesElement.innerHTML = profile.types.map(type => `<span class="type-badge">${type}</span>`).join('');
+                } else { typesElement.innerHTML = ''; }
+                const instrumentsElement = document.getElementById('profileInstruments');
+                if (instrumentsElement) {
+                    if (profile.instruments && profile.instruments.length > 0) {
+                        instrumentsElement.style.display = 'block';
+                        instrumentsElement.innerHTML = `
+                            <div class="instruments-section">
+                                <div class="section-header"><i class="fas fa-guitar"></i><h4>Instruments</h4></div>
+                                <div class="instruments-tags">${profile.instruments.map(i => `<span class="instrument-tag">${i}</span>`).join('')}</div>
+                            </div>`;
+                    } else { instrumentsElement.style.display = 'none'; }
+                }
+                const contactElement = document.getElementById('profileContact');
+                if (contactElement) {
+                    const contactHTML = [];
+                    if (profile.phone) contactHTML.push(`<div class="contact-card"><i class="fas fa-phone-alt"></i><span>${profile.phone}</span></div>`);
+                    if (profile.email) contactHTML.push(`<div class="contact-card"><i class="fas fa-envelope"></i><span>${profile.email}</span></div>`);
+                    if (profile.website) {
+                        const displayWebsite = profile.website.replace('https://', '').replace('http://', '');
+                        contactHTML.push(`<div class="contact-card"><i class="fas fa-globe"></i><a href="${profile.website}" target="_blank">${displayWebsite}</a></div>`);
+                    }
+                    contactElement.innerHTML = contactHTML.length ? `<div class="contact-grid">${contactHTML.join('')}</div>` : '';
+                }
+                const socialElement = document.getElementById('profileSocial');
+                if (socialElement) {
+                    if (profile.social_links && profile.social_links.length > 0) {
+                        socialElement.innerHTML = `
+                            <div class="social-section">
+                                <div class="section-header"><i class="fas fa-share-alt"></i><h4>Connect</h4></div>
+                                <div class="social-icons-grid">
+                                    ${profile.social_links.map(link => {
+                                        const platform = getSocialPlatform(link.platform);
+                                        if (!platform) return '';
+                                        if (link.platform === 'whatsapp') {
+                                            const number = link.url.replace(/\D/g, '');
+                                            return `<div class="social-icon-copy" onclick="copyToClipboard('${number}', 'WhatsApp number')" style="background: ${platform.color}15; cursor: pointer;" title="Click to copy WhatsApp number"><i class="${platform.icon}" style="color: ${platform.color};"></i><span class="copy-tooltip">Copy</span></div>`;
+                                        } else if (link.platform === 'email') {
+                                            const email = link.url.replace('mailto:', '');
+                                            return `<div class="social-icon-copy" onclick="copyToClipboard('${email}', 'Email address')" style="background: ${platform.color}15; cursor: pointer;" title="Click to copy email address"><i class="${platform.icon}" style="color: ${platform.color};"></i><span class="copy-tooltip">Copy</span></div>`;
+                                        } else {
+                                            return `<a href="${link.url}" target="_blank" class="social-icon-link" style="background: ${platform.color}15;" title="${platform.name}"><i class="${platform.icon}" style="color: ${platform.color};"></i></a>`;
+                                        }
+                                    }).join('')}
+                                </div>
+                            </div>`;
+                    } else { socialElement.innerHTML = ''; }
+                }
+                document.getElementById('fansCount').textContent = profile.fans || '0';
+            }
+
+            function updateCountryFlag(countryCode, countryName) {
+                const flagBadge = document.getElementById('countryFlagBadge');
+                const flagElement = document.getElementById('countryFlag');
+                const nameElement = document.getElementById('countryName');
+                if (countryCode) {
+                    const code = countryCode.toLowerCase();
+                    flagElement.className = `fi fi-${code} fi-circle`;
+                    nameElement.textContent = countryName || '';
+                    flagBadge.style.display = 'flex';
+                } else { flagBadge.style.display = 'none'; }
+            }
+
+            function getSocialPlatform(platformKey) {
+                const socialPlatforms = {
+                    'whatsapp': { name: 'WhatsApp', icon: 'fab fa-whatsapp', color: '#25D366' },
+                    'email': { name: 'Email', icon: 'fas fa-envelope', color: '#EA4335' },
+                    'instagram': { name: 'Instagram', icon: 'fab fa-instagram', color: '#E4405F' },
+                    'facebook': { name: 'Facebook', icon: 'fab fa-facebook', color: '#1877F2' },
+                    'twitter': { name: 'Twitter', icon: 'fab fa-twitter', color: '#1DA1F2' },
+                    'tiktok': { name: 'TikTok', icon: 'fab fa-tiktok', color: '#000000' },
+                    'youtube': { name: 'YouTube', icon: 'fab fa-youtube', color: '#FF0000' },
+                    'spotify': { name: 'Spotify', icon: 'fab fa-spotify', color: '#1DB954' },
+                    'soundcloud': { name: 'SoundCloud', icon: 'fab fa-soundcloud', color: '#FF3300' },
+                    'website': { name: 'Website', icon: 'fas fa-globe', color: '#6C63FF' }
+                };
+                return socialPlatforms[platformKey];
+            }
+
+            window.copyToClipboard = function(text, type) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast(`${type} copied to clipboard!`, 'success');
+                }).catch(() => {
+                    showToast('Failed to copy', 'error');
+                });
+            };
+
+            function showToast(message, type) {
+                const toast = document.createElement('div');
+                toast.textContent = message;
+                toast.style.cssText = `
+                    position: fixed; top: 20px; right: 20px; padding: 15px 25px;
+                    background: ${type === 'success' ? '#48BB78' : '#F56565'};
+                    color: white; border-radius: 10px; z-index: 10001;
+                    animation: slideInRight 0.3s ease; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                `;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
+            }
+
+            async function checkUpcomingEvent(performerId) {
+                if (!performerId) return;
+                try {
+                    const today = new Date().toISOString().split('T')[0];
+                    const { data: gigs, error } = await supabaseClient
+                        .from('gigs')
+                        .select('event_date')
+                        .eq('performer_id', performerId)
+                        .gte('event_date', today)
+                        .order('event_date', { ascending: true })
+                        .limit(1);
+                    if (error) return;
+                    const badge = document.getElementById('calendarDaysBadge');
+                    if (!badge) return;
+                    if (gigs && gigs.length > 0) {
+                        const eventDate = new Date(gigs[0].event_date);
+                        const todayDate = new Date(today);
+                        const diffTime = eventDate - todayDate;
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                        let badgeText = '';
+                        if (diffDays === 0) badgeText = 'today';
+                        else if (diffDays === 1) badgeText = 'tomorrow';
+                        else badgeText = `in ${diffDays}d`;
+                        badge.textContent = badgeText;
+                        badge.style.display = 'inline-block';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                } catch (err) {}
+            }
+
+            // Dropdown toggles
+            const toolsToggle = document.getElementById('toolsDropdownToggle');
+            const toolsMenu = document.getElementById('toolsDropdownMenu');
+            if (toolsToggle && toolsMenu) {
+                toolsToggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toolsToggle.classList.toggle('open');
+                    toolsMenu.classList.toggle('show');
+                });
+            }
+
+            const settingsToggle = document.getElementById('settingsDropdownToggle');
+            const settingsMenu = document.getElementById('settingsDropdownMenu');
+            const themesPanel = document.getElementById('themesPanel');
+            const placementPanel = document.getElementById('placementPanel');
+            const themesToggle = document.getElementById('themesToggle');
+            const placementToggle = document.getElementById('placementToggle');
+
+            if (settingsToggle && settingsMenu) {
+                settingsToggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    settingsToggle.classList.toggle('open');
+                    settingsMenu.classList.toggle('show');
+                    // Hide panels when closing the dropdown
+                    if (!settingsMenu.classList.contains('show')) {
+                        themesPanel.classList.remove('show');
+                        placementPanel.classList.remove('show');
+                    }
+                });
+            }
+
+            // Toggle themes panel
+            themesToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                themesPanel.classList.toggle('show');
+                placementPanel.classList.remove('show'); // hide the other
+            });
+
+            // Toggle placement panel
+            placementToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                placementPanel.classList.toggle('show');
+                themesPanel.classList.remove('show'); // hide the other
+            });
+
+            // Theme selection
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const theme = this.dataset.theme;
+                    applyTheme(theme);
+                    localStorage.setItem('vivoTheme', theme);
+                });
+            });
+
+            // Slideshow toggle
+            const slideshowCheck = document.getElementById('slideshowToggle');
+            slideshowCheck.addEventListener('change', function() {
+                if (this.checked) {
+                    startSlideshow();
+                } else {
+                    stopSlideshow();
+                }
+                localStorage.setItem('vivoSlideshow', this.checked);
+            });
+
+            // Navbar placement
+            document.querySelectorAll('.placement-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const placement = this.dataset.placement;
+                    applyPlacement(placement);
+                    localStorage.setItem('vivoPlacement', placement);
+                });
+            });
+
+            // Load saved settings
+            const savedTheme = localStorage.getItem('vivoTheme');
+            if (savedTheme) applyTheme(savedTheme);
+            const savedSlideshow = localStorage.getItem('vivoSlideshow') === 'true';
+            if (savedSlideshow) {
+                slideshowCheck.checked = true;
+                startSlideshow();
+            }
+            const savedPlacement = localStorage.getItem('vivoPlacement');
+            if (savedPlacement) applyPlacement(savedPlacement);
+
+            // Theme application (simple CSS variables)
+            function applyTheme(theme) {
+                const root = document.documentElement;
+                switch(theme) {
+                    case 'dark':
+                        root.style.setProperty('--bg-color', '#1a1a1a');
+                        root.style.setProperty('--text-color', '#f0f0f0');
+                        break;
+                    case 'ocean':
+                        root.style.setProperty('--bg-color', '#1e3c72');
+                        root.style.setProperty('--text-color', '#e0f2fe');
+                        break;
+                    case 'forest':
+                        root.style.setProperty('--bg-color', '#2d5a27');
+                        root.style.setProperty('--text-color', '#e0f2e0');
+                        break;
+                    case 'sunset':
+                        root.style.setProperty('--bg-color', '#b43b3b');
+                        root.style.setProperty('--text-color', '#fff3e0');
+                        break;
+                    default:
+                        root.style.setProperty('--bg-color', '');
+                        root.style.setProperty('--text-color', '');
+                }
+            }
+
+            let slideshowInterval;
+            let currentImage = 1;
+            function startSlideshow() {
+                if (slideshowInterval) clearInterval(slideshowInterval);
+                document.body.classList.add('slideshow-bg');
+                slideshowInterval = setInterval(() => {
+                    document.body.style.backgroundImage = `url('${currentImage}.jpg')`;
+                    currentImage = (currentImage % 4) + 1;
+                }, 5000);
+            }
+            function stopSlideshow() {
+                if (slideshowInterval) clearInterval(slideshowInterval);
+                document.body.classList.remove('slideshow-bg');
+                document.body.style.backgroundImage = '';
+            }
+
+            function applyPlacement(placement) {
+                document.body.classList.remove('nav-left', 'nav-right', 'nav-top', 'nav-bottom');
+                document.body.classList.add(`nav-${placement}`);
+                // You'll need to add corresponding CSS in your stylesheet
+            }
+        });
+    </script>
+</body>
+</html>
