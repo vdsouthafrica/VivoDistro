@@ -1,0 +1,178 @@
+/* Tips/Tour System Styles */
+.vivo-tip-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 9998;
+    backdrop-filter: blur(2px);
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.vivo-tip-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+.vivo-tip-bubble {
+    position: absolute;
+    width: 320px;
+    background: rgba(21, 26, 44, 0.95);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(108, 99, 255, 0.3);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 20px rgba(108, 99, 255, 0.1);
+    z-index: 9999;
+    color: #fff;
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: none;
+}
+
+.vivo-tip-bubble.active {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: all;
+}
+
+/* Arrow */
+.vivo-tip-bubble::after {
+    content: '';
+    position: absolute;
+    border: 10px solid transparent;
+}
+
+.vivo-tip-bubble.arrow-top::after {
+    border-bottom-color: rgba(108, 99, 255, 0.3);
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.vivo-tip-bubble.arrow-bottom::after {
+    border-top-color: rgba(108, 99, 255, 0.3);
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.vivo-tip-bubble.arrow-left::after {
+    border-right-color: rgba(108, 99, 255, 0.3);
+    left: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.vivo-tip-bubble.arrow-right::after {
+    border-left-color: rgba(108, 99, 255, 0.3);
+    right: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.vivo-tip-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.vivo-tip-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #6C63FF;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.vivo-tip-close {
+    background: none;
+    border: none;
+    color: #8892b0;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: color 0.2s;
+    padding: 0;
+    line-height: 1;
+}
+
+.vivo-tip-close:hover {
+    color: #fff;
+}
+
+.vivo-tip-body {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #cbd5e0;
+    margin-bottom: 20px;
+}
+
+.vivo-tip-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.vivo-tip-progress {
+    font-size: 0.8rem;
+    color: #8892b0;
+    font-weight: 500;
+}
+
+.vivo-tip-next {
+    background: linear-gradient(135deg, #6C63FF, #FF6584);
+    color: #fff;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.vivo-tip-next:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(108, 99, 255, 0.3);
+}
+
+/* Highlight effect for target element */
+.vivo-tip-target-hightlight {
+    position: relative;
+    z-index: 10000 !important;
+    box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.5) !important;
+    pointer-events: none !important;
+}
+
+/* For sidebar special cases */
+.hub-sidebar.vivo-tip-target-hightlight {
+    box-shadow: 0 0 30px rgba(108, 99, 255, 0.5) !important;
+}
+
+@keyframes pulse-highlight {
+    0% { outline: 0px solid rgba(108, 99, 255, 0.5); }
+    50% { outline: 4px solid rgba(108, 99, 255, 0.8); }
+    100% { outline: 0px solid rgba(108, 99, 255, 0.5); }
+}
+
+.tip-highlight-ring {
+    position: absolute;
+    pointer-events: none;
+    border: 2px solid #6C63FF;
+    border-radius: 12px;
+    z-index: 9997;
+    animation: pulse-border 2s infinite;
+}
+
+@keyframes pulse-border {
+    0% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.05); opacity: 0.4; }
+    100% { transform: scale(1); opacity: 0.8; }
+}

@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vivo Admin | Vivo Distro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --admin-primary: #805AD5;
+            --admin-bg: #0A0E1A;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background: var(--admin-bg);
+            color: #fff;
+            margin: 0;
+            display: flex;
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Login Overlay */
+        #adminLogin {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0A0E1A;
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .login-box {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            padding: 40px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            backdrop-filter: blur(20px);
+        }
+
+        .login-box h2 {
+            margin-bottom: 30px;
+            font-size: 2rem;
+            color: var(--admin-primary);
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .password-input-wrapper input {
+            margin-bottom: 0 !important;
+        }
+
+        .login-box button {
+            width: 100%;
+            padding: 15px;
+            background: var(--admin-primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .password-input-wrapper {
+            position: relative;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .toggle-password-btn {
+            position: absolute !important;
+            right: 15px !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            background: none !important;
+            border: none !important;
+            color: #8892b0 !important;
+            cursor: pointer !important;
+            font-size: 1.1rem !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            width: auto !important;
+            height: auto !important;
+            transition: color 0.2s !important;
+            box-shadow: none !important;
+        }
+
+        .toggle-password-btn:hover {
+            color: #fff !important;
+            background: none !important;
+        }
+
+        /* Sidebar */
+        .admin-sidebar {
+            width: 280px;
+            background: rgba(0, 0, 0, 0.3);
+            border-right: 1px solid var(--glass-border);
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .admin-sidebar h1 {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            color: var(--admin-primary);
+            padding-left: 15px;
+        }
+
+        .admin-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 20px;
+            color: #8892b0;
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .admin-nav-item:hover, .admin-nav-item.active {
+            background: var(--glass);
+            color: white;
+        }
+
+        .admin-nav-item i {
+            width: 20px;
+        }
+
+        /* Main Content */
+        .admin-main {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .admin-section {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .admin-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .edit-modal.active {
+            display: flex;
+        }
+
+        /* User List Styles */
+        .user-mgmt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(128, 90, 213, 0.1), rgba(255, 255, 255, 0.02));
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .user-mgmt-header h3 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .total-badge {
+            background: var(--admin-primary);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .user-list-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .user-mgmt-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .user-mgmt-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--admin-primary);
+        }
+
+        .user-mgmt-pic {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 2px solid var(--glass-border);
+        }
+
+        .user-mgmt-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #fff;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .user-mgmt-id {
+            font-size: 0.75rem;
+            color: #8892b0;
+            word-break: break-all;
+        }
+
+        /* Sidebar Stats */
+        .sidebar-stats {
+            margin-top: auto;
+            margin-bottom: 10px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .sidebar-stats p {
+            margin: 0;
+            font-size: 0.8rem;
+            color: #8892b0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sidebar-stats h3 {
+            margin: 5px 0 0;
+            font-size: 1.4rem;
+            color: var(--admin-primary);
+        }
+
+        /* Table/Card Styles */
+        .data-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .data-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 10px;
+        }
+
+        .user-id {
+            color: var(--admin-primary);
+            font-size: 0.9rem;
+        }
+
+        .timestamp {
+            color: #5f6b8a;
+            font-size: 0.8rem;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-pending { background: rgba(236, 201, 75, 0.1); color: #ECC94B; }
+        .status-resolved { background: rgba(72, 187, 120, 0.1); color: #48BB78; }
+
+        /* Team Management UI */
+        .add-team-member {
+            background: var(--glass);
+            padding: 25px;
+            border-radius: 16px;
+            margin-bottom: 40px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .team-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            padding: 20px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .team-info h4 { margin: 0; color: #fff; }
+        .team-info p { margin: 5px 0 0; color: #8892b0; font-size: 0.9rem; }
+
+        .btn-delete {
+            color: #F56565;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        .btn-edit {
+            color: var(--admin-primary);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        .edit-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 20000;
+        }
+
+        .edit-modal.active {
+            display: flex;
+        }
+
+        /* Bulk Actions */
+        .bulk-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn-bulk-delete {
+            background: #F56565;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-bulk-delete:hover {
+            opacity: 0.8;
+            transform: scale(1.02);
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .fix-status-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            color: #8892b0;
+            font-size: 0.9rem;
+            user-select: none;
+        }
+
+        .fix-status-container input {
+            cursor: pointer;
+        }
+
+        .card-actions-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Overlay -->
+    <div id="adminLogin">
+        <div class="login-box">
+            <h2>Vivo Admin</h2>
+            <input type="text" id="adminUser" placeholder="Username">
+            <div class="password-input-wrapper">
+                <input type="password" id="adminPass" placeholder="Password">
+                <button class="toggle-password-btn" onclick="togglePass('adminPass')">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </div>
+            <button onclick="checkAdminLogin()">Access Dashboard</button>
+            <p id="loginError" style="color:#F56565; margin-top:15px; display:none;">Invalid credentials</p>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="admin-sidebar" id="sidebar">
+        <h1>VIVO ADMIN</h1>
+        <div class="admin-nav-item active" onclick="showSection('support')">
+            <i class="fas fa-headset"></i> Support Messages
+        </div>
+        <div class="admin-nav-item" onclick="showSection('bugs')">
+            <i class="fas fa-bug"></i> Bug Reports
+        </div>
+        <div class="admin-nav-item" onclick="showSection('team')">
+            <i class="fas fa-users-cog"></i> My Team
+        </div>
+        
+        <div style="margin-top:20px; border-top: 1px solid var(--glass-border); padding-top: 20px;">
+            <div class="admin-nav-item" onclick="showSection('performers')">
+                <i class="fas fa-microphone"></i> Performers
+            </div>
+            <div class="admin-nav-item" onclick="showSection('agents')">
+                <i class="fas fa-user-tie"></i> Agents
+            </div>
+            <div class="admin-nav-item" onclick="showSection('bookers')">
+                <i class="fas fa-calendar-check"></i> Bookers
+            </div>
+        </div>
+
+        <div class="sidebar-stats">
+            <p>Total Users</p>
+            <h3 id="globalUserCount">0</h3>
+        </div>
+
+        <div class="admin-nav-item" onclick="showSection('test-push')">
+            <i class="fas fa-paper-plane"></i> Test Notifications
+        </div>
+        <div class="admin-nav-item" onclick="window.location.href='index.html'">
+            <i class="fas fa-external-link-alt"></i> Exit Admin
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="admin-main">
+        <!-- Support Section -->
+        <div id="section-support" class="admin-section active">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 30px;">
+                <h2 style="margin:0;">Support Messages</h2>
+                <div class="bulk-actions" id="bulk-support" style="display:none;">
+                    <span id="support-count">0 selected</span>
+                    <button class="btn-bulk-delete" onclick="deleteSelected('support_messages')">Delete Selected</button>
+                </div>
+            </div>
+            <div id="supportList">
+                <p>Loading messages...</p>
+            </div>
+        </div>
+
+        <!-- Bugs Section -->
+        <div id="section-bugs" class="admin-section">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 30px;">
+                <h2 style="margin:0;">Bug Reports</h2>
+                <div class="bulk-actions" id="bulk-bugs" style="display:none;">
+                    <span id="bugs-count">0 selected</span>
+                    <button class="btn-bulk-delete" onclick="deleteSelected('bug_reports')">Delete Selected</button>
+                </div>
+            </div>
+            <div id="bugsList">
+                <p>Loading reports...</p>
+            </div>
+        </div>
+
+        <!-- Team Section -->
+        <div id="section-team" class="admin-section">
+            <h2>My Team</h2>
+            
+            <div class="add-team-member">
+                <h3>Add Team Member</h3>
+                <div style="display:flex; gap:10px; margin-top:15px;">
+                    <input type="text" id="newMemberUser" placeholder="Username" style="flex:1; padding:10px; background:rgba(255,255,255,0.05); border:1px solid var(--glass-border); border-radius:8px; color:white;">
+                    <input type="password" id="newMemberPass" placeholder="Password" style="flex:1; padding:10px; background:rgba(255,255,255,0.05); border:1px solid var(--glass-border); border-radius:8px; color:white;">
+                    <button onclick="addTeamMember()" style="padding:10px 20px; background:var(--admin-primary); color:white; border:none; border-radius:8px; font-weight:600; cursor:pointer;">Add Member</button>
+                </div>
+            </div>
+
+            <div class="team-grid" id="teamList">
+                <!-- Team members here -->
+            </div>
+        </div>
+
+        <!-- Performers Section -->
+        <div id="section-performers" class="admin-section">
+            <div class="user-mgmt-header">
+                <h3>Performers List</h3>
+                <span class="total-badge" id="totalPerfCount">0 Total</span>
+            </div>
+            <div class="user-list-grid" id="perfList">
+                <p>Loading performers...</p>
+            </div>
+        </div>
+
+        <!-- Agents Section -->
+        <div id="section-agents" class="admin-section">
+            <div class="user-mgmt-header">
+                <h3>Agents List</h3>
+                <span class="total-badge" id="totalAgentCount">0 Total</span>
+            </div>
+            <div class="user-list-grid" id="agentList">
+                <p>Loading agents...</p>
+            </div>
+        </div>
+
+        <!-- Bookers Section -->
+        <div id="section-bookers" class="admin-section">
+            <div class="user-mgmt-header">
+                <h3>Bookers List</h3>
+                <span class="total-badge" id="totalBookerCount">0 Total</span>
+            </div>
+            <div class="user-list-grid" id="bookerList">
+                <p>Loading bookers...</p>
+            </div>
+        </div>
+        <!-- Test Push Section -->
+        <div id="section-test-push" class="admin-section">
+            <div class="user-mgmt-header">
+                <h3>System Notification Tester</h3>
+            </div>
+            <div class="data-card">
+                <p style="margin-bottom:20px; color:#8892b0;">Use this to test if your Edge Function is correctly sending push alerts to closed browsers.</p>
+                <div style="display:grid; gap:15px;">
+                    <input type="text" id="testPushUserId" placeholder="Recipient Auth ID (UUID)" style="padding:12px; background:rgba(255,255,255,0.05); border:1px solid var(--glass-border); border-radius:8px; color:white;">
+                    <input type="text" id="testPushTitle" placeholder="Notification Title" style="padding:12px; background:rgba(255,255,255,0.05); border:1px solid var(--glass-border); border-radius:8px; color:white;" value="Admin Test Notification">
+                    <textarea id="testPushBody" placeholder="Notification Body" style="padding:12px; background:rgba(255,255,255,0.05); border:1px solid var(--glass-border); border-radius:8px; color:white; min-height:80px;">This is a test notification from the Vivo Admin panel.</textarea>
+                    <button onclick="triggerTestPush()" id="btnTestPush" style="padding:15px; background:var(--admin-primary); color:white; border:none; border-radius:8px; font-weight:600; cursor:pointer;">
+                        <i class="fas fa-bolt"></i> Fire Test Notification
+                    </button>
+                </div>
+                <p id="testPushResult" style="margin-top:15px; font-size:0.9rem; display:none;"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Member Modal -->
+    <div class="edit-modal" id="editModal">
+        <div class="login-box">
+            <h3>Edit Account</h3>
+            <input type="hidden" id="editMemberId">
+            <input type="text" id="editMemberUser" placeholder="Username">
+            <div class="password-input-wrapper">
+                <input type="password" id="editMemberPass" placeholder="Password">
+                <button class="toggle-password-btn" onclick="togglePass('editMemberPass')">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </div>
+            <div style="display:flex; gap:10px;">
+                <button onclick="saveEditMember()" style="flex:1;">Save Changes</button>
+                <button onclick="closeEditModal()" class="btn-cancel" style="flex:1; background:rgba(255,255,255,0.05); color: white; border-radius: 12px; border: 1px solid var(--glass-border); cursor: pointer;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const supabaseUrl = 'https://msjinuumxmezrijqemmp.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zamludXVteG1lenJpanFlbW1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwOTAyNjMsImV4cCI6MjA4NzY2NjI2M30.ic50fSC7MQfhSkhfE5E8B0R5-BGCQStMRZNHiy6Zakw';
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+        // Password Toggle
+        function togglePass(id) {
+            const input = document.getElementById(id);
+            const icon = event.currentTarget.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fas fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fas fa-eye';
+            }
+        }
+
+        // Simple Login Check
+        async function checkAdminLogin() {
+            const user = document.getElementById('adminUser').value;
+            const pass = document.getElementById('adminPass').value;
+
+            // Check admin_team table first
+            try {
+                const { data, error } = await supabaseClient
+                    .from('admin_team')
+                    .select('*')
+                    .eq('username', user)
+                    .eq('password', pass)
+                    .maybeSingle();
+
+                if (data) {
+                    document.getElementById('adminLogin').style.display = 'none';
+                    loadAllData();
+                    return;
+                }
+            } catch (err) {
+                console.error(err);
+            }
+
+            // Super Admin fallback
+            if (user === 'vdsouthafrica@gmail.com' && pass === 'VivoDistro2004.') {
+                document.getElementById('adminLogin').style.display = 'none';
+                loadAllData();
+                // Ensure super admin is in the DB for future management
+                ensureSuperAdminInDB();
+                return;
+            }
+
+            document.getElementById('loginError').style.display = 'block';
+        }
+
+        async function ensureSuperAdminInDB() {
+            const { data } = await supabaseClient
+                .from('admin_team')
+                .select('*')
+                .eq('username', 'vdsouthafrica@gmail.com')
+                .maybeSingle();
+            
+            if (!data) {
+                await supabaseClient
+                    .from('admin_team')
+                    .insert([{ 
+                        username: 'vdsouthafrica@gmail.com', 
+                        password: 'VivoDistro2004.',
+                        role: 'super-admin'
+                    }]);
+                loadTeam();
+            }
+        }
+
+        // Section Switching
+        function showSection(sectionId) {
+            document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.admin-nav-item').forEach(i => i.classList.remove('active'));
+            
+            document.getElementById('section-' + sectionId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // Data Loading
+        async function loadAllData() {
+            try {
+                // Parallel load
+                await Promise.all([
+                    loadSupport(),
+                    loadBugs(),
+                    loadTeam(),
+                    loadUsers('performers', 'perfList', 'totalPerfCount'),
+                    loadUsers('agents', 'agentList', 'totalAgentCount'),
+                    loadUsers('bookers', 'bookerList', 'totalBookerCount')
+                ]);
+                updateGlobalCounter();
+            } catch (err) {
+                console.error("Error loading data:", err);
+            }
+        }
+
+        async function loadUsers(table, listId, countId) {
+            // Determine correct column names based on table
+            let nameCol = 'name';
+            let picCol = 'image_url';
+            
+            if (table === 'agents' || table === 'bookers') {
+                picCol = 'logo_url';
+            }
+
+            const { data, error } = await supabaseClient
+                .from(table)
+                .select('*')
+                .order(nameCol, { ascending: true });
+
+            const list = document.getElementById(listId);
+            const countLabel = document.getElementById(countId);
+
+            if (data) {
+                countLabel.innerText = `${data.length} Total`;
+                if (data.length > 0) {
+                    list.innerHTML = data.map(user => {
+                        const profilePic = user[picCol] || 'https://via.placeholder.com/150';
+                        const displayName = user[nameCol] || 'No Name';
+                        const userId = user.auth_id || user.user_id || user.id; // Try common ID fields
+
+                        return `
+                        <div class="user-mgmt-card">
+                            <img src="${profilePic}" class="user-mgmt-pic" onerror="this.src='https://via.placeholder.com/150'">
+                            <span class="user-mgmt-name">${displayName}</span>
+                            <span class="user-mgmt-id">ID: ${userId}</span>
+                        </div>
+                    `}).join('');
+                } else {
+                    list.innerHTML = `<p>No users found in ${table}.</p>`;
+                }
+            } else {
+                console.error(`Error loading ${table}:`, error);
+                list.innerHTML = `<p style="color:#F56565;">Error loading ${table}. Check console for details.</p>`;
+            }
+        }
+
+        function updateGlobalCounter() {
+            const p = parseInt(document.getElementById('totalPerfCount').innerText) || 0;
+            const a = parseInt(document.getElementById('totalAgentCount').innerText) || 0;
+            const b = parseInt(document.getElementById('totalBookerCount').innerText) || 0;
+            document.getElementById('globalUserCount').innerText = p + a + b;
+        }
+
+        async function loadSupport() {
+            const { data, error } = await supabaseClient
+                .from('support_messages')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            const list = document.getElementById('supportList');
+            if (data && data.length > 0) {
+                list.innerHTML = data.map(msg => `
+                    <div class="data-card" data-id="${msg.id}">
+                        <div class="data-header">
+                            <div class="checkbox-container">
+                                <input type="checkbox" class="card-checkbox support-cb" onchange="updateBulkUI('support')">
+                                <span class="user-id">User ID: ${msg.user_id || 'Guest'}</span>
+                            </div>
+                            <span class="status-badge status-${msg.status}">${msg.status.toUpperCase()}</span>
+                        </div>
+                        <p style="margin:10px 0;">${msg.message}</p>
+                        <div class="card-actions-row">
+                            <div class="timestamp">${new Date(msg.created_at).toLocaleString()}</div>
+                            <div style="display:flex; align-items:center; gap:20px;">
+                                <label class="fix-status-container">
+                                    <input type="checkbox" ${msg.status === 'resolved' ? 'checked' : ''} onchange="updateStatus('support_messages', '${msg.id}', this.checked)">
+                                    Fixed
+                                </label>
+                                <button class="btn-delete" onclick="deleteItem('support_messages', '${msg.id}')" style="padding:0;"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                list.innerHTML = '<p>No support messages found.</p>';
+            }
+            updateBulkUI('support');
+        }
+
+        async function loadBugs() {
+            const { data, error } = await supabaseClient
+                .from('bug_reports')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            const list = document.getElementById('bugsList');
+            if (data && data.length > 0) {
+                list.innerHTML = data.map(msg => `
+                    <div class="data-card" data-id="${msg.id}">
+                        <div class="data-header">
+                            <div class="checkbox-container">
+                                <input type="checkbox" class="card-checkbox bug-cb" onchange="updateBulkUI('bug')">
+                                <span class="user-id">Reporter: ${msg.user_id || 'Guest'}</span>
+                            </div>
+                            <span class="status-badge status-${msg.status}">${msg.status.toUpperCase()}</span>
+                        </div>
+                        <p style="margin:10px 0; color:#FF6B6B;">${msg.report}</p>
+                        <div class="card-actions-row">
+                            <div class="timestamp">${new Date(msg.created_at).toLocaleString()}</div>
+                            <div style="display:flex; align-items:center; gap:20px;">
+                                <label class="fix-status-container">
+                                    <input type="checkbox" ${msg.status === 'resolved' ? 'checked' : ''} onchange="updateStatus('bug_reports', '${msg.id}', this.checked)">
+                                    Fixed
+                                </label>
+                                <button class="btn-delete" onclick="deleteItem('bug_reports', '${msg.id}')" style="padding:0;"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                list.innerHTML = '<p>No bug reports found.</p>';
+            }
+            updateBulkUI('bug');
+        }
+
+        // New Management Actions
+        async function updateStatus(table, id, isFixed) {
+            const status = isFixed ? 'resolved' : 'pending';
+            const { error } = await supabaseClient
+                .from(table)
+                .update({ status: status })
+                .eq('id', id);
+            
+            if (error) alert('Error updating status: ' + error.message);
+            else {
+                if (table === 'support_messages') loadSupport();
+                else loadBugs();
+            }
+        }
+
+        async function deleteItem(table, id) {
+            if (!confirm('Are you sure you want to delete this message?')) return;
+            const { error } = await supabaseClient
+                .from(table)
+                .delete()
+                .eq('id', id);
+            
+            if (error) alert('Error deleting: ' + error.message);
+            else {
+                if (table === 'support_messages') loadSupport();
+                else loadBugs();
+            }
+        }
+
+        function updateBulkUI(type) {
+            const checkboxes = document.querySelectorAll(`.${type}-cb:checked`);
+            const bulkBar = document.getElementById(`bulk-${type === 'support' ? 'support' : 'bugs'}`);
+            const countLabel = document.getElementById(`${type === 'support' ? 'support' : 'bugs'}-count`);
+            
+            if (checkboxes.length > 0) {
+                bulkBar.style.display = 'flex';
+                countLabel.innerText = `${checkboxes.length} selected`;
+            } else {
+                bulkBar.style.display = 'none';
+            }
+        }
+
+        async function deleteSelected(table) {
+            const type = table === 'support_messages' ? 'support' : 'bug';
+            const checkboxes = document.querySelectorAll(`.${type}-cb:checked`);
+            const ids = Array.from(checkboxes).map(cb => cb.closest('.data-card').dataset.id);
+
+            if (!confirm(`Are you sure you want to delete ${ids.length} items?`)) return;
+
+            const { error } = await supabaseClient
+                .from(table)
+                .delete()
+                .in('id', ids);
+            
+            if (error) alert('Error deleting selected: ' + error.message);
+            else {
+                if (table === 'support_messages') loadSupport();
+                else loadBugs();
+            }
+        }
+
+        async function loadTeam() {
+            const { data, error } = await supabaseClient
+                .from('admin_team')
+                .select('*')
+                .order('role', { ascending: false });
+
+            const list = document.getElementById('teamList');
+            if (data) {
+                list.innerHTML = data.map(member => `
+                    <div class="team-card">
+                        <div class="team-info">
+                            <h4>${member.username}</h4>
+                            <p>${member.role}</p>
+                        </div>
+                        <div style="display:flex;">
+                            <button class="btn-edit" onclick="openEditModal('${member.id}', '${member.username}', '${member.password}')"><i class="fas fa-user-edit"></i></button>
+                            <button class="btn-delete" onclick="deleteTeamMember('${member.id}')"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function openEditModal(id, user, pass) {
+            document.getElementById('editMemberId').value = id;
+            document.getElementById('editMemberUser').value = user;
+            document.getElementById('editMemberPass').value = pass;
+            document.getElementById('editModal').classList.add('active');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('active');
+        }
+
+        async function saveEditMember() {
+            const id = document.getElementById('editMemberId').value;
+            const user = document.getElementById('editMemberUser').value;
+            const pass = document.getElementById('editMemberPass').value;
+
+            const { error } = await supabaseClient
+                .from('admin_team')
+                .update({ username: user, password: pass })
+                .eq('id', id);
+
+            if (error) alert('Error updating: ' + error.message);
+            else {
+                closeEditModal();
+                loadTeam();
+            }
+        }
+
+        async function addTeamMember() {
+            const user = document.getElementById('newMemberUser').value;
+            const pass = document.getElementById('newMemberPass').value;
+
+            if (!user || !pass) return;
+
+            const { error } = await supabaseClient
+                .from('admin_team')
+                .insert([{ username: user, password: pass }]);
+
+            if (error) alert('Error adding member: ' + error.message);
+            else {
+                document.getElementById('newMemberUser').value = '';
+                document.getElementById('newMemberPass').value = '';
+                loadTeam();
+            }
+        }
+
+        async function deleteTeamMember(id) {
+            if (!confirm('Are you sure you want to remove this team member?')) return;
+            
+            const { error } = await supabaseClient
+                .from('admin_team')
+                .delete()
+                .eq('id', id);
+                
+            if (error) alert('Error deleting: ' + error.message);
+            else loadTeam();
+        }
+        async function triggerTestPush() {
+            const userId = document.getElementById('testPushUserId').value;
+            const title = document.getElementById('testPushTitle').value;
+            const body = document.getElementById('testPushBody').value;
+            const resultEl = document.getElementById('testPushResult');
+            const btn = document.getElementById('btnTestPush');
+
+            if (!userId) { alert('Enter a User UUID'); return; }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+
+            try {
+                // We test by inserting a mock record into inbox_items 
+                // This triggers the Webhook -> Edge Function flow
+                const { error } = await supabaseClient.from('inbox_items').insert([{
+                    sender_id: '00000000-0000-0000-0000-000000000000', // System ID
+                    recipient_id: userId,
+                    type: 'chat',
+                    message: body,
+                    status: 'pending',
+                    created_at: new Date().toISOString()
+                }]);
+
+                if (error) throw error;
+                
+                resultEl.style.display = 'block';
+                resultEl.style.color = '#48BB78';
+                resultEl.innerText = '✅ Test record inserted! Check Edge Function logs to see if it fired.';
+            } catch (err) {
+                resultEl.style.display = 'block';
+                resultEl.style.color = '#F56565';
+                resultEl.innerText = '❌ Error: ' + err.message;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-bolt"></i> Fire Test Notification';
+            }
+        }
+    </script>
+</body>
+</html>

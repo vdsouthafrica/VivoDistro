@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse & Connect | Vivo Distro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons@6.6.6/css/flag-icons.min.css">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; }
+        body { background:#080c18; color:#fff; min-height:100vh; overflow-x:hidden; }
+
+        .simple-header { background:rgba(8,12,24,0.92); backdrop-filter:blur(20px); border-bottom:1px solid rgba(108,99,255,0.15); padding:1rem 2rem; display:flex; align-items:center; gap:1rem; position:sticky; top:0; z-index:100; }
+        .back-btn { display:inline-flex; align-items:center; gap:0.5rem; padding:0.55rem 1.1rem; background:rgba(255,255,255,0.04); border:1px solid rgba(108,99,255,0.2); border-radius:10px; color:#fff; font-size:0.88rem; font-weight:500; cursor:pointer; transition:all 0.25s; }
+        .back-btn:hover { background:rgba(108,99,255,0.12); border-color:#6C63FF; transform:translateX(-3px); }
+        .back-btn i { color:#6C63FF; }
+        .page-title { font-size:1.2rem; font-weight:700; display:flex; align-items:center; gap:0.6rem; }
+        .page-title i { color:#6C63FF; }
+        .header-live { margin-left:auto; display:flex; align-items:center; gap:0.5rem; color:#334155; font-size:0.78rem; }
+        .live-dot { width:7px; height:7px; border-radius:50%; background:#10b981; box-shadow:0 0 6px #10b981; animation:pulse-dot 2s infinite; }
+        @keyframes pulse-dot { 0%,100%{opacity:1}50%{opacity:0.3} }
+
+        .hub-main { min-height:100vh; padding:30px; position:relative; z-index:1; }
+        .container { max-width:1400px; margin:0 auto; }
+        .page-header { margin-bottom:1.5rem; }
+        .page-header h1 { font-size:2.3rem; font-weight:800; background:linear-gradient(135deg,#fff 30%,#6C63FF 100%); -webkit-background-clip:text; background-clip:text; color:transparent; margin-bottom:0.4rem; letter-spacing:-1px; }
+        .page-header p { color:#475569; font-size:0.95rem; }
+
+        .full-page-loading { position:fixed; top:0;left:0;right:0;bottom:0; background:#080c18; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:10000; gap:1.5rem; }
+        .full-page-loading .spinner { width:56px; height:56px; border:3px solid rgba(108,99,255,0.15); border-top-color:#6C63FF; border-radius:50%; animation:spin 0.9s linear infinite; }
+        @keyframes spin { to{transform:rotate(360deg)} }
+
+        .tabs-container { display:flex; gap:0.3rem; margin:1.5rem 0 0; border-bottom:1px solid rgba(108,99,255,0.12); flex-wrap:wrap; }
+        .tab-btn { padding:0.75rem 1.5rem; background:transparent; border:1px solid transparent; border-bottom:none; color:#475569; font-size:0.9rem; font-weight:600; cursor:pointer; border-radius:10px 10px 0 0; transition:all 0.2s; display:flex; align-items:center; gap:7px; position:relative; }
+        .tab-btn:hover { color:#94a3b8; background:rgba(108,99,255,0.04); }
+        .tab-btn.active { color:#fff; background:rgba(108,99,255,0.07); border-color:rgba(108,99,255,0.18); }
+        .tab-btn.active::after { content:''; position:absolute; bottom:-1px; left:0; right:0; height:2px; background:#6C63FF; border-radius:2px 2px 0 0; }
+        .tab-count { background:rgba(108,99,255,0.18); color:#818cf8; font-size:0.68rem; font-weight:700; border-radius:10px; padding:0.1rem 0.5rem; min-width:20px; text-align:center; }
+        .tab-btn.active .tab-count { background:#6C63FF; color:#fff; }
+
+        .search-filter-section { background:rgba(8,12,24,0.7); backdrop-filter:blur(12px); border:1px solid rgba(108,99,255,0.12); border-radius:18px; padding:1.3rem; margin:1.4rem 0 2rem; }
+        .search-row { display:flex; gap:0.8rem; margin-bottom:1.1rem; }
+        .search-input-wrapper { flex:1; position:relative; }
+        .search-input { width:100%; padding:0.85rem 1rem 0.85rem 3rem; background:rgba(0,0,0,0.4); border:1px solid rgba(108,99,255,0.15); border-radius:12px; color:#fff; font-size:0.92rem; transition:all 0.2s; }
+        .search-input:focus { outline:none; border-color:#6C63FF; background:rgba(108,99,255,0.05); }
+        .search-input::placeholder { color:#334155; }
+        .search-input-wrapper i { position:absolute; left:1rem; top:50%; transform:translateY(-50%); color:#6C63FF; }
+        .search-btn { padding:0 1.6rem; background:linear-gradient(135deg,#6C63FF,#5a52d5); border:none; border-radius:12px; color:#fff; font-weight:700; cursor:pointer; font-size:0.88rem; transition:all 0.2s; }
+        .search-btn:hover { transform:translateY(-2px); box-shadow:0 6px 18px rgba(108,99,255,0.35); }
+        .filter-row { display:flex; flex-wrap:wrap; gap:0.7rem; align-items:center; }
+        .filter-group { display:flex; align-items:center; gap:0.4rem; background:rgba(0,0,0,0.25); padding:0.2rem 0.8rem; border-radius:30px; border:1px solid rgba(108,99,255,0.12); }
+        .filter-label { color:#475569; font-size:0.78rem; white-space:nowrap; }
+        .filter-select { padding:0.35rem 1.8rem 0.35rem 0.4rem; background:transparent; border:none; color:#cbd5e0; font-size:0.82rem; cursor:pointer; appearance:none; background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236C63FF' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat:no-repeat; background-position:right 0.3rem center; background-size:0.75rem; }
+        .reset-btn { background:transparent; border:1px solid rgba(108,99,255,0.2); padding:0.4rem 0.9rem; border-radius:30px; color:#6C63FF; cursor:pointer; display:flex; align-items:center; gap:0.4rem; font-size:0.8rem; }
+        .reset-btn:hover { background:rgba(108,99,255,0.1); }
+
+        .results-info { margin-bottom:1.4rem; display:flex; align-items:center; }
+        .results-count { color:#475569; font-size:0.85rem; }
+        .results-count span { color:#818cf8; font-weight:700; }
+        .cards-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+
+        .profile-card { background:linear-gradient(160deg,#0f1525 0%,#0a0f1e 100%); border-radius:20px; border:1px solid rgba(255,255,255,0.05); transition:all 0.3s ease; position:relative; overflow:hidden; cursor:pointer; display:flex; flex-direction:column; min-height:460px; }
+        .profile-card:hover { transform:translateY(-6px); border-color:rgba(108,99,255,0.25); box-shadow:0 24px 48px rgba(0,0,0,0.5),0 0 0 1px rgba(108,99,255,0.08); }
+        .profile-card.expanded { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:720px; max-width:92vw; height:auto; max-height:88vh; overflow-y:auto; z-index:2000; cursor:default; box-shadow:0 40px 80px rgba(0,0,0,0.8); border:1px solid rgba(108,99,255,0.3); border-radius:24px; }
+        .close-expanded { display:none; position:absolute; top:13px; right:13px; width:32px; height:32px; border-radius:50%; background:rgba(0,0,0,0.7); border:1px solid rgba(255,255,255,0.12); color:#fff; cursor:pointer; align-items:center; justify-content:center; z-index:10; font-size:0.82rem; }
+        .close-expanded:hover { background:rgba(108,99,255,0.4); }
+        .profile-card.expanded .close-expanded { display:flex; }
+        .card-type-badge { position:absolute; top:13px; left:13px; font-size:0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:1px; padding:0.18rem 0.6rem; border-radius:20px; z-index:2; }
+        .badge-performer { background:rgba(108,99,255,0.18); color:#a5b4fc; border:1px solid rgba(108,99,255,0.28); }
+        .badge-agent { background:rgba(255,101,132,0.18); color:#fda4af; border:1px solid rgba(255,101,132,0.28); }
+        .badge-booker { background:rgba(16,185,129,0.18); color:#6ee7b7; border:1px solid rgba(16,185,129,0.28); }
+        .card-inner { padding:1.3rem; padding-top:2.5rem; flex:1; display:flex; flex-direction:column; }
+        .card-header { display:flex; gap:0.9rem; margin-bottom:0.9rem; align-items:flex-start; }
+        .avatar { width:66px; height:66px; border-radius:50%; background:linear-gradient(135deg,#6C63FF,#9d8cff); display:flex; align-items:center; justify-content:center; font-size:1.5rem; color:#fff; overflow:hidden; border:2px solid rgba(108,99,255,0.25); }
+        .avatar img { width:100%; height:100%; object-fit:cover; }
+        .title-info { flex:1; min-width:0; }
+        .title-info h2 { font-size:1.08rem; margin-bottom:0.2rem; color:#f1f5f9; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .name-row { display:flex; align-items:center; flex-wrap:wrap; gap:4px; margin-bottom:0.2rem; }
+        .rating-stars { display:inline-flex; align-items:center; gap:2px; }
+        .rating-stars i { font-size:0.72rem; color:#fbbf24; }
+        .rating-stars i.empty { color:#1e293b; }
+        .rating-number { font-size:0.7rem; color:#475569; margin-left:3px; }
+        .flag-circle-badge { display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; border-radius:50%; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.12); overflow:hidden; margin-left:3px; }
+        .flag-circle-badge .fi { font-size:0.8rem; }
+        .location-display { display:flex; align-items:center; gap:0.3rem; color:#475569; font-size:0.76rem; margin-top:0.15rem; }
+        .location-display i { color:#6C63FF; font-size:0.65rem; }
+        .role-tags { display:flex; flex-wrap:wrap; gap:0.35rem; margin-bottom:0.75rem; }
+        .role-tag { background:rgba(108,99,255,0.09); color:#818cf8; padding:0.16rem 0.6rem; border-radius:20px; font-size:0.66rem; font-weight:600; border:1px solid rgba(108,99,255,0.15); }
+        .bio { color:#64748b; line-height:1.55; margin-bottom:0.75rem; font-size:0.82rem; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+        .expand-hint { color:#6C63FF; font-size:0.67rem; margin-bottom:0.7rem; display:flex; align-items:center; gap:0.3rem; opacity:0.55; }
+        .social-links { display:flex; gap:0.45rem; margin-bottom:0.9rem; flex-wrap:wrap; }
+        .social-icon { width:30px; height:30px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; text-decoration:none; transition:all 0.2s; background:rgba(255,255,255,0.06); font-size:0.95rem; color:#64748b; }
+        .social-icon:hover { transform:translateY(-3px) scale(1.12); }
+        .social-icon.whatsapp { background:#25D366; color:#fff; }
+        .social-icon.instagram { background:radial-gradient(circle at 30% 107%,#fdf497 0%,#fdf497 5%,#fd5949 45%,#d6249f 60%,#285AEB 90%); color:#fff; }
+        .social-icon.facebook { background:#1877F2; color:#fff; }
+        .social-icon.twitter { background:#1DA1F2; color:#fff; }
+        .social-icon.tiktok { background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.3); color: #ffffff !important; backdrop-filter: blur(5px); }
+        .social-icon.youtube { background:#FF0000; color:#fff; }
+        .social-icon.spotify { background:#1DB954; color:#fff; }
+        .social-icon.soundcloud { background:#FF5500; color:#fff; }
+        .social-icon.linkedin { background:#0077B5; color:#fff; }
+        .social-icon.email { background:#EA4335; color:#fff; }
+        .social-icon.website { background:#6C63FF; color:#fff; }
+        .action-buttons { display:flex; gap:0.55rem; border-top:1px solid rgba(255,255,255,0.04); padding-top:0.9rem; margin-top:auto; flex-wrap:wrap; }
+        .action-btn { flex:1; padding:0.62rem 0.5rem; border-radius:10px; font-weight:700; font-size:0.8rem; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:0.4rem; border:none; transition:all 0.2s; }
+        .connect-btn { background:linear-gradient(135deg,#6C63FF,#5a52d5); color:#fff; }
+        .connect-btn:hover { transform:translateY(-2px); box-shadow:0 6px 18px rgba(108,99,255,0.38); }
+        .connect-btn.disabled,.connect-btn:disabled { opacity:0.3; cursor:not-allowed; pointer-events:none; background:#1e293b; }
+        .techlist-btn { background:rgba(108,99,255,0.09); color:#a5b4fc; flex:1; padding:0.62rem 0.5rem; border-radius:10px; font-weight:700; font-size:0.8rem; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:0.4rem; border:1px solid rgba(108,99,255,0.18); }
+        .techlist-btn:hover { background:rgba(108,99,255,0.18); transform:translateY(-2px); }
+        .roster-btn { background:rgba(255,101,132,0.1); color:#fda4af; flex:1; padding:0.62rem 0.5rem; border-radius:10px; font-weight:700; font-size:0.8rem; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:0.4rem; border:1px solid rgba(255,101,132,0.22); }
+        .roster-btn:hover { background:rgba(255,101,132,0.2); transform:translateY(-2px); }
+        .expanded-content { display:none; padding:1.4rem; border-top:1px solid rgba(108,99,255,0.1); background:rgba(0,0,0,0.25); }
+        .profile-card.expanded .expanded-content { display:block; }
+        .details-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:0.75rem; }
+        .detail-item { background:rgba(0,0,0,0.3); border-radius:12px; padding:0.75rem; }
+        .detail-label { color:#334155; font-size:0.65rem; text-transform:uppercase; margin-bottom:0.25rem; }
+        .detail-value { color:#e2e8f0; font-weight:600; font-size:0.86rem; }
+        .view-comments-btn { background:rgba(108,99,255,0.07); border:1px solid rgba(108,99,255,0.2); border-radius:10px; padding:0.65rem 1rem; color:#818cf8; cursor:pointer; font-size:0.83rem; margin-top:0.9rem; width:100%; display:flex; align-items:center; justify-content:center; gap:0.5rem; font-weight:600; }
+
+        .event-card { background:linear-gradient(160deg,#0f1525 0%,#0a0f1e 100%); border-radius:20px; border:1px solid rgba(245,158,11,0.1); transition:all 0.3s ease; position:relative; overflow:hidden; cursor:pointer; display:flex; flex-direction:column; }
+        .event-card:hover { transform:translateY(-6px); border-color:rgba(245,158,11,0.28); }
+        .event-card.expanded { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:720px; max-width:92vw; height:auto; max-height:88vh; overflow-y:auto; z-index:2000; cursor:default; box-shadow:0 40px 80px rgba(0,0,0,0.8); border:1px solid rgba(245,158,11,0.3); border-radius:24px; }
+        .event-photos { height:230px; background:#080c18; position:relative; overflow:hidden; flex-shrink:0; }
+        .event-photos-gradient { position:absolute; bottom:0;left:0;right:0; height:90px; background:linear-gradient(to top,rgba(15,21,37,1) 0%,transparent 100%); z-index:2; pointer-events:none; }
+        .photo-slider { display:flex; height:100%; transition:transform 0.4s cubic-bezier(0.4,0,0.2,1); }
+        .photo-slide { min-width:100%; height:100%; }
+        .photo-slide img { width:100%; height:100%; object-fit:cover; }
+        .slider-nav { position:absolute; top:50%; transform:translateY(-50%); width:100%; display:flex; justify-content:space-between; padding:0 10px; z-index:5; pointer-events:none; }
+        .slider-btn { width:30px; height:30px; border-radius:50%; background:rgba(0,0,0,0.7); backdrop-filter:blur(4px); border:1px solid rgba(255,255,255,0.12); color:#fff; cursor:pointer; font-size:0.75rem; display:flex; align-items:center; justify-content:center; pointer-events:all; }
+        .slider-btn:hover { background:rgba(245,158,11,0.55); }
+        .slider-dots { position:absolute; bottom:10px; left:50%; transform:translateX(-50%); display:flex; gap:5px; z-index:5; }
+        .slider-dot { width:5px; height:5px; border-radius:50%; background:rgba(255,255,255,0.28); transition:all 0.2s; cursor:pointer; }
+        .slider-dot.active { width:16px; border-radius:3px; background:#f59e0b; }
+        .event-inner { padding:1rem 1.3rem 1.3rem; flex:1; display:flex; flex-direction:column; }
+        .event-title { font-size:1.08rem; font-weight:700; color:#f1f5f9; margin-bottom:0.35rem; }
+        .event-meta { display:flex; flex-wrap:wrap; gap:0.55rem; margin-bottom:0.7rem; }
+        .event-meta-item { display:flex; align-items:center; gap:0.28rem; font-size:0.76rem; color:#64748b; }
+        .event-meta-item i { color:#f59e0b; font-size:0.68rem; }
+        .event-tags { display:flex; flex-wrap:wrap; gap:0.35rem; margin-bottom:0.7rem; }
+        .event-tag { background:rgba(245,158,11,0.09); color:#fbbf24; padding:0.15rem 0.6rem; border-radius:20px; font-size:0.65rem; font-weight:600; border:1px solid rgba(245,158,11,0.18); }
+        .event-desc { color:#475569; font-size:0.8rem; line-height:1.55; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; margin-bottom:0.7rem; }
+        .event-expand-hint { color:#f59e0b; font-size:0.67rem; opacity:0.55; display:flex; align-items:center; gap:0.3rem; margin-bottom:0.6rem; }
+        .event-action-row { display:flex; gap:0.55rem; margin-top:auto; border-top:1px solid rgba(255,255,255,0.04); padding-top:0.9rem; }
+
+        .ticket-btn { flex:1; padding:0.62rem; background:linear-gradient(135deg,#f59e0b,#d97706); border:none; border-radius:10px; color:#fff; font-weight:700; font-size:0.8rem; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:0.4rem; text-decoration:none; }
+        .event-expanded-content { display:none; padding:1.4rem; border-top:1px solid rgba(245,158,11,0.08); background:rgba(0,0,0,0.25); }
+        .event-card.expanded .event-expanded-content { display:block; }
+
+        .connect-modal-overlay { position:fixed; top:0;left:0;right:0;bottom:0; background:rgba(0,0,0,0.88); backdrop-filter:blur(12px); display:none; align-items:center; justify-content:center; z-index:4000; }
+        .connect-modal-overlay.active { display:flex; }
+        .connect-modal { width:550px; max-width:95%; max-height:88vh; background:#0d1626; border-radius:24px; border:1px solid rgba(108,99,255,0.22); overflow-y:auto; box-shadow:0 40px 80px rgba(0,0,0,0.7); }
+        .connect-option { background:rgba(255,255,255,0.025); border:1px solid rgba(108,99,255,0.12); border-radius:14px; padding:1rem; cursor:pointer; display:flex; align-items:center; gap:1rem; transition:all 0.2s; margin-bottom:0.75rem; }
+        .connect-option:hover { background:rgba(108,99,255,0.08); border-color:rgba(108,99,255,0.35); transform:translateX(4px); }
+        .connect-option-icon { width:44px; height:44px; background:rgba(108,99,255,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.2rem; color:#6C63FF; flex-shrink:0; }
+        .form-group { margin-bottom:1rem; }
+        .form-group label { display:block; margin-bottom:0.4rem; color:#64748b; font-size:0.83rem; font-weight:500; }
+        .form-group input, .form-group textarea, .form-group select { width:100%; padding:0.75rem 1rem; background:rgba(0,0,0,0.4); border:1px solid rgba(108,99,255,0.15); border-radius:10px; color:#fff; font-size:0.92rem; box-sizing:border-box; transition:border-color 0.2s; }
+        .form-group textarea { resize: none; min-height: 80px; }
+        .form-group input:focus, .form-group textarea:focus { outline:none; border-color:#6C63FF; }
+        .modal-actions { display:flex; gap:0.8rem; margin-top:1.4rem; }
+        .btn-cancel { flex:1; padding:0.75rem; background:rgba(255,255,255,0.03); border:1px solid rgba(108,99,255,0.15); border-radius:10px; color:#475569; cursor:pointer; text-align:center; font-weight:600; }
+        .btn-cancel:hover { color:#94a3b8; }
+        .btn-send { flex:2; padding:0.75rem; background:linear-gradient(135deg,#6C63FF,#5a52d5); border:none; border-radius:10px; color:#fff; font-weight:700; cursor:pointer; transition:all 0.2s; }
+        .btn-send:hover { transform:translateY(-1px); box-shadow:0 6px 18px rgba(108,99,255,0.35); }
+        .btn-send:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
+        .loading-spinner-small { display:inline-block; width:16px; height:16px; border:2px solid rgba(255,255,255,0.3); border-top-color:#fff; border-radius:50%; animation:spin 0.6s linear infinite; margin-right:0.5rem; }
+        .form-row { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; }
+        .radio-group { display:flex; gap:1rem; align-items:center; }
+        .radio-group label { display:flex; align-items:center; gap:0.4rem; cursor:pointer; margin-bottom:0; }
+        .radio-group input[type="radio"] { width:auto; margin:0; }
+
+        .comments-modal-overlay { position:fixed; top:0;left:0;right:0;bottom:0; background:rgba(0,0,0,0.88); backdrop-filter:blur(12px); display:none; align-items:center; justify-content:center; z-index:5000; }
+        .comments-modal-overlay.active { display:flex; }
+        .comments-modal { width:540px; max-width:95%; max-height:84vh; background:#0d1626; border-radius:24px; border:1px solid rgba(108,99,255,0.22); display:flex; flex-direction:column; overflow:hidden; }
+        .comments-modal-header { padding:1.3rem 1.5rem; border-bottom:1px solid rgba(108,99,255,0.1); display:flex; justify-content:space-between; align-items:center; }
+        .comments-rating-summary { padding:1.1rem 1.5rem; background:rgba(0,0,0,0.2); border-bottom:1px solid rgba(108,99,255,0.07); display:flex; align-items:center; gap:1.5rem; }
+        .summary-score { text-align:center; min-width:70px; }
+        .summary-score .big-number { font-size:2.8rem; font-weight:800; color:#f1f5f9; line-height:1; }
+        .summary-stars { display:flex; gap:3px; margin:0.3rem 0; justify-content:center; }
+        .rating-bars { flex:1; }
+        .rating-bar-row { display:flex; align-items:center; gap:0.6rem; margin-bottom:5px; }
+        .rating-bar-track { flex:1; height:5px; background:rgba(255,255,255,0.05); border-radius:3px; overflow:hidden; }
+        .rating-bar-fill { height:100%; background:linear-gradient(90deg,#f59e0b,#fbbf24); border-radius:3px; }
+        .comments-list-container { flex:1; overflow-y:auto; padding:1rem 1.5rem; }
+        .comment-item { background:rgba(255,255,255,0.018); border:1px solid rgba(255,255,255,0.04); border-radius:14px; padding:0.95rem 1rem; margin-bottom:0.7rem; }
+        .empty-state { grid-column:1/-1; text-align:center; padding:4rem 2rem; background:rgba(8,12,24,0.7); border-radius:20px; border:1px dashed rgba(108,99,255,0.18); }
+        .toast { position:fixed; bottom:28px; right:28px; padding:11px 20px; border-radius:12px; color:#fff; z-index:6000; animation:slideInRight 0.3s ease; font-weight:600; font-size:0.88rem; }
+        .toast.success { background:linear-gradient(135deg,#10b981,#059669); }
+        .toast.error { background:linear-gradient(135deg,#ef4444,#dc2626); }
+        @keyframes slideInRight { from{transform:translateX(120%);opacity:0}to{transform:translateX(0);opacity:1} }
+        @media(max-width:1200px){.cards-grid{grid-template-columns:repeat(2,1fr)}}
+        @media(max-width:768px){.hub-main{padding:16px} .cards-grid{grid-template-columns:1fr} .search-row{flex-direction:column} .filter-row{flex-direction:column;align-items:stretch} .form-row{grid-template-columns:1fr}}
+    </style>
+    <!-- GLobally Applied Theme Hook -->
+    <link rel="stylesheet" href="settings.css">
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const configT = localStorage.getItem('vivo_theme') || 'theme-default';
+            if(configT !== 'theme-default') document.body.classList.add(configT);
+        });
+    </script>
+</head>
+<body>
+    <div id="fullPageLoading" class="full-page-loading"><div class="spinner"></div><p>Discovering talent &amp; events...</p></div>
+
+    <div class="simple-header">
+        <button class="back-btn" onclick="window.history.back()"><i class="fas fa-arrow-left"></i><span>Back</span></button>
+        <div class="page-title"><i class="fas fa-compass"></i><span>Browse &amp; Connect</span></div>
+        <div class="header-live"><div class="live-dot"></div> Live</div>
+    </div>
+
+    <main class="hub-main">
+        <div class="container">
+            <div class="page-header"><h1>Browse &amp; Connect</h1><p>Discover performers, agents, bookers and upcoming events across the industry</p></div>
+            <div class="tabs-container">
+                <button class="tab-btn active" data-tab="performers"><i class="fas fa-microphone"></i> Performers <span class="tab-count" id="tc-performers">0</span></button>
+                <button class="tab-btn" data-tab="agents"><i class="fas fa-user-tie"></i> Agents <span class="tab-count" id="tc-agents">0</span></button>
+                <button class="tab-btn" data-tab="bookers"><i class="fas fa-building"></i> Bookers <span class="tab-count" id="tc-bookers">0</span></button>
+                <button class="tab-btn" data-tab="events"><i class="fas fa-calendar-alt"></i> Events <span class="tab-count" id="tc-events">0</span></button>
+            </div>
+            <div class="search-filter-section">
+                <div class="search-row">
+                    <div class="search-input-wrapper"><i class="fas fa-search"></i><input type="text" class="search-input" id="searchInput" placeholder="Search by name, location, genre..."></div>
+                    <button class="search-btn" id="searchBtn"><i class="fas fa-search"></i> Search</button>
+                </div>
+                <div class="filter-row">
+                    <div class="filter-group"><span class="filter-label"><i class="fas fa-globe"></i> Country</span><select class="filter-select" id="countryFilter"><option value="">All</option></select></div>
+                    <div class="filter-group"><span class="filter-label"><i class="fas fa-city"></i> State</span><select class="filter-select" id="stateFilter" disabled><option value="">Select Country</option></select></div>
+                    <div class="filter-group"><span class="filter-label"><i class="fas fa-map-marker-alt"></i> City</span><select class="filter-select" id="cityFilter" disabled><option value="">Select State</option></select></div>
+                    <button class="reset-btn" id="resetFilters"><i class="fas fa-undo-alt"></i> Reset</button>
+                </div>
+            </div>
+            <div class="results-info"><div class="results-count">Showing <span id="resultsCount">0</span> results</div></div>
+            <div class="tab-content" id="performers-tab"><div class="cards-grid" id="performersGrid"></div></div>
+            <div class="tab-content" id="agents-tab" style="display:none"><div class="cards-grid" id="agentsGrid"></div></div>
+            <div class="tab-content" id="bookers-tab" style="display:none"><div class="cards-grid" id="bookersGrid"></div></div>
+            <div class="tab-content" id="events-tab" style="display:none"><div class="cards-grid" id="eventsGrid"></div></div>
+        </div>
+    </main>
+
+    <div class="connect-modal-overlay" id="connectModal"><div class="connect-modal"><div style="padding:1.4rem 1.5rem; border-bottom:1px solid rgba(108,99,255,0.12); display:flex; justify-content:space-between; align-items:center;"><h3 style="font-size:1rem; font-weight:700;"><i class="fas fa-link" style="color:#6C63FF; margin-right:0.5rem;"></i>Connect with <span id="connectUserName"></span></h3><button onclick="closeConnectModal()" style="background:none;border:none;color:#475569;font-size:1.4rem;cursor:pointer;">&times;</button></div><div class="connect-modal-body" id="connectModalBody" style="padding:1.4rem;"></div></div></div>
+    <div class="comments-modal-overlay" id="commentsModal"><div class="comments-modal"><div class="comments-modal-header"><h3><i class="fas fa-star"></i> <span id="commentsUserName"></span> — Reviews</h3><button class="comments-modal-close" onclick="closeCommentsModal()">&times;</button></div><div class="comments-rating-summary" id="commentsSummary"></div><div class="comments-list-container" id="commentsList"></div></div></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            const supabaseUrl = 'https://msjinuumxmezrijqemmp.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zamludXVteG1lenJpanFlbW1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwOTAyNjMsImV4cCI6MjA4NzY2NjI2M30.ic50fSC7MQfhSkhfE5E8B0R5-BGCQStMRZNHiy6Zakw';
+            const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+            let currentUser=null, currentUserId=null;
+            let performers=[], agents=[], bookers=[], events=[];
+            let bookerProfiles={};
+            let currentTab='performers';
+            let searchTerm='', countryFilter='', stateFilter='', cityFilter='';
+            let locationData={countries:new Set(), statesByCountry:{}, citiesByState:{}};
+            let currentConnectProfile=null;
+            const connectModal=document.getElementById('connectModal');
+
+            const {data:{user}}=await supabaseClient.auth.getUser();
+            if(user){currentUser=user; currentUserId=user.id;} else {window.location.href='login.html'; return;}
+
+            async function loadPerformers(){const{data}=await supabaseClient.from('performers').select('*'); if(data) performers=data;}
+            async function loadAgents(){const{data}=await supabaseClient.from('agents').select('*'); if(data) agents=data;}
+            async function loadBookers(){const{data}=await supabaseClient.from('bookers').select('*'); if(data){bookers=data; for(const b of bookers) bookerProfiles[b.id]=b;}}
+            async function loadEvents(){try{const today=new Date().toISOString().split('T')[0]; const{data,error}=await supabaseClient.from('events').select('*').gte('event_date',today).order('event_date',{ascending:true}); if(!error&&data) events=data;}catch(err){console.error(err); events=[];}}
+            
+            async function getRecipientAuthId(profileId, profileType) {
+                try {
+                    // Fast path: if we already have auth_id stored on the profile object, use it
+                    if (currentConnectProfile && currentConnectProfile.authId) {
+                        return currentConnectProfile.authId;
+                    }
+                    // Normalize: handle both 'performer' and 'performers' etc.
+                    const t = (profileType || '').toLowerCase().replace(/s$/, '');
+                    let tableName = '';
+                    if (t === 'performer') tableName = 'performers';
+                    else if (t === 'agent') tableName = 'agents';
+                    else if (t === 'booker') tableName = 'bookers';
+                    else { console.error('Unknown profileType passed to getRecipientAuthId:', profileType); return null; }
+                    
+                    const { data, error } = await supabaseClient
+                        .from(tableName)
+                        .select('auth_id')
+                        .eq('id', profileId)
+                        .maybeSingle();
+                    
+                    if (error) {
+                        console.error('Error getting recipient:', error);
+                        return null;
+                    }
+                    return data?.auth_id;
+                } catch (err) {
+                    console.error('Error in getRecipientAuthId:', err);
+                    return null;
+                }
+            }
+            
+            async function getUserRating(userId){const{data}=await supabaseClient.from('ratings').select('rating,comment,reviewer_id,created_at').eq('rated_user_id',userId); if(!data||data.length===0) return{average:0,count:0,comments:[]}; const sum=data.reduce((a,b)=>a+b.rating,0); return{average:(sum/data.length).toFixed(1),count:data.length,comments:data};}
+            function renderStars(rating){const f=Math.floor(rating); const h=rating%1>=0.5; let s=''; for(let i=1;i<=5;i++){if(i<=f) s+='<i class="fas fa-star"></i>'; else if(i===f+1&&h) s+='<i class="fas fa-star-half-alt"></i>'; else s+='<i class="far fa-star empty"></i>';} return s;}
+            function getSocialIconClass(p){const m={'whatsapp':'fab fa-whatsapp','email':'fas fa-envelope','instagram':'fab fa-instagram','facebook':'fab fa-facebook-f','twitter':'fab fa-twitter','tiktok':'fab fa-tiktok','youtube':'fab fa-youtube','spotify':'fab fa-spotify','soundcloud':'fab fa-soundcloud','linkedin':'fab fa-linkedin-in','website':'fas fa-globe'}; return m[p]||'fas fa-link';}
+            function getSocialColorClass(p){const m={'whatsapp':'whatsapp','instagram':'instagram','facebook':'facebook','twitter':'twitter','tiktok':'tiktok','youtube':'youtube','spotify':'spotify','soundcloud':'soundcloud','linkedin':'linkedin','email':'email','website':'website'}; return m[p]||'';}
+            function getCleanLocation(l){if(!l) return 'Location not set'; var p=l.split(',').map(s=>s.trim()); return p.length>=2?p[0]+', '+p[1]:p[0];}
+            function getCityOnly(l){if(!l) return 'Location'; return l.split(',')[0].trim();}
+            function escapeHtml(str){if(!str) return ''; return String(str).replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));}
+            function showToast(msg,type){const t=document.createElement('div'); t.className='toast '+type; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),3200);}
+
+            // Enhanced Booking Form
+            window.showBookingForm = function() {
+                const ptype = (currentConnectProfile?.type || '').toLowerCase().replace(/s$/, '');
+                if (ptype === 'agent') {
+                    showAgentRosterPicker();
+                    return;
+                }
+                renderBookingForm(null, null, null);
+            };
+
+            window.showAgentRosterPicker = async function() {
+                document.getElementById('connectModalBody').innerHTML = `
+                    <div style="text-align:center; padding:20px;"><div class="loading-spinner-small" style="width:28px; height:28px; border-width:3px; display:inline-block; margin-bottom:10px;"></div><p style="color:#64748b;">Loading roster...</p></div>`;
+                try {
+                    const agentAuthId = currentConnectProfile.authId || currentConnectProfile.id;
+
+                    // Step 1: get the agent's row id using auth_id
+                    const { data: agentRow } = await supabaseClient
+                        .from('agents')
+                        .select('id')
+                        .eq('auth_id', agentAuthId)
+                        .maybeSingle();
+
+                    if (!agentRow) {
+                        document.getElementById('connectModalBody').innerHTML = `
+                            <p style="color:#64748b; text-align:center; padding:20px;">Could not find agent profile.</p>
+                            <div class="modal-actions"><button type="button" class="btn-cancel" onclick="showConnectOptions()"><i class="fas fa-arrow-left"></i> Back</button></div>`;
+                        return;
+                    }
+
+                    // Step 2: query the roster_artists table by agent_id
+                    const { data: artists } = await supabaseClient
+                        .from('roster_artists')
+                        .select('id, name, image_url')
+                        .eq('agent_id', agentRow.id)
+                        .order('name', { ascending: true });
+
+                    const rosterArtists = artists || [];
+
+                    if (rosterArtists.length === 0) {
+                        document.getElementById('connectModalBody').innerHTML = `
+                            <h4 style="margin-bottom:1rem; font-size:1rem;"><i class="fas fa-users"></i> Choose Performer</h4>
+                            <p style="color:#64748b; text-align:center; padding:20px;">This agent has no performers on their roster yet.</p>
+                            <div class="modal-actions"><button type="button" class="btn-cancel" onclick="showConnectOptions()"><i class="fas fa-arrow-left"></i> Back</button></div>`;
+                        return;
+                    }
+
+                    const rosterHtml = rosterArtists.map(p => `
+                        <div class="connect-option" onclick="renderBookingForm('${p.id}', '${(p.name || '').replace(/'/g, "\\'")}', '${p.image_url || ''}')" style="align-items:center;">
+                            <div style="width:46px; height:46px; border-radius:50%; overflow:hidden; border:2px solid rgba(108,99,255,0.4); flex-shrink:0; background:rgba(108,99,255,0.1); display:flex; align-items:center; justify-content:center;">
+                                ${p.image_url ? `<img src="${p.image_url}" style="width:100%; height:100%; object-fit:cover;">` : `<i class="fas fa-user" style="color:#6C63FF;"></i>`}
+                            </div>
+                            <div><h4 style="margin:0; font-size:0.95rem;">${p.name || 'Performer'}</h4><p style="margin:0; font-size:0.78rem; color:#64748b;">Tap to book this artist</p></div>
+                        </div>`).join('');
+
+                    document.getElementById('connectModalBody').innerHTML = `
+                        <h4 style="margin-bottom:0.75rem; font-size:1rem; font-weight:700;"><i class="fas fa-users" style="color:#6C63FF; margin-right:6px;"></i> Choose Performer to Book</h4>
+                        <p style="color:#64748b; font-size:0.83rem; margin-bottom:1rem;">Select the artist you wish to book through this agent:</p>
+                        ${rosterHtml}
+                        <div class="modal-actions" style="margin-top:0.5rem;"><button type="button" class="btn-cancel" onclick="showConnectOptions()"><i class="fas fa-arrow-left"></i> Back</button></div>`;
+                } catch (err) {
+                    console.error('Roster load error:', err);
+                    document.getElementById('connectModalBody').innerHTML = `<p style="color:#ef4444; text-align:center; padding:20px;">Error loading roster.</p>`;
+                }
+            };
+
+            window.renderBookingForm = function(performerId, performerName, performerImg) {
+                const ptype = (currentConnectProfile?.type || '').toLowerCase().replace(/s$/, '');
+                const isAgent = ptype === 'agent';
+                const backAction = isAgent ? 'showAgentRosterPicker()' : 'showConnectOptions()';
+
+                const agentPickerHtml = (isAgent && performerId) ? `
+                    <div style="display:flex; align-items:center; gap:12px; background:rgba(108,99,255,0.08); border:1px solid rgba(108,99,255,0.2); border-radius:12px; padding:10px 14px; margin-bottom:1rem;">
+                        <div style="width:38px; height:38px; border-radius:50%; overflow:hidden; border:2px solid #6C63FF; flex-shrink:0; background:rgba(108,99,255,0.1); display:flex; align-items:center; justify-content:center;">
+                            ${performerImg ? `<img src="${performerImg}" style="width:100%; height:100%; object-fit:cover;">` : `<i class="fas fa-user" style="color:#6C63FF; font-size:0.85rem;"></i>`}
+                        </div>
+                        <div style="flex:1;"><p style="margin:0; font-size:0.72rem; color:#64748b;">Booking performer:</p><p style="margin:0; font-weight:700; color:#f1f5f9; font-size:0.9rem;">${performerName}</p></div>
+                        <button type="button" onclick="showAgentRosterPicker()" style="background:none; border:1px solid rgba(255,255,255,0.1); color:#64748b; border-radius:8px; padding:4px 10px; cursor:pointer; font-size:0.72rem; white-space:nowrap;">Change</button>
+                    </div>` : '';
+
+                document.getElementById('connectModalBody').innerHTML = `
+                    <h4 style="margin-bottom:1rem;font-size:1rem;font-weight:700;"><i class="fas fa-calendar-check"></i> Send Booking Request</h4>
+                    <form id="bookingForm">
+                        ${agentPickerHtml}
+                        <div class="form-group"><label><i class="fas fa-calendar-alt"></i> Event Name *</label><input type="text" id="evName" placeholder="e.g. Summer Festival 2024" maxlength="30" required></div>
+                        <div class="form-group"><label><i class="fas fa-map-pin"></i> Venue *</label><input type="text" id="evVenue" placeholder="Venue name" maxlength="30" required></div>
+                        <div class="form-group"><label><i class="fas fa-location-dot"></i> Location (City, State) *</label><input type="text" id="evLocation" placeholder="e.g. Los Angeles, CA" maxlength="30" required></div>
+                        <div class="form-row">
+                            <div class="form-group"><label><i class="fas fa-calendar-day"></i> Date *</label><input type="date" id="evDate" required></div>
+                            <div class="form-group"><label><i class="fas fa-clock"></i> Start Time *</label><input type="time" id="evStartTime" required></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label><i class="fas fa-clock"></i> End Time</label><input type="time" id="evEndTime"></div>
+                            <div class="form-group"><label><i class="fas fa-building"></i> Indoor/Outdoor</label>
+                                <select id="evVenueType">
+                                    <option value="Indoor">Indoor</option>
+                                    <option value="Outdoor">Outdoor</option>
+                                    <option value="Both">Both</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group"><label><i class="fas fa-users"></i> Expected Attendance *</label><input type="number" id="evAttendance" placeholder="Number of people expected" required></div>
+                        <div class="form-group"><label><i class="fas fa-phone"></i> Your Contact Number *</label><input type="tel" id="evContact" placeholder="+27..." maxlength="15" required></div>
+                        <div class="modal-actions"><button type="button" class="btn-cancel" onclick="${backAction}"><i class="fas fa-arrow-left"></i> Back</button><button type="submit" class="btn-send"><i class="fas fa-paper-plane"></i> Send Request</button></div>
+                    </form>`;
+                document.getElementById('bookingForm').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const sendBtn = e.target.querySelector('.btn-send');
+                    sendBtn.disabled = true;
+                    sendBtn.innerHTML = '<span class="loading-spinner-small"></span> Sending...';
+                    try {
+                        const recipient = await getRecipientAuthId(currentConnectProfile.id, currentConnectProfile.type);
+                        if (!recipient) { showToast('Could not find recipient', 'error'); return; }
+                        await supabaseClient.from('inbox_items').insert([{
+                            sender_id: currentUserId,
+                            recipient_id: recipient,
+                            recipient_name: currentConnectProfile.name,
+                            event_name: document.getElementById('evName').value,
+                            venue: document.getElementById('evVenue').value,
+                            event_date: document.getElementById('evDate').value,
+                            start_time: document.getElementById('evStartTime').value,
+                            sender_phone: document.getElementById('evContact').value,
+                            sender_profile: {
+                                event_name: document.getElementById('evName').value,
+                                venue: document.getElementById('evVenue').value,
+                                location: document.getElementById('evLocation').value,
+                                event_date: document.getElementById('evDate').value,
+                                start_time: document.getElementById('evStartTime').value,
+                                end_time: document.getElementById('evEndTime').value,
+                                venue_type: document.getElementById('evVenueType').value,
+                                expected_attendance: document.getElementById('evAttendance').value,
+                                sender_phone: document.getElementById('evContact').value,
+                                ...(performerId ? { requested_performer_id: performerId, requested_performer_name: performerName } : {})
+                            },
+                            type: 'booking',
+                            status: 'pending',
+                            created_at: new Date().toISOString()
+                        }]);
+                        showToast('Booking request sent!', 'success');
+                        closeConnectModal();
+                    } catch (err) {
+                        showToast('Error sending request', 'error');
+                    } finally {
+                        sendBtn.disabled = false;
+                        sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Request';
+                    }
+                });
+            };
+
+            // Chat Form with fixed textarea
+            window.showChatForm = function() {
+                document.getElementById('connectModalBody').innerHTML = `
+                    <h4 style="margin-bottom:1rem;font-size:1rem;font-weight:700;"><i class="fas fa-comment"></i> Send Message</h4>
+                    <form id="chatForm">
+                        <div class="form-group"><label><i class="fas fa-envelope"></i> Message (max 300 words)</label><textarea id="msgText" rows="4" placeholder="Write your message..." style="resize:none;" oninput="let words = this.value.match(/\\S+/g); if(words && words.length > 300) { this.value = words.slice(0, 300).join(' ') + ' '; this.style.borderColor = '#F56565'; } else { this.style.borderColor = ''; }"></textarea></div>
+                        <div class="form-group"><label><i class="fas fa-phone"></i> Your Contact Number</label><input type="tel" id="msgContact" maxlength="15" placeholder="+27..."></div>
+                        <div class="modal-actions"><button type="button" class="btn-cancel" onclick="showConnectOptions()"><i class="fas fa-arrow-left"></i> Back</button><button type="submit" class="btn-send"><i class="fas fa-paper-plane"></i> Send</button></div>
+                    </form>`;
+                document.getElementById('chatForm').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const sendBtn = e.target.querySelector('.btn-send');
+                    sendBtn.disabled = true;
+                    sendBtn.innerHTML = '<span class="loading-spinner-small"></span> Sending...';
+                    try {
+                        const recipient = await getRecipientAuthId(currentConnectProfile.id, currentConnectProfile.type);
+                        if (!recipient) { showToast('Could not find recipient', 'error'); return; }
+                        await supabaseClient.from('inbox_items').insert([{
+                            sender_id: currentUserId,
+                            recipient_id: recipient,
+                            recipient_name: currentConnectProfile.name,
+                            message: document.getElementById('msgText').value,
+                            sender_profile: { sender_phone: document.getElementById('msgContact').value },
+                            type: 'chat',
+                            status: 'pending',
+                            created_at: new Date().toISOString()
+                        }]);
+                        showToast('Message sent!', 'success');
+                        closeConnectModal();
+                    } catch (err) {
+                        showToast('Error sending message', 'error');
+                    } finally {
+                        sendBtn.disabled = false;
+                        sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send';
+                    }
+                });
+            };
+
+            // Send Profile with loading state and confirmation
+            window.sendProfile = async function() {
+                const sendBtn = document.querySelector('#connectModalBody .btn-send');
+                if (sendBtn) {
+                    sendBtn.disabled = true;
+                    sendBtn.innerHTML = '<span class="loading-spinner-small"></span> Sending...';
+                }
+                try {
+                    const recipient = await getRecipientAuthId(currentConnectProfile.id, currentConnectProfile.type);
+                    if (!recipient) { showToast('Could not find recipient', 'error'); return; }
+                    let profile = null;
+                    for (let table of ['performers', 'agents', 'bookers']) {
+                        const { data } = await supabaseClient.from(table).select('*').eq('auth_id', currentUserId).maybeSingle();
+                        if (data) { profile = data; break; }
+                    }
+                    if (!profile) { showToast('Complete your profile first', 'error'); return; }
+                    await supabaseClient.from('inbox_items').insert([{
+                        sender_id: currentUserId,
+                        recipient_id: recipient,
+                        recipient_name: currentConnectProfile.name,
+                        sender_profile: profile,
+                        type: 'profile',
+                        status: 'pending',
+                        created_at: new Date().toISOString()
+                    }]);
+                    showToast('Profile shared successfully!', 'success');
+                    closeConnectModal();
+                } catch (err) {
+                    showToast('Error sharing profile', 'error');
+                } finally {
+                    if (sendBtn) {
+                        sendBtn.disabled = false;
+                        sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Profile';
+                    }
+                }
+            };
+
+            window.showConnectOptions = function() {
+                const ptype = (currentConnectProfile?.type || '').toLowerCase().replace(/s$/, '');
+                const bookLabel = ptype === 'booker' ? 'Send Proposal' : ptype === 'agent' ? 'Book via Agent' : 'Book Talent';
+                const bookDesc = ptype === 'agent' ? 'Choose a performer from this roster' : 'Send a detailed booking request';
+                document.getElementById('connectModalBody').innerHTML = `
+                    <div class="connect-options">
+                        <div class="connect-option" onclick="showBookingForm()"><div class="connect-option-icon"><i class="fas fa-calendar-check"></i></div><div><h4>${bookLabel}</h4><p>${bookDesc}</p></div></div>
+                        <div class="connect-option" onclick="showChatForm()"><div class="connect-option-icon"><i class="fas fa-comment"></i></div><div><h4>Message</h4><p>Send a direct message</p></div></div>
+                        <div class="connect-option" onclick="sendProfile()"><div class="connect-option-icon"><i class="fas fa-id-card"></i></div><div><h4>Share Profile</h4><p>Send your profile card</p></div></div>
+                    </div>`;
+            };
+
+            window.openConnectModal = function(pid, pname, ptype, pauthid) {
+                if (currentUserId && pauthid && currentUserId === pauthid) {
+                    showToast("You can't connect with yourself", 'error');
+                    return;
+                }
+                currentConnectProfile = { id: pid, name: pname, type: ptype, authId: pauthid || null };
+                document.getElementById('connectUserName').textContent = pname;
+                showConnectOptions();
+                connectModal.classList.add('active');
+            };
+            window.closeConnectModal = function() { connectModal.classList.remove('active'); currentConnectProfile = null; };
+            window.closeCommentsModal = function() { document.getElementById('commentsModal').classList.remove('active'); };
+            window.viewComments = async function(userId, userName) {
+                document.getElementById('commentsUserName').textContent = userName;
+                const { data } = await supabaseClient.from('ratings').select('rating,comment,created_at').eq('rated_user_id', userId).order('created_at', { ascending: false });
+                const summaryDiv = document.getElementById('commentsSummary');
+                const listDiv = document.getElementById('commentsList');
+                if (!data || data.length === 0) {
+                    summaryDiv.innerHTML = '';
+                    listDiv.innerHTML = `<div class="empty-state"><i class="fas fa-star"></i><p>No reviews yet.</p></div>`;
+                } else {
+                    const avg = (data.reduce((a, b) => a + b.rating, 0) / data.length).toFixed(1);
+                    const counts = [5, 4, 3, 2, 1].map(s => ({ s, n: data.filter(d => Math.round(d.rating) === s).length }));
+                    summaryDiv.innerHTML = `<div class="summary-score"><div class="big-number">${avg}</div><div class="summary-stars">${renderStars(parseFloat(avg))}</div><div class="summary-count">${data.length} review${data.length !== 1 ? 's' : ''}</div></div><div class="rating-bars">${counts.map(c => `<div class="rating-bar-row"><span class="rating-bar-label">${c.s}</span><div class="rating-bar-track"><div class="rating-bar-fill" style="width:${data.length > 0 ? Math.round(c.n / data.length * 100) : 0}%"></div></div><span class="rating-bar-count">${c.n}</span></div>`).join('')}</div>`;
+                    listDiv.innerHTML = data.map(c => `<div class="comment-item"><div class="comment-header"><div class="comment-user-info"><div class="comment-avatar">⭐</div><span class="comment-username">Reviewer</span></div><div class="comment-rating-row">${renderStars(c.rating)}</div></div><div class="comment-text">${escapeHtml(c.comment || 'No written review.')}</div><div class="comment-date">${new Date(c.created_at).toLocaleDateString()}</div></div>`).join('');
+                }
+                document.getElementById('commentsModal').classList.add('active');
+            };
+
+            // Profile rendering functions (simplified but functional)
+            async function renderProfileCard(profile, type) {
+                const cityOnly = getCityOnly(profile.location);
+                const cleanLocation = getCleanLocation(profile.location);
+                const rating = await getUserRating(profile.auth_id);
+                const isAgent = type === 'agents' || type === 'agent';
+                const isPerformer = type === 'performers' || type === 'performer';
+                const countryCode = profile.country_code ? profile.country_code.toLowerCase() : '';
+                const socialHtml = (profile.social_links || []).map(link => `<a href="${link.url}" target="_blank" class="social-icon ${getSocialColorClass(link.platform)}" onclick="event.stopPropagation()"><i class="${getSocialIconClass(link.platform)}"></i></a>`).join('');
+                const isSelf = profile.auth_id === currentUserId;
+                const typeLabel = isPerformer ? 'performer' : isAgent ? 'agent' : 'booker';
+                const badgeClass = `badge-${typeLabel}`;
+                const typeIcon = isPerformer ? 'fa-microphone' : isAgent ? 'fa-user-tie' : 'fa-building';
+                const memberSince = profile.created_at ? new Date(profile.created_at).toLocaleDateString('en-ZA', { year: 'numeric', month: 'short' }) : '—';
+                return `<div class="profile-card" data-id="${profile.id}" data-type="${type}" data-auth-id="${profile.auth_id || ''}" data-name="${(profile.name || 'Unknown').replace(/'/g, "\\'")}"><div class="close-expanded"><i class="fas fa-times"></i></div><div class="card-type-badge ${badgeClass}"><i class="fas ${typeIcon}"></i> ${typeLabel}</div><div class="card-inner"><div class="card-header"><div class="avatar">${profile.image_url || profile.logo_url ? `<img src="${profile.image_url || profile.logo_url}">` : `<i class="fas ${typeIcon}"></i>`}</div><div class="title-info"><div class="name-row"><h2>${profile.name || 'Unknown'}</h2>${countryCode ? `<div class="flag-circle-badge"><span class="fi fi-${countryCode}"></span></div>` : ''}</div><div class="rating-stars">${renderStars(rating.average)}<span class="rating-number">${rating.average > 0 ? rating.average : 'No'} (${rating.count})</span></div><div class="location-display"><i class="fas fa-map-marker-alt"></i> ${cityOnly}</div></div></div><div class="role-tags">${profile.types && profile.types.length ? profile.types.map(t => `<span class="role-tag">${t}</span>`).join('') : `<span class="role-tag">${typeLabel.charAt(0).toUpperCase() + typeLabel.slice(1)}</span>`}</div><div class="bio">${profile.bio || 'No bio added yet.'}</div><div class="expand-hint"><i class="fas fa-chevron-down"></i> Tap to expand</div><div class="social-links">${socialHtml}</div><div class="action-buttons">${isPerformer ? `<button class="techlist-btn" onclick="event.stopPropagation(); window.location.href='techlist-view.html?id=${profile.id}'"><i class="fas fa-list-ul"></i> Techlist</button>` : ''}${isAgent ? `<button class="roster-btn" onclick="event.stopPropagation(); window.location.href='agent-roster-view.html?id=${profile.id}'"><i class="fas fa-users"></i> Roster</button>` : ''}<button class="view-btn" onclick="event.stopPropagation(); window.location.href='profile.html?id=${profile.auth_id}'" style="background:rgba(108,99,255,0.1); border:1px solid #6C63FF; color:white; padding:6px 10px; border-radius:8px; font-size:0.85rem; cursor:pointer; display:flex; align-items:center; gap:5px;"><i class="fas fa-eye"></i> View</button>${isSelf ? `<button class="action-btn connect-btn disabled" disabled><i class="fas fa-user"></i> Your Profile</button>` : `<button class="action-btn connect-btn" onclick="event.stopPropagation(); openConnectModal('${profile.id}','${(profile.name || 'User').replace(/'/g, "\\'")}','${type}','${profile.auth_id || ''}')"><i class="fas fa-link"></i> Connect</button>`}</div></div><div class="expanded-content"><div class="expanded-section"><h4>About</h4><p style="color:#94a3b8;">${escapeHtml(profile.bio) || 'No bio provided.'}</p></div><div class="details-grid"><div class="detail-item"><div class="detail-label">Location</div><div class="detail-value">${escapeHtml(cleanLocation)}</div></div><div class="detail-item"><div class="detail-label">Member Since</div><div class="detail-value">${memberSince}</div></div>${profile.phone ? `<div class="detail-item"><div class="detail-label">Phone</div><div class="detail-value">${escapeHtml(profile.phone)}</div></div>` : ''}${profile.email ? `<div class="detail-item"><div class="detail-label">Email</div><div class="detail-value">${escapeHtml(profile.email)}</div></div>` : ''}${profile.types && profile.types.length > 3 ? `<div class="detail-item" style="grid-column:1/-1"><div class="detail-label">Specialties</div><div class="detail-value">${profile.types.join(', ')}</div></div>` : ''}</div>${rating.count > 0 ? `<button class="view-comments-btn" onclick="event.stopPropagation(); viewComments('${profile.auth_id}','${(profile.name || 'User').replace(/'/g, "\\'")}')"><i class="fas fa-star"></i> View ${rating.count} Review${rating.count !== 1 ? 's' : ''} (${rating.average} avg)</button>` : `<button class="view-comments-btn" style="opacity:0.35;cursor:default;" disabled><i class="far fa-star"></i> No Reviews Yet</button>`}</div></div>`;
+            }
+
+            async function renderEventCard(event) {
+                const eventDate = new Date(event.event_date).toLocaleDateString('en-ZA', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+                const photos = event.photos || [];
+                const booker = bookerProfiles[event.booker_id] || null;
+                let photoArea = '';
+                if (photos.length) {
+                    const slides = photos.map(p => `<div class="photo-slide"><img src="${p}" alt="Event photo" loading="lazy"></div>`).join('');
+                    const navBtns = photos.length > 1 ? `<div class="slider-nav"><button class="slider-btn prev-btn" data-event="${event.id}"><i class="fas fa-chevron-left"></i></button><button class="slider-btn next-btn" data-event="${event.id}"><i class="fas fa-chevron-right"></i></button></div>` : '';
+                    const dotsHtml = photos.length > 1 ? `<div class="slider-dots">${photos.map((_, i) => `<div class="slider-dot${i === 0 ? ' active' : ''}" data-idx="${i}"></div>`).join('')}</div>` : '';
+                    photoArea = `<div class="photo-slider" id="slider-${event.id}">${slides}</div>${navBtns}${dotsHtml}`;
+                } else {
+                    photoArea = `<div class="no-photo-placeholder"><i class="fas fa-calendar-star"></i><span>No photos</span></div>`;
+                }
+                return `<div class="event-card" data-id="${event.id}" data-type="event"><div class="close-expanded"><i class="fas fa-times"></i></div><div class="event-photos" id="photos-${event.id}">${photoArea}<div class="event-photos-gradient"></div></div><div class="event-inner"><div class="event-title">${escapeHtml(event.name)}</div><div class="event-meta"><div class="event-meta-item"><i class="fas fa-calendar"></i> ${eventDate}</div><div class="event-meta-item"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(event.venue || 'TBA')}</div>${event.event_time ? `<div class="event-meta-item"><i class="fas fa-clock"></i> ${escapeHtml(event.event_time)}</div>` : ''}</div><div class="event-tags"><span class="event-tag">${escapeHtml(event.event_type || 'Event')}</span></div><div class="event-desc">${escapeHtml(event.description ? event.description.substring(0, 120) + (event.description.length > 120 ? '...' : '') : 'No description.')}</div><div class="event-expand-hint"><i class="fas fa-chevron-down"></i> Tap for details</div><div class="event-action-row">${event.ticket_link ? `<a href="${event.ticket_link}" target="_blank" class="ticket-btn" onclick="event.stopPropagation()"><i class="fas fa-ticket-alt"></i> Tickets</a>` : '<div style="flex:1;color:#334155;font-size:0.78rem;"><i class="fas fa-info-circle"></i> Expand for details</div>'}</div></div><div class="event-expanded-content"><h4>Full Description</h4><p>${escapeHtml(event.description || 'No description.')}</p><h4>Details</h4><div class="details-grid"><div class="detail-item"><div class="detail-label">Venue</div><div class="detail-value">${escapeHtml(event.venue || 'TBA')}</div></div><div class="detail-item"><div class="detail-label">Location</div><div class="detail-value">${escapeHtml(event.location || 'TBA')}</div></div><div class="detail-item"><div class="detail-label">Date</div><div class="detail-value">${eventDate}</div></div><div class="detail-item"><div class="detail-label">Time</div><div class="detail-value">${escapeHtml(event.event_time || 'TBA')}</div></div></div>${event.ticket_link ? `<a href="${event.ticket_link}" target="_blank" class="ticket-btn" style="display:flex;margin-top:1.2rem;text-decoration:none;"><i class="fas fa-ticket-alt"></i> Get Tickets</a>` : ''}</div></div>`;
+            }
+
+            function initEventSliders() {
+                document.querySelectorAll('.event-photos').forEach(container => {
+                    const slider = container.querySelector('.photo-slider');
+                    const prev = container.querySelector('.prev-btn');
+                    const next = container.querySelector('.next-btn');
+                    const dots = container.querySelectorAll('.slider-dot');
+                    if (!slider) return;
+                    let idx = 0;
+                    const slides = slider.children.length;
+                    function goTo(n) { idx = (n + slides) % slides; slider.style.transform = `translateX(-${idx * 100}%)`; dots.forEach((d, i) => d.classList.toggle('active', i === idx)); }
+                    if (prev) prev.onclick = e => { e.stopPropagation(); goTo(idx - 1); };
+                    if (next) next.onclick = e => { e.stopPropagation(); goTo(idx + 1); };
+                    dots.forEach((d, i) => d.onclick = e => { e.stopPropagation(); goTo(i); });
+                });
+            }
+
+            function attachCardEvents() {
+                document.querySelectorAll('.profile-card, .event-card').forEach(card => {
+                    card.addEventListener('click', function (e) {
+                        if (e.target.closest('button') || e.target.closest('a') || e.target.closest('.close-expanded') || e.target.closest('.slider-btn') || e.target.closest('.slider-dot')) return;
+                        document.querySelectorAll('.profile-card.expanded,.event-card.expanded').forEach(c => c.classList.remove('expanded'));
+                        if (card.classList.contains('profile-card') && card.dataset.type === 'performers') { const authId = card.dataset.authId; if (authId) { window.location.href = 'profile.html?id=' + authId; return; } } card.classList.add('expanded');
+                    });
+                    card.querySelector('.close-expanded')?.addEventListener('click', e => { e.stopPropagation(); card.classList.remove('expanded'); });
+                });
+            }
+
+            function filterByLocation(items) { return items.filter(item => { if (!item.location) return true; const parts = item.location.split(',').map(s => s.trim()); if (parts.length >= 3) { if (countryFilter && parts[2] !== countryFilter) return false; if (stateFilter && parts[1] !== stateFilter) return false; if (cityFilter && parts[0] !== cityFilter) return false; } return true; }); }
+            function filterBySearch(items) { if (!searchTerm) return items; return items.filter(item => (item.name && item.name.toLowerCase().includes(searchTerm)) || (item.location && item.location.toLowerCase().includes(searchTerm)) || (item.bio && item.bio.toLowerCase().includes(searchTerm)) || (item.types && item.types.some(t => t.toLowerCase().includes(searchTerm)))); }
+            function updateStateFilter() { const stateSelect = document.getElementById('stateFilter'); const citySelect = document.getElementById('cityFilter'); if (!countryFilter) { stateSelect.disabled = true; stateSelect.innerHTML = '<option value="">Select Country</option>'; citySelect.disabled = true; citySelect.innerHTML = '<option value="">Select State</option>'; stateFilter = ''; cityFilter = ''; return; } const states = locationData.statesByCountry[countryFilter]; if (states && states.size > 0) { stateSelect.disabled = false; stateSelect.innerHTML = '<option value="">All States</option>'; Array.from(states).sort().forEach(s => { stateSelect.innerHTML += `<option value="${s}">${s}</option>`; }); } else { stateSelect.disabled = true; stateSelect.innerHTML = '<option value="">No states</option>'; } citySelect.disabled = true; citySelect.innerHTML = '<option value="">Select State</option>'; stateFilter = ''; cityFilter = ''; }
+            function updateCityFilter() { const citySelect = document.getElementById('cityFilter'); if (!stateFilter) { citySelect.disabled = true; citySelect.innerHTML = '<option value="">Select State</option>'; cityFilter = ''; return; } const cities = locationData.citiesByState[stateFilter]; if (cities && cities.size > 0) { citySelect.disabled = false; citySelect.innerHTML = '<option value="">All Cities</option>'; Array.from(cities).sort().forEach(c => { citySelect.innerHTML += `<option value="${c}">${c}</option>`; }); } else { citySelect.disabled = true; citySelect.innerHTML = '<option value="">No cities</option>'; } cityFilter = ''; }
+            function buildLocationHierarchy() { [...performers, ...agents, ...bookers].forEach(p => { if (p.location) { let parts = p.location.split(',').map(s => s.trim()); if (parts.length >= 3) { let city = parts[0], state = parts[1], country = parts[2]; locationData.countries.add(country); if (!locationData.statesByCountry[country]) locationData.statesByCountry[country] = new Set(); locationData.statesByCountry[country].add(state); if (!locationData.citiesByState[state]) locationData.citiesByState[state] = new Set(); locationData.citiesByState[state].add(city); } } }); }
+            function populateFilters() { let sel = document.getElementById('countryFilter'); sel.innerHTML = '<option value="">All Countries</option>'; Array.from(locationData.countries).sort().forEach(c => sel.innerHTML += `<option value="${c}">${c}</option>`); }
+            async function renderCurrentTab() {
+                let items = []; if (currentTab === 'performers') items = [...performers]; else if (currentTab === 'agents') items = [...agents]; else if (currentTab === 'bookers') items = [...bookers]; else if (currentTab === 'events') items = [...events];
+                if (currentTab !== 'events') { items = filterByLocation(items); items = filterBySearch(items); } else { items = filterBySearch(items); }
+                document.getElementById('resultsCount').textContent = items.length;
+                const container = document.getElementById(currentTab + 'Grid');
+                if (items.length === 0) { container.innerHTML = `<div class="empty-state"><i class="fas fa-${currentTab === 'performers' ? 'microphone' : currentTab === 'agents' ? 'user-tie' : currentTab === 'bookers' ? 'building' : 'calendar-alt'}"></i><h3>No ${currentTab} found</h3><p>Try adjusting your search.</p></div>`; }
+                else { let html = ''; if (currentTab === 'events') { for (let e of items) html += await renderEventCard(e); container.innerHTML = html; initEventSliders(); attachCardEvents(); } else { for (let p of items) html += await renderProfileCard(p, currentTab.slice(0, -1)); container.innerHTML = html; attachCardEvents(); } }
+            }
+
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', function () { document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); this.classList.add('active'); currentTab = this.dataset.tab; document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none'); document.getElementById(currentTab + '-tab').style.display = 'block'; renderCurrentTab(); }));
+            document.getElementById('searchBtn').addEventListener('click', () => { searchTerm = document.getElementById('searchInput').value.toLowerCase(); renderCurrentTab(); });
+            document.getElementById('searchInput').addEventListener('keydown', e => { if (e.key === 'Enter') { searchTerm = document.getElementById('searchInput').value.toLowerCase(); renderCurrentTab(); } });
+            document.getElementById('resetFilters').addEventListener('click', () => { document.getElementById('searchInput').value = ''; searchTerm = ''; countryFilter = ''; stateFilter = ''; cityFilter = ''; document.getElementById('countryFilter').value = ''; document.getElementById('stateFilter').disabled = true; document.getElementById('stateFilter').innerHTML = '<option value="">Select Country</option>'; document.getElementById('cityFilter').disabled = true; document.getElementById('cityFilter').innerHTML = '<option value="">Select State</option>'; renderCurrentTab(); });
+            document.getElementById('countryFilter').addEventListener('change', (e) => { countryFilter = e.target.value; updateStateFilter(); renderCurrentTab(); });
+            document.getElementById('stateFilter').addEventListener('change', (e) => { stateFilter = e.target.value; updateCityFilter(); renderCurrentTab(); });
+            document.getElementById('cityFilter').addEventListener('change', (e) => { cityFilter = e.target.value; renderCurrentTab(); });
+
+            await loadPerformers(); await loadAgents(); await loadBookers(); await loadEvents();
+            buildLocationHierarchy(); populateFilters();
+            document.getElementById('tc-performers').textContent = performers.length;
+            document.getElementById('tc-agents').textContent = agents.length;
+            document.getElementById('tc-bookers').textContent = bookers.length;
+            document.getElementById('tc-events').textContent = events.length;
+            await renderCurrentTab();
+            document.getElementById('fullPageLoading').style.display = 'none';
+            document.addEventListener('click', e => { if (!e.target.closest('.profile-card.expanded') && !e.target.closest('.event-card.expanded') && (document.querySelector('.profile-card.expanded') || document.querySelector('.event-card.expanded'))) { document.querySelectorAll('.profile-card.expanded,.event-card.expanded').forEach(c => c.classList.remove('expanded')); } if (e.target === connectModal) closeConnectModal(); if (e.target === document.getElementById('commentsModal')) closeCommentsModal(); });
+        });
+    </script>
+    <script src="settings-manager.js"></script>
+    <script src="navbar.js"></script>
+</body>
+</html>
+
+

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vivo Calendar | Vivo Distro</title>
+    <link rel="stylesheet" href="style.css">
+     <link rel="stylesheet" href="responsive.css"> <!-- YOUR NEW RESPONSIVE CSS -->
+    <link rel="stylesheet" href="calendar.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="global-fullscreen.js" defer></script>
+    
+    <!-- GLobally Applied Theme Hook -->
+    <link rel="stylesheet" href="settings.css">
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const configT = localStorage.getItem('vivo_theme') || 'theme-default';
+            if(configT !== 'theme-default') document.body.classList.add(configT);
+        });
+    </script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="calendar-sidebar">
+        <div class="sidebar-header">
+            <a href="agent-hub.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Hub</span>
+            </a>
+            <div class="logo">
+                <i class="fas fa-music"></i>
+                <span>VIVO <span class="logo-highlight">CALENDAR</span></span>
+            </div>
+        </div>
+        
+        <!-- Month Navigation -->
+        <div class="month-nav">
+            <button class="nav-btn prev-month">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <h2 id="currentMonth">Mar 2024</h2>
+            <button class="nav-btn next-month">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+        
+      <!-- In calendar.html, replace the calendar-stats section with: -->
+<div class="calendar-stats">
+    <div class="stat-box">
+        <div class="stat-number" id="totalGigs">0</div>
+        <div class="stat-label">TOTAL GIGS</div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-number" id="upcomingGigs">0</div>
+        <div class="stat-label">UPCOMING</div>
+    </div>
+</div>
+        
+        <!-- Add Event Button -->
+        <button class="add-event-btn" id="addEventBtn">
+            <i class="fas fa-plus"></i>
+            Add New Event
+        </button>
+        
+        <!-- Upcoming Events List -->
+        <div class="upcoming-list">
+            <h3><i class="fas fa-clock"></i> Upcoming</h3>
+            <div class="events-list" id="upcomingEventsList">
+                <!-- Events will be added here -->
+                <div class="empty-events">
+                    <i class="fas fa-calendar-plus"></i>
+                    <p>No upcoming events</p>
+                    <small>Add your first gig!</small>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Calendar -->
+    <main class="calendar-main">
+        <!-- Calendar Header -->
+        <header class="calendar-header">
+            <div class="view-controls">
+                <button class="view-btn active" data-view="month">Month</button>
+                <button class="view-btn" data-view="week">Week</button>
+                <button class="view-btn" data-view="day">Day</button>
+            </div>
+            
+            <div class="date-controls">
+                <button class="today-btn" id="todayBtn">
+                    <i class="fas fa-calendar-day"></i>
+                    Today
+                </button>
+            </div>
+        </header>
+
+        <!-- Calendar Grid -->
+        <div class="calendar-view">
+            <!-- Weekday Headers -->
+            <div class="weekdays">
+                <div class="weekday">Sun</div>
+                <div class="weekday">Mon</div>
+                <div class="weekday">Tue</div>
+                <div class="weekday">Wed</div>
+                <div class="weekday">Thu</div>
+                <div class="weekday">Fri</div>
+                <div class="weekday">Sat</div>
+            </div>
+
+            <!-- Calendar Days -->
+            <div class="calendar-days" id="calendarDays">
+                <!-- Days will be populated by JavaScript -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Event Modal -->
+    <div class="modal-overlay" id="eventModal" style="display: none;">
+        <div class="event-modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add New Event</h3>
+                <button class="close-modal" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="eventForm">
+                <div class="form-group">
+                    <label>Event Title *</label>
+                    <input type="text" id="eventTitle" placeholder="Gig name or event title" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Date *</label>
+                        <input type="date" id="eventDate" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Time *</label>
+                        <input type="time" id="eventTime" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Venue / Location *</label>
+                    <input type="text" id="eventVenue" placeholder="Venue name and location" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Highlight Color *</label>
+                    <div class="color-options">
+                        <label class="color-option">
+                            <input type="radio" name="color" value="#6C63FF" checked>
+                            <span class="color-preview" style="background: #6C63FF;"></span>
+                            <span class="color-label">Purple</span>
+                        </label>
+                        <label class="color-option">
+                            <input type="radio" name="color" value="#48BB78">
+                            <span class="color-preview" style="background: #48BB78;"></span>
+                            <span class="color-label">Green</span>
+                        </label>
+                        <label class="color-option">
+                            <input type="radio" name="color" value="#4299E1">
+                            <span class="color-preview" style="background: #4299E1;"></span>
+                            <span class="color-label">Blue</span>
+                        </label>
+                        <label class="color-option">
+                            <input type="radio" name="color" value="#ED8936">
+                            <span class="color-preview" style="background: #ED8936;"></span>
+                            <span class="color-label">Orange</span>
+                        </label>
+                        <label class="color-option">
+                            <input type="radio" name="color" value="#9F7AEA">
+                            <span class="color-preview" style="background: #9F7AEA;"></span>
+                            <span class="color-label">Violet</span>
+                        </label>
+                        <label class="color-option">
+                            <input type="radio" name="color" value="#F56565">
+                            <span class="color-preview" style="background: #F56565;"></span>
+                            <span class="color-label">Red</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Additional Notes</label>
+                    <textarea id="eventNotes" placeholder="Setlist, equipment needed, contact person, etc." rows="3"></textarea>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" id="cancelEvent">
+                        Cancel
+                    </button>
+                    <button type="button" class="btn-delete" id="deleteEvent" style="display: none;">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                    <button type="submit" class="btn-save">
+                        <i class="fas fa-save"></i> Save Event
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="calendar.js"></script>
+    <script src="settings-manager.js"></script>
+    <script src="navbar.js"></script>
+</body>
+</html>
+

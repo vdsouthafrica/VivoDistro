@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vivo For You | Discover Talent</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+        html, body { background: #000; color: #fff; overflow: hidden; height: 100vh; width: 100vw; }
+
+        .back-btn {
+            position: fixed; top: 25px; left: 25px; z-index: 1100;
+            width: 45px; height: 45px; border-radius: 50%;
+            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(10px);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; text-decoration: none; border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        .back-btn:hover { background: #6C63FF; transform: scale(1.1); }
+
+        .vivos-container {
+            height: 100vh; width: 100vw; overflow-y: scroll; scroll-snap-type: y mandatory;
+            scrollbar-width: none; -ms-overflow-style: none; background: #000;
+        }
+        .vivos-container::-webkit-scrollbar { display: none; }
+
+        .vivo-fullscreen-card {
+            height: 100vh; width: 100vw; scroll-snap-align: start;
+            position: relative; display: flex; align-items: center; justify-content: center;
+            background: #000;
+        }
+
+        .video-wrapper {
+            width: 100%; max-width: 56.25vh; height: 100vh;
+            position: relative; background: #000; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+        }
+
+        .tiktok-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+            position: relative;
+        }
+
+        .tiktok-embed-wrapper {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: #000;
+        }
+
+        .tiktok-embed-wrapper iframe {
+            width: 100% !important;
+            height: 100% !important;
+            border: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            background: #000 !important;
+        }
+
+        .youtube-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .youtube-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #000;
+        }
+
+        .nav-controls {
+            position: fixed; right: 20px; top: 50%; transform: translateY(-50%);
+            display: flex; flex-direction: column; gap: 15px; z-index: 1200;
+        }
+        .nav-btn {
+            width: 50px; height: 50px; border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2); color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.3s ease;
+        }
+        .nav-btn:hover { background: #6C63FF; transform: scale(1.1); }
+
+        .vivo-overlay {
+            position: absolute; inset: 0; z-index: 10;
+            background: linear-gradient(to bottom, transparent 70%, rgba(0,0,0,0.95) 100%);
+            display: flex; flex-direction: column; justify-content: flex-end; padding: 25px;
+            pointer-events: none;
+        }
+
+        .performer-meta { 
+            display: flex; align-items: center; gap: 15px; margin-bottom: 12px; 
+            pointer-events: auto; cursor: pointer; 
+        }
+        .performer-pic { 
+            width: 48px; height: 48px; border-radius: 50%; border: 2px solid #6C63FF; 
+            object-fit: cover; background: #333; 
+        }
+        .performer-info h3 { 
+            font-size: 1.1rem; font-weight: 700; color: #fff; 
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8); 
+        }
+        .performer-info p { 
+            font-size: 0.8rem; color: rgba(255,255,255,0.7); 
+        }
+
+        .vivo-title { 
+            font-size: 0.95rem; color: #fff; margin-bottom: 25px; 
+            max-width: 80%; line-height: 1.4; text-shadow: 0 2px 5px rgba(0,0,0,0.8); 
+        }
+
+        .connect-btn {
+            position: absolute; bottom: 25px; right: 25px; z-index: 1500;
+            pointer-events: auto;
+        }
+        .btn-connect {
+            padding: 12px 24px; border-radius: 30px;
+            background: linear-gradient(135deg, #6C63FF, #FF6584);
+            border: none; color: white; font-weight: 700;
+            display: flex; align-items: center; gap: 10px;
+            cursor: pointer; transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(108,99,255,0.3);
+            font-size: 0.95rem; text-transform: uppercase;
+            pointer-events: auto;
+        }
+        .btn-connect:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 15px 40px rgba(108,99,255,0.5); 
+        }
+
+        .loading-screen { 
+            position: fixed; inset: 0; z-index: 3000; background: #000; 
+            display: flex; align-items: center; justify-content: center; 
+            transition: opacity 0.5s; 
+        }
+        .loader-spinner { 
+            width: 40px; height: 40px; border: 3px solid rgba(108, 99, 255, 0.2); 
+            border-top-color: #6C63FF; border-radius: 50%; 
+            animation: spin 1s infinite linear; 
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .video-placeholder {
+            width: 100%; height: 100%; display: flex;
+            align-items: center; justify-content: center;
+            background: #111; color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-controls">
+        <button class="nav-btn" id="scrollUp"><i class="fas fa-chevron-up"></i></button>
+        <button class="nav-btn" id="scrollDown"><i class="fas fa-chevron-down"></i></button>
+    </div>
+
+    <a href="browse.html" class="back-btn" id="dynamicBackBtn"><i class="fas fa-arrow-left"></i></a>
+
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loader-spinner"></div>
+    </div>
+
+    <div class="vivos-container" id="vivosContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const supabaseUrl = 'https://msjinuumxmezrijqemmp.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zamludXVteG1lenJpanFlbW1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwOTAyNjMsImV4cCI6MjA4NzY2NjI2M30.ic50fSC7MQfhSkhfE5E8B0R5-BGCQStMRZNHiy6Zakw';
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+        let allVivos = [];
+        let isAppending = false;
+        let activeVideoCard = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await smartDetectHub();
+            await loadVivosFeed();
+            
+            document.getElementById('scrollUp').addEventListener('click', () => {
+                const container = document.getElementById('vivosContainer');
+                container.scrollBy({ top: -window.innerHeight, behavior: 'smooth' });
+            });
+
+            document.getElementById('scrollDown').addEventListener('click', () => {
+                const container = document.getElementById('vivosContainer');
+                container.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
+            });
+
+            document.getElementById('vivosContainer').addEventListener('scroll', () => {
+                if (isAppending) return;
+                const container = document.getElementById('vivosContainer');
+                if (container.scrollTop + container.clientHeight >= container.scrollHeight - 100) {
+                    isAppending = true;
+                    renderVivos(allVivos, false);
+                    setTimeout(() => isAppending = false, 1000);
+                }
+            });
+
+            setTimeout(() => {
+                const ls = document.getElementById('loadingScreen');
+                if(ls) { ls.style.opacity = '0'; setTimeout(() => ls.remove(), 500); }
+            }, 1500);
+        });
+
+        async function smartDetectHub() {
+            try {
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                const btn = document.getElementById('dynamicBackBtn');
+                if (user) {
+                    let hub = 'browse.html';
+                    const roles = { 'performers': 'performer-hub.html', 'agents': 'agent-hub.html', 'bookers': 'booker-hub.html' };
+                    for (const [table, page] of Object.entries(roles)) {
+                        const { data } = await supabaseClient.from(table).select('id').eq('auth_id', user.id).maybeSingle();
+                        if (data) { hub = page; break; }
+                    }
+                    if(btn) btn.href = hub;
+                }
+            } catch (e) {
+                console.error('Error detecting hub:', e);
+            }
+        }
+
+        async function loadVivosFeed() {
+            const { data: vivos, error } = await supabaseClient.from('vivos').select('*, performers!vivos_performer_id_fkey(*)');
+
+            if (error) {
+                console.error('Error loading vivos:', error);
+                document.getElementById('vivosContainer').innerHTML = '<div class="vivo-fullscreen-card"><div class="video-placeholder">Error loading videos</div></div>';
+                return;
+            }
+
+            if (!vivos || vivos.length === 0) {
+                document.getElementById('vivosContainer').innerHTML = '<div class="vivo-fullscreen-card"><div class="video-placeholder">No videos found</div></div>';
+                return;
+            }
+
+            allVivos = vivos.sort(() => Math.random() - 0.5);
+            
+            let feedData = [...allVivos];
+            while (feedData.length < 10 && feedData.length > 0) {
+                feedData = [...feedData, ...allVivos];
+            }
+            
+            await renderVivos(feedData, true);
+            setupVideoControl();
+        }
+
+        function getYouTubeEmbedUrl(videoId) {
+            // Use standard embed with autoplay and sound
+            return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&loop=1&playlist=${videoId}&controls=0&modestbranding=1&rel=0&playsinline=1&enablejsapi=1`;
+        }
+
+        function getTikTokEmbedHtml(videoId) {
+            return `
+                <iframe 
+                    src="https://www.tiktok.com/embed/v2/${videoId}"
+                    allow="autoplay; encrypted-media; picture-in-picture; web-share"
+                    allowfullscreen
+                    style="width:100%;height:100%;border:none;background:#000;">
+                </iframe>
+            `;
+        }
+
+        async function renderVivos(vivosToRender, clearExisting) {
+            const container = document.getElementById('vivosContainer');
+            if (clearExisting) {
+                container.innerHTML = '';
+            }
+
+            for (const v of vivosToRender) {
+                const embedData = parseVideoUrl(v.video_url);
+                if (!embedData) continue;
+                
+                const performer = v.performers || { name: 'Exclusive', location: 'Global' };
+                const performerId = performer.auth_id || performer.id;
+
+                const card = document.createElement('div');
+                card.className = 'vivo-fullscreen-card';
+                card.dataset.platform = embedData.platform;
+                card.dataset.videoId = embedData.videoId;
+                card.dataset.performerId = performerId;
+                card.dataset.loaded = 'false';
+                
+                let videoHtml = '';
+                if (embedData.platform === 'tiktok') {
+                    videoHtml = `
+                        <div class="tiktok-container">
+                            <div class="tiktok-embed-wrapper">
+                                ${getTikTokEmbedHtml(embedData.videoId)}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // YouTube - simple iframe approach that works reliably
+                    videoHtml = `
+                        <div class="youtube-container">
+                            <iframe 
+                                class="youtube-iframe"
+                                data-src="${getYouTubeEmbedUrl(embedData.videoId)}"
+                                allow="autoplay; encrypted-media; gyroscope; accelerometer; picture-in-picture; web-share"
+                                allowfullscreen
+                                style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;background:#000;">
+                            </iframe>
+                        </div>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div class="video-wrapper">
+                        <div class="video-container">
+                            ${videoHtml}
+                        </div>
+                        <div class="vivo-overlay">
+                            <div class="performer-meta" onclick="goToProfile('${performerId}')">
+                                <img src="${performer.image_url || 'https://via.placeholder.com/150'}" class="performer-pic" onerror="this.src='https://via.placeholder.com/150'">
+                                <div class="performer-info">
+                                    <h3>@${performer.name || 'Anonymous'}</h3>
+                                    <p><i class="fas fa-map-marker-alt"></i> ${performer.location || 'Global'}</p>
+                                </div>
+                            </div>
+                            <div class="vivo-title">${v.title || 'Untitled'}</div>
+                        </div>
+                        <div class="connect-btn">
+                            <button class="btn-connect" onclick="goToProfile('${performerId}')">
+                                <i class="fas fa-user-plus"></i> Connect
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            }
+        }
+
+        window.goToProfile = function(performerId) {
+            if (performerId) {
+                window.location.href = `profile.html?id=${performerId}`;
+            }
+        };
+
+        function setupVideoControl() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const card = entry.target;
+                    const platform = card.dataset.platform;
+                    const isVisible = entry.isIntersecting;
+                    
+                    if (platform === 'youtube') {
+                        const iframe = card.querySelector('.youtube-iframe');
+                        if (iframe) {
+                            if (isVisible) {
+                                // Load and play video when visible
+                                if (!iframe.src && iframe.dataset.src) {
+                                    iframe.src = iframe.dataset.src;
+                                } else if (iframe.src) {
+                                    // Resume playback by reloading with autoplay
+                                    const currentSrc = iframe.src;
+                                    if (!currentSrc.includes('autoplay=1')) {
+                                        iframe.src = currentSrc.replace('autoplay=0', 'autoplay=1');
+                                    }
+                                }
+                                
+                                // Pause other videos
+                                pauseOtherVideos(card);
+                                activeVideoCard = card;
+                            } else {
+                                // Pause video when not visible
+                                if (iframe.src) {
+                                    // Change src to pause (by removing autoplay)
+                                    const pausedSrc = iframe.src.replace('autoplay=1', 'autoplay=0');
+                                    iframe.src = pausedSrc;
+                                }
+                            }
+                        }
+                    } else if (platform === 'tiktok') {
+                        const iframe = card.querySelector('iframe');
+                        if (iframe) {
+                            if (isVisible) {
+                                // Ensure TikTok loads
+                                if (!iframe.src) {
+                                    iframe.src = `https://www.tiktok.com/embed/v2/${card.dataset.videoId}`;
+                                }
+                                activeVideoCard = card;
+                            } else {
+                                // Stop TikTok by removing src
+                                if (iframe.src) {
+                                    iframe.removeAttribute('src');
+                                }
+                            }
+                        }
+                    }
+                });
+            }, { 
+                threshold: 0.6,
+                rootMargin: '0px'
+            });
+            
+            document.querySelectorAll('.vivo-fullscreen-card').forEach(card => {
+                observer.observe(card);
+            });
+        }
+
+        function pauseOtherVideos(currentCard) {
+            document.querySelectorAll('.vivo-fullscreen-card').forEach(card => {
+                if (card !== currentCard) {
+                    const platform = card.dataset.platform;
+                    
+                    if (platform === 'youtube') {
+                        const iframe = card.querySelector('.youtube-iframe');
+                        if (iframe && iframe.src) {
+                            iframe.src = iframe.src.replace('autoplay=1', 'autoplay=0');
+                        }
+                    } else if (platform === 'tiktok') {
+                        const iframe = card.querySelector('iframe');
+                        if (iframe && iframe.src) {
+                            iframe.removeAttribute('src');
+                        }
+                    }
+                }
+            });
+        }
+
+        function parseVideoUrl(url) {
+            if (!url) return null;
+            
+            // YouTube detection
+            const ytMatch = url.match(/(?:youtube\.com\/shorts\/|youtu\.be\/|youtube\.com\/watch\?v=)([\w-]{11})/);
+            if (ytMatch) {
+                return { 
+                    platform: 'youtube', 
+                    videoId: ytMatch[1]
+                };
+            }
+            
+            // TikTok detection
+            const ttPatterns = [
+                /tiktok\.com\/@[\w.-]+\/video\/(\d+)/,
+                /tiktok\.com\/t\/(\w+)/,
+                /tiktok\.com\/v\/(\d+)/,
+                /video\/(\d+)/
+            ];
+            
+            for (const pattern of ttPatterns) {
+                const match = url.match(pattern);
+                if (match) {
+                    return { 
+                        platform: 'tiktok', 
+                        videoId: match[1]
+                    };
+                }
+            }
+            
+            console.warn('Could not parse video URL:', url);
+            return null;
+        }
+    </script>
+</body>
+</html>

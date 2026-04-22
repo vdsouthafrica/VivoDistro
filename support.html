@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Support | Vivo Distro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="hub.css">
+    <link rel="stylesheet" href="sidebar-system.css">
+    <style>
+        :root {
+            --primary: #6C63FF;
+            --secondary: #FF6584;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        .support-container {
+            padding: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .support-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .support-header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, #6C63FF, #FF6584);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .support-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .support-card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .support-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(108, 99, 255, 0.1);
+        }
+
+        .support-card i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .support-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .support-card p {
+            color: #8892b0;
+            line-height: 1.6;
+        }
+
+        /* Top Right Chat Button */
+        .chat-trigger {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #6C63FF, #FF6584);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 20px rgba(108, 99, 255, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .chat-trigger:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(108, 99, 255, 0.4);
+        }
+
+        /* Chat Modal Container */
+        .chat-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .chat-modal.active {
+            display: flex;
+        }
+
+        .docs-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.82);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2100;
+            padding: 20px;
+        }
+
+        .docs-modal.active {
+            display: flex;
+        }
+
+        .docs-window {
+            width: 100%;
+            max-width: 760px;
+            max-height: min(80vh, 720px);
+            overflow-y: auto;
+            background: #0A0E1A;
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
+        }
+
+        .docs-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .docs-header h2 {
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .docs-header p {
+            color: #8892b0;
+            line-height: 1.6;
+        }
+
+        .docs-close {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .docs-section {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 18px;
+            padding: 20px;
+            margin-top: 18px;
+        }
+
+        .docs-section h3 {
+            color: #fff;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .docs-section p,
+        .docs-section li {
+            color: #c0c7d8;
+            line-height: 1.7;
+        }
+
+        .docs-section ul {
+            margin-left: 20px;
+        }
+
+        .chat-window {
+            width: 100%;
+            max-width: 500px;
+            background: #0A0E1A;
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 30px;
+            position: relative;
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .chat-window h2 {
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .chat-type-toggle {
+            display: flex;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 5px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .chat-type-toggle button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            color: #8892b0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .chat-type-toggle button.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .chat-window textarea {
+            width: 100%;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 15px;
+            color: white;
+            font-size: 1rem;
+            resize: none;
+            margin-bottom: 20px;
+            font-family: inherit;
+        }
+
+        .chat-window textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .chat-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .chat-actions button {
+            flex: 1;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn-send {
+            background: linear-gradient(135deg, #6C63FF, #FF6584);
+            color: white;
+            border: none;
+        }
+
+        .btn-send:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108,99,255,0.3);
+        }
+
+        @media (max-width: 768px) {
+            .support-container { padding: 80px 20px 20px; }
+            .support-header h1 { font-size: 2rem; }
+            .chat-trigger { top: auto; bottom: 20px; right: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <button class="chat-trigger" id="openChat">
+        <i class="fas fa-comment-dots"></i> Chat with Support
+    </button>
+
+    <div class="hub-main">
+        <div class="support-container">
+            <div class="support-header">
+                <h1>Help & Support</h1>
+            </div>
+
+            <div class="support-grid">
+                <!-- Titles for sidebar options -->
+                <div class="support-card" data-topic="dashboard">
+                    <i class="fas fa-home"></i>
+                    <h3>Dashboard Support</h3>
+                    <p>Learn how to use your home feed, track your stats, and manage your account overview.</p>
+                </div>
+
+                <div class="support-card" data-topic="browse">
+                    <i class="fas fa-search"></i>
+                    <h3>Browse & Search</h3>
+                    <p>Tips on finding the best talent, venues, and agents within the Vivo Distro network.</p>
+                </div>
+
+                <div class="support-card" data-topic="profile">
+                    <i class="fas fa-edit"></i>
+                    <h3>Profile Editing</h3>
+                    <p>How to make your profile stand out, upload high-quality banners, and manage your bio.</p>
+                </div>
+
+                <div class="support-card" data-topic="inbox">
+                    <i class="fas fa-calendar-check"></i>
+                    <h3>Inbox & Messages</h3>
+                    <p>Manage your conversations, booking requests, and notifications efficiently.</p>
+                </div>
+
+                <div class="support-card" data-topic="tools">
+                    <i class="fas fa-tools"></i>
+                    <h3>Tools & Calculators</h3>
+                    <p>Guides on using the Vivo Calculator, Calendar, TechList, and more.</p>
+                </div>
+
+                <div class="support-card" data-topic="settings">
+                    <i class="fas fa-cog"></i>
+                    <h3>Settings & Subscriptions</h3>
+                    <p>Manage your account security, theme preferences, and subscription status.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="docs-modal" id="docsModal">
+        <div class="docs-window">
+            <div class="docs-header">
+                <div>
+                    <h2 id="docsTitle">Help Topic</h2>
+                    <p id="docsIntro">Choose a support topic to learn how that part of the platform works.</p>
+                </div>
+                <button class="docs-close" id="closeDocs" type="button" aria-label="Close help topic">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="docs-section">
+                <h3>What This Area Does</h3>
+                <p id="docsPurpose"></p>
+            </div>
+            <div class="docs-section">
+                <h3>How To Use It</h3>
+                <ul id="docsSteps"></ul>
+            </div>
+            <div class="docs-section">
+                <h3>Helpful Tips</h3>
+                <p id="docsTips"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Modal -->
+    <div class="chat-modal" id="chatModal">
+        <div class="chat-window">
+            <h2 id="modalTitle">Contact Support</h2>
+            
+            <div class="chat-type-toggle">
+                <button class="active" id="typeSupport">Support Issue</button>
+                <button id="typeBug">Bug Report</button>
+            </div>
+
+            <textarea id="chatInput" placeholder="Type your message here..."></textarea>
+
+            <div class="chat-actions">
+                <button class="btn-cancel" id="closeChat">Cancel</button>
+                <button class="btn-send" id="sendChat">Send Message</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- External Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="navbar.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatModal = document.getElementById('chatModal');
+            const openChat = document.getElementById('openChat');
+            const closeChat = document.getElementById('closeChat');
+            const sendChat = document.getElementById('sendChat');
+            const chatInput = document.getElementById('chatInput');
+            const typeSupport = document.getElementById('typeSupport');
+            const typeBug = document.getElementById('typeBug');
+            const modalTitle = document.getElementById('modalTitle');
+            const docsModal = document.getElementById('docsModal');
+            const closeDocs = document.getElementById('closeDocs');
+
+            const helpTopics = {
+                dashboard: {
+                    title: 'Dashboard Support',
+                    intro: 'Your dashboard is the main starting point for activity, stats, and shortcuts.',
+                    purpose: 'Use the dashboard to get a fast summary of your account, current actions, and the parts of Vivo Distro you need most often.',
+                    steps: [
+                        'Open the dashboard from the Home option in the sidebar.',
+                        'Review the top summary cards to check recent activity, stats, or pending work.',
+                        'Use the quick links or action buttons to jump into profile updates, inbox items, or tools.',
+                        'Return here whenever you want a high-level overview before taking action.'
+                    ],
+                    tips: 'If something looks out of date, refresh the page after major changes like new messages, bookings, or profile edits.'
+                },
+                browse: {
+                    title: 'Browse & Search',
+                    intro: 'Browse helps you discover performers, agents, venues, and opportunities faster.',
+                    purpose: 'Use search and filters to narrow the results to the people or listings that best match what you need.',
+                    steps: [
+                        'Open Browse from the sidebar.',
+                        'Type a keyword or use available filters such as role, location, or specialty.',
+                        'Open profile cards that match what you are looking for.',
+                        'Use inbox, sharing, or profile actions to continue the conversation.'
+                    ],
+                    tips: 'Best results usually come from complete profiles, so encourage users to keep names, media, and descriptions updated.'
+                },
+                profile: {
+                    title: 'Profile Editing',
+                    intro: 'Your profile is how other users evaluate you, so keeping it polished matters.',
+                    purpose: 'Use profile editing to manage your name, bio, visuals, contact details, and any role-specific information.',
+                    steps: [
+                        'Open Edit Profile from the sidebar.',
+                        'Update your profile image, banner, biography, and any professional details.',
+                        'Save your changes before leaving the page.',
+                        'Preview the public profile to make sure everything appears correctly.'
+                    ],
+                    tips: 'Clear images, short strong bios, and complete contact details usually improve trust and engagement.'
+                },
+                inbox: {
+                    title: 'Inbox & Messages',
+                    intro: 'The inbox collects bookings, profile shares, chats, and follow-up actions in one place.',
+                    purpose: 'Use the inbox to review new requests, reply to messages, accept or decline bookings, and keep your account organized.',
+                    steps: [
+                        'Open Inbox from the sidebar when you see a notification badge.',
+                        'Switch between tabs to review all items, bookings, chats, or profiles.',
+                        'Use the action buttons to reply, accept, decline, rate, or delete.',
+                        'Turn on select mode when you want to bulk-manage multiple items.'
+                    ],
+                    tips: 'Open the inbox regularly so you do not miss pending booking requests or unread conversations.'
+                },
+                tools: {
+                    title: 'Tools & Calculators',
+                    intro: 'The tools section groups the working utilities that support your daily planning.',
+                    purpose: 'Use these tools for pricing, scheduling, planning, checklists, and technical prep.',
+                    steps: [
+                        'Open the Tools area from the sidebar.',
+                        'Choose the calculator, calendar, checklist, TechList, or role-specific tool you need.',
+                        'Enter or review your data inside that tool and save changes if available.',
+                        'Return to the sidebar to switch tools without leaving the main workflow.'
+                    ],
+                    tips: 'If your sidebar is in compact mode, expand it first if you want to see tool names instead of icons.'
+                },
+                settings: {
+                    title: 'Settings & Subscriptions',
+                    intro: 'Settings lets you personalize the app and manage account-level options.',
+                    purpose: 'Use this area to change appearance, control sidebar behavior, manage notifications, and access account actions like signing out.',
+                    steps: [
+                        'Open Settings from the sidebar.',
+                        'Adjust your theme, compact sidebar preference, and visible navigation items.',
+                        'Save the settings so they persist to your account when available.',
+                        'Use account actions for password updates, account switching, or logout.'
+                    ],
+                    tips: 'If something in the layout feels off, check whether compact mode or hidden navigation items were turned on in settings.'
+                }
+            };
+
+            function openDocs(topicKey) {
+                const topic = helpTopics[topicKey];
+                if (!topic) return;
+
+                document.getElementById('docsTitle').textContent = topic.title;
+                document.getElementById('docsIntro').textContent = topic.intro;
+                document.getElementById('docsPurpose').textContent = topic.purpose;
+                document.getElementById('docsTips').textContent = topic.tips;
+                document.getElementById('docsSteps').innerHTML = topic.steps.map(step => `<li>${step}</li>`).join('');
+                docsModal.classList.add('active');
+            }
+
+            let currentType = 'support';
+
+            // Modal Toggles
+            openChat.addEventListener('click', () => chatModal.classList.add('active'));
+            closeChat.addEventListener('click', () => chatModal.classList.remove('active'));
+            closeDocs.addEventListener('click', () => docsModal.classList.remove('active'));
+            document.querySelectorAll('.support-card').forEach(card => {
+                card.addEventListener('click', () => openDocs(card.dataset.topic));
+            });
+
+            [chatModal, docsModal].forEach(modal => {
+                modal.addEventListener('click', (event) => {
+                    if (event.target === modal) {
+                        modal.classList.remove('active');
+                    }
+                });
+            });
+
+            // Toggle between Support and Bug
+            typeSupport.addEventListener('click', () => {
+                currentType = 'support';
+                typeSupport.classList.add('active');
+                typeBug.classList.remove('active');
+                modalTitle.textContent = 'Contact Support';
+                chatInput.placeholder = 'Type your message here...';
+            });
+
+            typeBug.addEventListener('click', () => {
+                currentType = 'bug';
+                typeBug.classList.add('active');
+                typeSupport.classList.remove('active');
+                modalTitle.textContent = 'Report a Bug';
+                chatInput.placeholder = 'Please describe the bug and how to reproduce it...';
+            });
+
+            // Send Logic
+            sendChat.addEventListener('click', async () => {
+                const message = chatInput.value.trim();
+                if (!message) {
+                    alert('Please type a message before sending.');
+                    return;
+                }
+
+                sendChat.disabled = true;
+                sendChat.textContent = 'Sending...';
+
+                try {
+                    const supabaseClient = window.supabaseClient; 
+                    const { data: { user } } = await supabaseClient.auth.getUser();
+                    
+                    const table = currentType === 'support' ? 'support_messages' : 'bug_reports';
+                    const payload = currentType === 'support' 
+                        ? { user_id: user?.id, message: message } 
+                        : { user_id: user?.id, report: message };
+
+                    const { error } = await supabaseClient
+                        .from(table)
+                        .insert([payload]);
+
+                    if (error) throw error;
+
+                    alert('Thank you! Your message has been sent to our team.');
+                    chatInput.value = '';
+                    chatModal.classList.remove('active');
+                } catch (err) {
+                    console.error('Error sending message:', err);
+                    alert('Failed to send message. Please try again later.');
+                } finally {
+                    sendChat.disabled = false;
+                    sendChat.textContent = 'Send Message';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

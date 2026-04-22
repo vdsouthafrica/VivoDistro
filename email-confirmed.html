@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Confirmed | Vivo Distro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a0e1a 0%, #151a2c 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(21, 26, 44, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 50px 40px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            animation: fadeInUp 0.6s ease;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .icon-circle {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            border: 2px solid rgba(16, 185, 129, 0.3);
+        }
+        
+        .icon-circle i {
+            font-size: 3.5rem;
+            color: #10b981;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(90deg, #10b981, #6C63FF);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .message-box {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 30px 0;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .message-box p {
+            color: #cbd5e0;
+            font-size: 1rem;
+            line-height: 1.7;
+            margin-bottom: 15px;
+        }
+        
+        .message-box p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .success-badge {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 30px;
+            padding: 8px 20px;
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #10b981;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .success-badge i {
+            margin-right: 5px;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 16px 40px;
+            background: linear-gradient(90deg, #6C63FF, #FF6584);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(108, 99, 255, 0.3);
+            margin-top: 20px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(108, 99, 255, 0.4);
+        }
+        
+        .btn i {
+            font-size: 1.2rem;
+        }
+        
+        .footer {
+            margin-top: 30px;
+            color: #5f6b8a;
+            font-size: 0.85rem;
+        }
+        
+        .footer a {
+            color: #6C63FF;
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .loader {
+            border: 4px solid #2a2f45;
+            border-top: 4px solid #6C63FF;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            border: 2px solid rgba(239, 68, 68, 0.3);
+        }
+        
+        .error-icon i {
+            font-size: 3.5rem;
+            color: #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading State -->
+    <div class="container" id="loadingContainer">
+        <div class="loader"></div>
+        <h2 style="color: #fff; margin-bottom: 15px;">Verifying your email...</h2>
+        <p style="color: #94a3b8;">Please wait while we confirm your email address.</p>
+    </div>
+
+    <!-- Success State -->
+    <div class="container" id="successContainer" style="display: none;">
+        <div class="icon-circle">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        
+        <div class="success-badge">
+            <i class="fas fa-check"></i> Verified
+        </div>
+        
+        <h1><span class="gradient-text">Email Confirmed!</span></h1>
+        
+        <div class="message-box">
+            <p>Your email has been successfully verified and your account is now active.</p>
+            <p>You can now log in to access your Vivo Distro dashboard.</p>
+        </div>
+        
+        <!-- BACK TO LOGIN BUTTON - CLEAR AND PROMINENT -->
+        <a href="login.html" class="btn">
+            <i class="fas fa-sign-in-alt"></i>
+            Back to Login
+        </a>
+        
+        <div class="footer">
+            <p>© 2026 Vivo Distro. All rights reserved.</p>
+        </div>
+    </div>
+
+    <!-- Error State -->
+    <div class="container" id="errorContainer" style="display: none;">
+        <div class="error-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        
+        <h1 style="color: #ef4444; margin-bottom: 15px;">Verification Failed</h1>
+        
+        <div class="message-box">
+            <p id="errorMessage" style="color: #ef4444;">The confirmation link is invalid or has expired.</p>
+            <p style="margin-top: 15px;">Please try signing up again or contact support.</p>
+        </div>
+        
+        <a href="signup.html" class="btn">
+            <i class="fas fa-user-plus"></i>
+            Sign Up Again
+        </a>
+        
+        <div class="footer">
+            <p>Need help? <a href="mailto:support@vivodistro.com">Contact Support</a></p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        (function() {
+            // Supabase configuration
+            const supabaseUrl = 'https://msjinuumxmezrijqemmp.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zamludXVteG1lenJpanFlbW1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwOTAyNjMsImV4cCI6MjA4NzY2NjI2M30.ic50fSC7MQfhSkhfE5E8B0R5-BGCQStMRZNHiy6Zakw';
+            
+            // Create Supabase client
+            const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey, {
+                auth: {
+                    autoRefreshToken: true,
+                    persistSession: true,
+                    detectSessionInUrl: true
+                }
+            });
+
+            const loadingContainer = document.getElementById('loadingContainer');
+            const successContainer = document.getElementById('successContainer');
+            const errorContainer = document.getElementById('errorContainer');
+            const errorMessage = document.getElementById('errorMessage');
+
+            async function handleEmailConfirmation() {
+                try {
+                    console.log('Checking for email confirmation...');
+                    
+                    // Get the session from the URL
+                    const { data, error } = await supabaseClient.auth.getSession();
+                    
+                    if (error) {
+                        console.error('Session error:', error);
+                        throw error;
+                    }
+                    
+                    console.log('Session data:', data);
+                    
+                    if (data.session) {
+                        // Success! User is confirmed
+                        console.log('Email confirmed successfully!');
+                        
+                        // Check if we have pending user data
+                        const pendingUser = localStorage.getItem('pendingUser');
+                        if (pendingUser) {
+                            const userData = JSON.parse(pendingUser);
+                            
+                            // Update usernames table to mark as confirmed if needed
+                            await supabaseClient
+                                .from('usernames')
+                                .update({ email_confirmed: true })
+                                .eq('user_id', data.session.user.id);
+                            
+                            localStorage.removeItem('pendingUser');
+                        }
+                        
+                        // Show success
+                        loadingContainer.style.display = 'none';
+                        successContainer.style.display = 'block';
+                        return;
+                    }
+                    
+                    // Check URL parameters for error
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const errorParam = urlParams.get('error');
+                    const errorDescription = urlParams.get('error_description');
+                    
+                    if (errorParam || errorDescription) {
+                        throw new Error(errorDescription || 'Verification failed');
+                    }
+                    
+                    // If no session and no error, try to get tokens from hash
+                    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+                    const accessToken = hashParams.get('access_token');
+                    const refreshToken = hashParams.get('refresh_token');
+                    const type = hashParams.get('type');
+                    
+                    if ((accessToken && refreshToken) || type === 'signup') {
+                        console.log('Found tokens in URL hash, confirming...');
+                        
+                        // For email confirmations, we can just show success
+                        // The session will be established automatically
+                        
+                        // Show success immediately for email confirmation
+                        loadingContainer.style.display = 'none';
+                        successContainer.style.display = 'block';
+                        return;
+                    }
+                    
+                    // If we get here, no session found
+                    console.log('No session found after all attempts');
+                    throw new Error('Unable to verify email. The link may have expired.');
+                    
+                } catch (err) {
+                    console.error('Confirmation error:', err);
+                    loadingContainer.style.display = 'none';
+                    errorContainer.style.display = 'block';
+                    errorMessage.textContent = err.message || 'The confirmation link is invalid or has expired.';
+                }
+            }
+
+            // Run when page loads
+            handleEmailConfirmation();
+        })();
+    </script>
+</body>
+</html>

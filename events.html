@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Events | Vivo Distro</title>
+    <link rel="stylesheet" href="style.css">
+     <link rel="stylesheet" href="responsive.css"> <!-- YOUR NEW RESPONSIVE CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="global-fullscreen.js" defer></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        body {
+            background: #0a0e1a;
+            color: #fff;
+        }
+        
+        .header {
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #151a2c;
+            border-bottom: 1px solid #2a2f45;
+        }
+        
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #8892b0;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.2rem;
+        }
+        
+        .logo i {
+            color: #6C63FF;
+        }
+        
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+        
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .page-header p {
+            color: #8892b0;
+        }
+        
+        .add-btn {
+            padding: 12px 24px;
+            background: #6C63FF;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .add-btn:hover {
+            background: #554fd8;
+            transform: translateY(-2px);
+        }
+        
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+        }
+        
+        .event-card {
+            background: #151a2c;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid #2a2f45;
+            transition: all 0.3s ease;
+        }
+        
+        .event-card:hover {
+            transform: translateY(-5px);
+            border-color: #6C63FF;
+        }
+        
+        .event-photos {
+            height: 200px;
+            background: #1e243b;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .photo-slider {
+            display: flex;
+            height: 100%;
+            transition: transform 0.3s ease;
+        }
+        
+        .photo-slide {
+            min-width: 100%;
+            height: 100%;
+        }
+        
+        .photo-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .no-photos {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #8892b0;
+            font-size: 3rem;
+        }
+        
+        .slider-controls {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            display: flex;
+            gap: 5px;
+        }
+        
+        .slider-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.5);
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .slider-btn:hover {
+            background: #6C63FF;
+        }
+        
+        .event-content {
+            padding: 20px;
+        }
+        
+        .event-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .event-header h3 {
+            font-size: 1.4rem;
+            color: #fff;
+        }
+        
+        .event-date {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #6C63FF;
+            font-size: 0.9rem;
+            background: rgba(108,99,255,0.15);
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+        
+        .event-venue {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #8892b0;
+            margin-bottom: 10px;
+        }
+        
+        .event-description {
+            color: #cbd5e0;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        
+        .event-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #2a2f45;
+            padding-top: 15px;
+        }
+        
+        .ticket-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #6C63FF;
+            text-decoration: none;
+            padding: 8px 15px;
+            background: rgba(108,99,255,0.1);
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .ticket-link:hover {
+            background: rgba(108,99,255,0.2);
+        }
+        
+        .event-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .edit-btn, .delete-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .edit-btn {
+            background: rgba(108,99,255,0.15);
+            color: #6C63FF;
+        }
+        
+        .delete-btn {
+            background: rgba(245,101,101,0.15);
+            color: #F56565;
+        }
+        
+        .edit-btn:hover, .delete-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px;
+            background: #151a2c;
+            border-radius: 20px;
+            border: 2px dashed #2a2f45;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            color: #6C63FF;
+            opacity: 0.5;
+            margin-bottom: 20px;
+        }
+        
+        .empty-state h3 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+        
+        .empty-state p {
+            color: #8892b0;
+        }
+        
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: #151a2c;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid #2a2f45;
+        }
+        
+        .modal-header {
+            padding: 25px;
+            border-bottom: 1px solid #2a2f45;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h2 i {
+            color: #6C63FF;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: #8892b0;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+        
+        .modal-body {
+            padding: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid #2a2f45;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1rem;
+        }
+        
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #6C63FF;
+        }
+        
+        .photo-upload-area {
+            border: 2px dashed #2a2f45;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .photo-upload-area:hover {
+            border-color: #6C63FF;
+        }
+        
+        .photo-preview-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .photo-preview {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .photo-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .remove-photo {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: rgba(245,101,101,0.9);
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+        
+        .modal-footer {
+            padding: 20px 25px;
+            border-top: 1px solid #2a2f45;
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+        }
+        
+        .btn-cancel {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid #2a2f45;
+            border-radius: 8px;
+            color: #fff;
+            cursor: pointer;
+        }
+        
+        .btn-save {
+            padding: 10px 20px;
+            background: #6C63FF;
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            cursor: pointer;
+        }
+        
+        .btn-save:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .char-counter {
+            display: block;
+            text-align: right;
+            font-size: 0.75rem;
+            color: #8892b0;
+            margin-top: 4px;
+            transition: color 0.2s;
+        }
+        .char-counter.warning {
+            color: #F6AD55;
+        }
+        .char-counter.limit {
+            color: #F56565;
+            font-weight: 600;
+        }
+
+        /* ========== MOBILE RESPONSIVE FIXES ========== */
+        @media screen and (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+            }
+            
+            .main-container {
+                padding: 20px;
+            }
+            
+            .page-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .page-header h1 {
+                font-size: 2rem;
+            }
+            
+            .add-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .events-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .event-card {
+                margin: 0;
+            }
+            
+            .event-photos {
+                height: 180px;
+            }
+            
+            .event-content {
+                padding: 15px;
+            }
+            
+            .event-header {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+            
+            .event-header h3 {
+                font-size: 1.2rem;
+            }
+            
+            .event-date {
+                align-self: flex-start;
+            }
+            
+            .event-venue {
+                font-size: 0.85rem;
+                flex-wrap: wrap;
+            }
+            
+            .event-description {
+                font-size: 0.9rem;
+            }
+            
+            .event-footer {
+                flex-direction: column;
+                gap: 12px;
+                align-items: stretch;
+            }
+            
+            .ticket-link {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .event-actions {
+                width: 100%;
+                gap: 8px;
+            }
+            
+            .edit-btn, .delete-btn {
+                flex: 1;
+                text-align: center;
+            }
+            
+            /* Modal fixes */
+            .modal-content {
+                width: 95%;
+                max-height: 85vh;
+            }
+            
+            .modal-header {
+                padding: 20px;
+            }
+            
+            .modal-body {
+                padding: 20px;
+            }
+            
+            .photo-preview-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+            
+            .photo-upload-area {
+                padding: 15px;
+            }
+            
+            .photo-upload-area i {
+                font-size: 1.8rem;
+            }
+            
+            .photo-upload-area p {
+                font-size: 0.9rem;
+            }
+            
+            .modal-footer {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .btn-cancel, .btn-save {
+                width: 100%;
+                justify-content: center;
+                padding: 12px;
+            }
+            
+            .form-group input,
+            .form-group textarea {
+                font-size: 16px;
+                padding: 12px;
+            }
+            
+            .empty-state {
+                padding: 40px 20px;
+            }
+            
+            .empty-state i {
+                font-size: 3rem;
+            }
+            
+            .empty-state h3 {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Extra small devices */
+        @media screen and (max-width: 480px) {
+            .event-photos {
+                height: 160px;
+            }
+            
+            .event-content {
+                padding: 12px;
+            }
+            
+            .event-header h3 {
+                font-size: 1.1rem;
+            }
+            
+            .event-date {
+                font-size: 0.8rem;
+                padding: 4px 8px;
+            }
+            
+            .event-venue {
+                font-size: 0.8rem;
+            }
+            
+            .event-description {
+                font-size: 0.85rem;
+                -webkit-line-clamp: 2;
+            }
+            
+            .ticket-link, .edit-btn, .delete-btn {
+                padding: 8px 12px;
+                font-size: 0.85rem;
+            }
+            
+            .photo-preview-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .remove-photo {
+                width: 30px;
+                height: 30px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Landscape mode optimization */
+        @media screen and (max-height: 600px) and (orientation: landscape) {
+            .modal-content {
+                max-height: 80vh;
+            }
+            
+            .modal-body {
+                padding: 15px;
+            }
+            
+            .form-group {
+                margin-bottom: 12px;
+            }
+            
+            .photo-preview-container {
+                max-height: 150px;
+                overflow-y: auto;
+            }
+        }
+    </style>
+    <!-- GLobally Applied Theme Hook -->
+    <link rel="stylesheet" href="settings.css">
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const configT = localStorage.getItem('vivo_theme') || 'theme-default';
+            if(configT !== 'theme-default') document.body.classList.add(configT);
+        });
+    </script>
+</head>
+<body>
+    <header class="header">
+        <a href="booker-hub.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i> <span>Back to Hub</span>
+        </a>
+        <div class="logo">
+            <i class="fas fa-calendar-alt"></i> <span>MY <span style="color:#6C63FF;">EVENTS</span></span>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="page-header">
+            <div>
+                <h1>Manage Your Events</h1>
+                <p>Create and manage your upcoming events</p>
+            </div>
+            <button class="add-btn" id="addEventBtn">
+                <i class="fas fa-plus"></i> Add New Event
+            </button>
+        </div>
+
+        <div class="events-grid" id="eventsGrid">
+            <div class="empty-state">
+                <i class="fas fa-calendar-alt"></i>
+                <h3>No Events Yet</h3>
+                <p>Create your first event to get started</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Event Modal -->
+    <div class="modal-overlay" id="eventModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-calendar-plus"></i> <span id="modalTitle">Add Event</span></h2>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+            
+            <form id="eventForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Event Name *</label>
+                        <input type="text" id="eventName" required maxlength="25">
+                        <span class="char-counter" id="eventNameCounter">0 / 25</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="eventDescription" rows="3"></textarea>
+                        <span class="char-counter" id="eventDescriptionCounter">0 / 250 words</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Venue Name *</label>
+                        <input type="text" id="eventVenue" required maxlength="25">
+                        <span class="char-counter" id="eventVenueCounter">0 / 25</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Location *</label>
+                        <input type="text" id="eventLocation" required maxlength="25">
+                        <span class="char-counter" id="eventLocationCounter">0 / 25</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Event Date *</label>
+                        <input type="date" id="eventDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Event Time</label>
+                        <input type="time" id="eventTime">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Ticket Link</label>
+                        <input type="url" id="ticketLink" placeholder="https://tickets.com/event" maxlength="25">
+                        <span class="char-counter" id="ticketLinkCounter">0 / 25</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Event Photos (up to 3)</label>
+                        <div class="photo-upload-area" id="photoUploadArea">
+                            <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: #6C63FF; margin-bottom: 10px;"></i>
+                            <p>Click or drag photos here</p>
+                            <input type="file" id="photoInput" accept="image/*" multiple hidden>
+                        </div>
+                        <div class="photo-preview-container" id="photoPreview"></div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" id="cancelModal">Cancel</button>
+                    <button type="submit" class="btn-save" id="saveEventBtn">Save Event</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const supabaseUrl = 'https://msjinuumxmezrijqemmp.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zamludXVteG1lenJpanFlbW1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwOTAyNjMsImV4cCI6MjA4NzY2NjI2M30.ic50fSC7MQfhSkhfE5E8B0R5-BGCQStMRZNHiy6Zakw';
+            const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+            let currentBookerId = null;
+            let editingEventId = null;
+            let selectedPhotos = [];   // stores { file, previewUrl } for new uploads, or string URL for existing
+            let currentPhotoIndex = 0;
+
+            loadBookerAndEvents();
+
+            async function loadBookerAndEvents() {
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                if (!user) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const { data: booker } = await supabaseClient
+                    .from('bookers')
+                    .select('id')
+                    .eq('auth_id', user.id)
+                    .single();
+
+                if (booker) {
+                    currentBookerId = booker.id;
+                    loadEvents();
+                }
+            }
+
+            async function loadEvents() {
+                const today = new Date().toISOString().split('T')[0];
+                
+                const { data: events, error } = await supabaseClient
+                    .from('events')
+                    .select('*')
+                    .eq('booker_id', currentBookerId)
+                    .gte('event_date', today) // Only future events
+                    .order('event_date', { ascending: true });
+
+                if (error) {
+                    console.error('Error loading events:', error);
+                    return;
+                }
+
+                renderEvents(events || []);
+            }
+
+            function renderEvents(events) {
+                const grid = document.getElementById('eventsGrid');
+                
+                if (events.length === 0) {
+                    grid.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-calendar-alt"></i>
+                            <h3>No Events Yet</h3>
+                            <p>Create your first event to get started</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                grid.innerHTML = events.map(event => {
+                    const eventDate = new Date(event.event_date).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric'
+                    });
+
+                    return `
+                        <div class="event-card">
+                            <div class="event-photos" id="photos-${event.id}">
+                                ${renderPhotoSlider(event.photos || [])}
+                            </div>
+                            <div class="event-content">
+                                <div class="event-header">
+                                    <h3>${event.name}</h3>
+                                    <span class="event-date"><i class="far fa-calendar"></i> ${eventDate}</span>
+                                </div>
+                                <div class="event-venue">
+                                    <i class="fas fa-map-marker-alt"></i> ${event.venue}, ${event.location}
+                                </div>
+                                <div class="event-description">${event.description || 'No description'}</div>
+                                <div class="event-footer">
+                                    ${event.ticket_link ? `
+                                        <a href="${event.ticket_link}" target="_blank" class="ticket-link">
+                                            <i class="fas fa-ticket-alt"></i> Buy Tickets
+                                        </a>
+                                    ` : '<span></span>'}
+                                    <div class="event-actions">
+                                        <button class="edit-btn" onclick="editEvent('${event.id}')">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="delete-btn" onclick="deleteEvent('${event.id}')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                // Initialize photo sliders
+                events.forEach(event => {
+                    if (event.photos?.length > 1) {
+                        initSlider(event.id, event.photos);
+                    }
+                });
+            }
+
+            function renderPhotoSlider(photos) {
+                if (!photos || photos.length === 0) {
+                    return '<div class="no-photos"><i class="fas fa-image"></i></div>';
+                }
+
+                return `
+                    <div class="photo-slider" id="slider-${Date.now()}">
+                        ${photos.map(photo => `
+                            <div class="photo-slide">
+                                <img src="${photo}" alt="Event photo">
+                            </div>
+                        `).join('')}
+                    </div>
+                    ${photos.length > 1 ? `
+                        <div class="slider-controls">
+                            <button class="slider-btn prev-btn"><i class="fas fa-chevron-left"></i></button>
+                            <button class="slider-btn next-btn"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                    ` : ''}
+                `;
+            }
+
+            function initSlider(eventId, photos) {
+                const card = document.getElementById(`photos-${eventId}`);
+                if (!card) return;
+
+                const slider = card.querySelector('.photo-slider');
+                const prevBtn = card.querySelector('.prev-btn');
+                const nextBtn = card.querySelector('.next-btn');
+                let currentIndex = 0;
+
+                if (prevBtn) {
+                    prevBtn.addEventListener('click', () => {
+                        currentIndex = (currentIndex - 1 + photos.length) % photos.length;
+                        slider.style.transform = `translateX(-${currentIndex * 100}%)`;
+                    });
+                }
+
+                if (nextBtn) {
+                    nextBtn.addEventListener('click', () => {
+                        currentIndex = (currentIndex + 1) % photos.length;
+                        slider.style.transform = `translateX(-${currentIndex * 100}%)`;
+                    });
+                }
+            }
+
+            // Modal functionality
+            const modal = document.getElementById('eventModal');
+            const addBtn = document.getElementById('addEventBtn');
+            const closeBtn = document.getElementById('closeModal');
+            const cancelBtn = document.getElementById('cancelModal');
+
+            // ── Character / word counters ──────────────────────────────
+            function updateCharCounter(inputId, counterId, max) {
+                const input = document.getElementById(inputId);
+                const counter = document.getElementById(counterId);
+                if (!input || !counter) return;
+                const len = input.value.length;
+                counter.textContent = `${len} / ${max}`;
+                counter.className = 'char-counter';
+                if (len >= max) counter.classList.add('limit');
+                else if (len >= max * 0.8) counter.classList.add('warning');
+            }
+
+            function updateWordCounter(textareaId, counterId, maxWords) {
+                const textarea = document.getElementById(textareaId);
+                const counter = document.getElementById(counterId);
+                if (!textarea || !counter) return;
+
+                const words = textarea.value.trim() === ''
+                    ? []
+                    : textarea.value.trim().split(/\s+/);
+                const count = words.length;
+
+                // Enforce the word limit
+                if (count > maxWords) {
+                    textarea.value = words.slice(0, maxWords).join(' ');
+                    return updateWordCounter(textareaId, counterId, maxWords);
+                }
+
+                counter.textContent = `${count} / ${maxWords} words`;
+                counter.className = 'char-counter';
+                if (count >= maxWords) counter.classList.add('limit');
+                else if (count >= maxWords * 0.8) counter.classList.add('warning');
+            }
+
+            const charFields = [
+                { input: 'eventName',     counter: 'eventNameCounter',     max: 25 },
+                { input: 'eventVenue',    counter: 'eventVenueCounter',    max: 25 },
+                { input: 'eventLocation', counter: 'eventLocationCounter', max: 25 },
+                { input: 'ticketLink',    counter: 'ticketLinkCounter',    max: 25 },
+            ];
+
+            charFields.forEach(({ input, counter, max }) => {
+                const el = document.getElementById(input);
+                if (el) el.addEventListener('input', () => updateCharCounter(input, counter, max));
+            });
+
+            const descTextarea = document.getElementById('eventDescription');
+            if (descTextarea) {
+                descTextarea.addEventListener('input', () =>
+                    updateWordCounter('eventDescription', 'eventDescriptionCounter', 250));
+            }
+
+            function resetCounters() {
+                charFields.forEach(({ input, counter, max }) => updateCharCounter(input, counter, max));
+                updateWordCounter('eventDescription', 'eventDescriptionCounter', 250);
+            }
+            // ─────────────────────────────────────────────────────────
+
+            addBtn.addEventListener('click', () => {
+                editingEventId = null;
+                document.getElementById('modalTitle').textContent = 'Add Event';
+                document.getElementById('eventForm').reset();
+                selectedPhotos = [];
+                updatePhotoPreview();
+                resetCounters();
+                modal.classList.add('active');
+            });
+
+            closeBtn.addEventListener('click', () => modal.classList.remove('active'));
+            cancelBtn.addEventListener('click', () => modal.classList.remove('active'));
+
+            // Photo upload
+            const photoUploadArea = document.getElementById('photoUploadArea');
+            const photoInput = document.getElementById('photoInput');
+            const photoPreview = document.getElementById('photoPreview');
+
+            photoUploadArea.addEventListener('click', () => photoInput.click());
+
+            photoInput.addEventListener('change', (e) => {
+                const files = Array.from(e.target.files);
+
+                for (const file of files) {
+                    if (selectedPhotos.length >= 3) {
+                        alert('Maximum 3 photos allowed');
+                        break;
+                    }
+
+                    if (!file.type.startsWith('image/')) {
+                        alert('Please select image files only');
+                        continue;
+                    }
+
+                    if (file.size > 5 * 1024 * 1024) {
+                        alert('File size must be less than 5MB');
+                        continue;
+                    }
+
+                    // Store the File object + a local preview URL (never base64 in DB)
+                    selectedPhotos.push({ file, previewUrl: URL.createObjectURL(file) });
+                    updatePhotoPreview();
+                }
+
+                // Reset input so the same file can be re-selected if removed
+                photoInput.value = '';
+            });
+
+            function updatePhotoPreview() {
+                photoPreview.innerHTML = selectedPhotos.map((photo, index) => {
+                    const src = typeof photo === 'string' ? photo : photo.previewUrl;
+                    return `
+                        <div class="photo-preview">
+                            <img src="${src}" alt="Preview">
+                            <button class="remove-photo" onclick="removePhoto(${index})">×</button>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            window.removePhoto = function(index) {
+                const photo = selectedPhotos[index];
+                // Revoke object URL to free memory if it's a new file
+                if (photo && typeof photo !== 'string' && photo.previewUrl) {
+                    URL.revokeObjectURL(photo.previewUrl);
+                }
+                selectedPhotos.splice(index, 1);
+                updatePhotoPreview();
+            };
+
+            // Upload new File objects to Supabase Storage, return public URLs
+            async function uploadPhotos(bookerId) {
+                const uploadedUrls = [];
+                for (const photo of selectedPhotos) {
+                    if (typeof photo === 'string') {
+                        // Already a stored URL (existing photo kept during edit)
+                        uploadedUrls.push(photo);
+                        continue;
+                    }
+                    const ext = photo.file.name.split('.').pop();
+                    const path = `events/${bookerId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+                    const { error } = await supabaseClient.storage
+                        .from('event-photos')
+                        .upload(path, photo.file, { upsert: false });
+                    if (error) {
+                        console.error('Upload error:', error);
+                        alert('Photo upload failed: ' + error.message);
+                        return null;
+                    }
+                    const { data: { publicUrl } } = supabaseClient.storage
+                        .from('event-photos')
+                        .getPublicUrl(path);
+                    uploadedUrls.push(publicUrl);
+                }
+                return uploadedUrls;
+            }
+
+            // Form submission
+            document.getElementById('eventForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                if (!currentBookerId) return;
+
+                const submitBtn = document.getElementById('saveEventBtn');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading photos...';
+
+                // Upload any new File objects; existing URLs pass through unchanged
+                const photoUrls = await uploadPhotos(currentBookerId);
+                if (photoUrls === null) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Save Event';
+                    return;
+                }
+
+                const eventData = {
+                    booker_id: currentBookerId,
+                    name: document.getElementById('eventName').value,
+                    description: document.getElementById('eventDescription').value,
+                    venue: document.getElementById('eventVenue').value,
+                    location: document.getElementById('eventLocation').value,
+                    event_date: document.getElementById('eventDate').value,
+                    event_time: document.getElementById('eventTime').value || null,
+                    ticket_link: document.getElementById('ticketLink').value || null,
+                    photos: photoUrls   // plain HTTPS URLs, never base64
+                };
+
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+                let error;
+                if (editingEventId) {
+                    ({ error } = await supabaseClient
+                        .from('events')
+                        .update(eventData)
+                        .eq('id', editingEventId));
+                } else {
+                    ({ error } = await supabaseClient
+                        .from('events')
+                        .insert([eventData]));
+                }
+
+                if (error) {
+                    alert('Error: ' + error.message);
+                } else {
+                    modal.classList.remove('active');
+                    loadEvents();
+                }
+
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Save Event';
+            });
+
+            window.editEvent = async function(eventId) {
+                const { data: event } = await supabaseClient
+                    .from('events')
+                    .select('*')
+                    .eq('id', eventId)
+                    .single();
+
+                if (event) {
+                    editingEventId = eventId;
+                    document.getElementById('modalTitle').textContent = 'Edit Event';
+                    
+                    document.getElementById('eventName').value = event.name || '';
+                    document.getElementById('eventDescription').value = event.description || '';
+                    document.getElementById('eventVenue').value = event.venue || '';
+                    document.getElementById('eventLocation').value = event.location || '';
+                    document.getElementById('eventDate').value = event.event_date || '';
+                    document.getElementById('eventTime').value = event.event_time || '';
+                    document.getElementById('ticketLink').value = event.ticket_link || '';
+
+                    selectedPhotos = (event.photos || []).filter(p => typeof p === 'string' && p.startsWith('http'));
+                    updatePhotoPreview();
+                    resetCounters();
+                    modal.classList.add('active');
+                }
+            };
+
+            window.deleteEvent = async function(eventId) {
+                if (confirm('Are you sure you want to delete this event?')) {
+                    const { error } = await supabaseClient
+                        .from('events')
+                        .delete()
+                        .eq('id', eventId);
+
+                    if (!error) {
+                        loadEvents();
+                    }
+                }
+            };
+        });
+    </script>
+    <script src="settings-manager.js"></script>
+    <script src="navbar.js"></script>
+</body>
+</html>

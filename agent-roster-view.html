@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent's Roster | Vivo Distro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="responsive.css">
+    <script src="global-fullscreen.js" defer></script>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; }
+        body { background:#080c18; color:#fff; min-height:100vh; overflow-x:hidden; }
+
+        .simple-header { background:rgba(8,12,24,0.92); backdrop-filter:blur(20px); border-bottom:1px solid rgba(108,99,255,0.15); padding:1rem 2rem; display:flex; align-items:center; gap:1rem; position:sticky; top:0; z-index:100; justify-content: space-between; }
+        .back-btn { display:inline-flex; align-items:center; gap:0.5rem; padding:0.55rem 1.1rem; background:rgba(255,255,255,0.04); border:1px solid rgba(108,99,255,0.2); border-radius:10px; color:#fff; font-size:0.88rem; font-weight:500; cursor:pointer; transition:all 0.25s; text-decoration: none; }
+        .back-btn:hover { background:rgba(108,99,255,0.12); border-color:#6C63FF; transform:translateX(-3px); }
+        .logo { display:flex; align-items:center; gap:0.5rem; font-size:1.2rem; font-weight:800; letter-spacing:1px; }
+        .logo i { color:#6C63FF; font-size:1.4rem; }
+        .logo-highlight { color:#6C63FF; }
+
+        .hub-main { min-height:100vh; padding:30px; position:relative; z-index:1; }
+        .container { max-width:1400px; margin:0 auto; }
+
+        .agent-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .agent-avatar-small {
+            width: 44px; height: 44px; border-radius: 50%;
+            background: linear-gradient(135deg, #6C63FF, #FF6584);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; color: #fff; overflow: hidden; flex-shrink: 0;
+            border: 2px solid rgba(108,99,255,0.3);
+        }
+        .agent-avatar-small img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .agent-info-small { display: flex; flex-direction: column; }
+        .agent-info-small h2 { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 2px; }
+        .artist-count-small { color: #a5b4fc; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+
+        .section-title { font-size: 1.6rem; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; font-weight: 700; color: #f1f5f9; }
+        .section-title i { color: #6C63FF; }
+
+        /* The Exact Profile Cards from browse.html */
+        .cards-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+        
+        .profile-card { background:linear-gradient(160deg,#0f1525 0%,#0a0f1e 100%); border-radius:20px; border:1px solid rgba(255,255,255,0.05); transition:all 0.3s ease; position:relative; overflow:hidden; cursor:pointer; display:flex; flex-direction:column; min-height:460px; }
+        .profile-card:hover { transform:translateY(-6px); border-color:rgba(108,99,255,0.25); box-shadow:0 24px 48px rgba(0,0,0,0.5),0 0 0 1px rgba(108,99,255,0.08); }
+        .profile-card.expanded { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:720px; max-width:92vw; height:auto; max-height:88vh; overflow-y:auto; z-index:2000; cursor:default; box-shadow:0 40px 80px rgba(0,0,0,0.8); border:1px solid rgba(108,99,255,0.3); border-radius:24px; }
+        
+        .close-expanded { display:none; position:absolute; top:13px; right:13px; width:32px; height:32px; border-radius:50%; background:rgba(0,0,0,0.7); border:1px solid rgba(255,255,255,0.12); color:#fff; cursor:pointer; align-items:center; justify-content:center; z-index:10; font-size:0.82rem; }
+        .close-expanded:hover { background:rgba(108,99,255,0.4); }
+        .profile-card.expanded .close-expanded { display:flex; }
+        
+        .card-type-badge { position:absolute; top:13px; left:13px; font-size:0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:1px; padding:0.18rem 0.6rem; border-radius:20px; z-index:2; }
+        .badge-performer { background:rgba(108,99,255,0.18); color:#a5b4fc; border:1px solid rgba(108,99,255,0.28); }
+        
+        .card-inner { padding:1.3rem; padding-top:2.5rem; flex:1; display:flex; flex-direction:column; }
+        .card-header { display:flex; gap:0.9rem; margin-bottom:0.9rem; align-items:flex-start; }
+        
+        .avatar { width:66px; height:66px; border-radius:50%; background:linear-gradient(135deg,#6C63FF,#9d8cff); display:flex; align-items:center; justify-content:center; font-size:1.5rem; color:#fff; overflow:hidden; border:2px solid rgba(108,99,255,0.25); flex-shrink: 0; }
+        .avatar img { width:100%; height:100%; object-fit:cover; }
+        
+        .title-info { flex:1; min-width:0; }
+        .title-info h2 { font-size:1.15rem; margin-bottom:0.2rem; color:#f1f5f9; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .location-display { display:flex; align-items:center; gap:0.3rem; color:#475569; font-size:0.76rem; margin-top:0.3rem; font-weight:500; }
+        .location-display i { color:#6C63FF; font-size:0.65rem; }
+        
+        .role-tags { display:flex; flex-wrap:wrap; gap:0.35rem; margin-bottom:0.75rem; }
+        .role-tag { background:rgba(108,99,255,0.09); color:#818cf8; padding:0.16rem 0.6rem; border-radius:20px; font-size:0.66rem; font-weight:600; border:1px solid rgba(108,99,255,0.15); }
+        
+        .bio { color:#64748b; line-height:1.55; margin-bottom:0.75rem; font-size:0.82rem; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+        .expand-hint { color:#6C63FF; font-size:0.67rem; margin-bottom:0.7rem; display:flex; align-items:center; gap:0.3rem; opacity:0.55; }
+        
+        .social-links { display:flex; gap:0.45rem; margin-bottom:0.9rem; flex-wrap:wrap; }
+        .social-icon { width:30px; height:30px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; text-decoration:none; transition:all 0.2s; background:rgba(255,255,255,0.06); font-size:0.95rem; color:#64748b; }
+        .social-icon:hover { transform:translateY(-3px) scale(1.12); color:#fff; }
+        .social-icon.whatsapp { background:#25D366; color:#fff; }
+        .social-icon.instagram { background:radial-gradient(circle at 30% 107%,#fdf497 0%,#fdf497 5%,#fd5949 45%,#d6249f 60%,#285AEB 90%); color:#fff; }
+        .social-icon.facebook { background:#1877F2; color:#fff; }
+        .social-icon.twitter { background:#1DA1F2; color:#fff; }
+        .social-icon.tiktok { background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.3); color: #ffffff !important; backdrop-filter: blur(5px); }
+        .social-icon.youtube { background:#FF0000; color:#fff; }
+        .social-icon.spotify { background:#1DB954; color:#fff; }
+        .social-icon.soundcloud { background:#FF5500; color:#fff; }
+        .social-icon.linkedin { background:#0077B5; color:#fff; }
+        .social-icon.email { background:#EA4335; color:#fff; }
+        .social-icon.website { background:#6C63FF; color:#fff; }
+        
+        .action-buttons { display:flex; gap:0.55rem; border-top:1px solid rgba(255,255,255,0.04); padding-top:0.9rem; margin-top:auto; flex-wrap:wrap; }
+        .action-btn { flex:1; padding:0.65rem 0.5rem; border-radius:10px; font-weight:700; font-size:0.85rem; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:0.4rem; border:none; transition:all 0.2s; }
+        .connect-btn { background:linear-gradient(135deg,#6C63FF,#5a52d5); color:#fff; width: 100%; border: 1px solid rgba(108,99,255,0.5); }
+        .connect-btn:hover { transform:translateY(-2px); box-shadow:0 6px 18px rgba(108,99,255,0.38); }
+        
+        .expanded-content { display:none; padding:1.4rem; border-top:1px solid rgba(108,99,255,0.1); background:rgba(0,0,0,0.25); }
+        .profile-card.expanded .expanded-content { display:block; }
+        
+        .expanded-section { margin-bottom: 20px; }
+        .expanded-section h4 { color: #f1f5f9; font-size: 1rem; margin-bottom: 10px; }
+        
+        .details-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:0.75rem; margin-top: 15px; }
+        .detail-item { background:rgba(0,0,0,0.3); border-radius:12px; padding:0.75rem; }
+        .detail-label { color:#334155; font-size:0.65rem; text-transform:uppercase; margin-bottom:0.25rem; font-weight:700; }
+        .detail-value { color:#e2e8f0; font-weight:600; font-size:0.86rem; }
+
+        .empty-state { grid-column:1/-1; text-align:center; padding:5rem 2rem; background:linear-gradient(160deg,#12182b 0%,#0a0f1e 100%); border-radius:24px; border:1px dashed rgba(108,99,255,0.18); }
+        .empty-state i { font-size:3.5rem; color:#6C63FF; opacity:0.4; margin-bottom:1.5rem; }
+        .empty-state h3 { font-size:1.6rem; font-weight:700; color:#f1f5f9; margin-bottom:0.5rem; }
+        .empty-state p { color:#475569; font-size:0.95rem; }
+        
+        .loading { grid-column:1/-1; font-size:2rem; color:#6C63FF; text-align:center; padding:4rem; }
+
+        /* Modal CSS */
+        .connect-modal-overlay { position:fixed; top:0;left:0;right:0;bottom:0; background:rgba(0,0,0,0.88); backdrop-filter:blur(12px); display:none; align-items:center; justify-content:center; z-index:4000; }
+        .connect-modal-overlay.active { display:flex; }
+        .connect-modal { width:550px; max-width:95%; max-height:88vh; background:#0d1626; border-radius:24px; border:1px solid rgba(108,99,255,0.22); overflow-y:auto; box-shadow:0 40px 80px rgba(0,0,0,0.7); }
+        .connect-option { background:rgba(255,255,255,0.025); border:1px solid rgba(108,99,255,0.12); border-radius:14px; padding:1rem; cursor:pointer; display:flex; align-items:center; gap:1rem; transition:all 0.2s; margin-bottom:0.75rem; }
+        .connect-option:hover { background:rgba(108,99,255,0.08); border-color:rgba(108,99,255,0.35); transform:translateX(4px); }
+        .connect-option-icon { width:44px; height:44px; background:rgba(108,99,255,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.2rem; color:#6C63FF; flex-shrink:0; }
+        .form-group { margin-bottom:1rem; }
+        .form-group label { display:block; margin-bottom:0.4rem; color:#64748b; font-size:0.83rem; font-weight:500; }
+        .form-group input, .form-group textarea, .form-group select { width:100%; padding:0.75rem 1rem; background:rgba(0,0,0,0.4); border:1px solid rgba(108,99,255,0.15); border-radius:10px; color:#fff; font-size:0.92rem; box-sizing:border-box; transition:border-color 0.2s; }
+        .form-group textarea { resize: none; min-height: 80px; }
+        .form-group input:focus, .form-group textarea:focus { outline:none; border-color:#6C63FF; }
+        .modal-actions { display:flex; gap:0.8rem; margin-top:1.4rem; }
+        .btn-cancel { flex:1; padding:0.75rem; background:rgba(255,255,255,0.03); border:1px solid rgba(108,99,255,0.15); border-radius:10px; color:#475569; cursor:pointer; text-align:center; font-weight:600; border:none; }
+        .btn-cancel:hover { color:#94a3b8; }
+        .btn-send { flex:2; padding:0.75rem; background:linear-gradient(135deg,#6C63FF,#5a52d5); border:none; border-radius:10px; color:#fff; font-weight:700; cursor:pointer; transition:all 0.2s; text-align:center; }
+        .btn-send:hover { transform:translateY(-1px); box-shadow:0 6px 18px rgba(108,99,255,0.35); }
+        .btn-send:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
+        .loading-spinner-small { display:inline-block; width:16px; height:16px; border:2px solid rgba(255,255,255,0.3); border-top-color:#fff; border-radius:50%; animation:spin 0.6s linear infinite; margin-right:0.5rem; }
+        .form-row { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; }
+        
+        .toast { position:fixed; bottom:28px; right:28px; padding:11px 20px; border-radius:12px; color:#fff; z-index:6000; animation:slideInRight 0.3s ease; font-weight:600; font-size:0.88rem; }
+        .toast.success { background:linear-gradient(135deg,#10b981,#059669); }
+        .toast.error { background:linear-gradient(135deg,#ef4444,#dc2626); }
+        @keyframes slideInRight { from{transform:translateX(120%);opacity:0}to{transform:translateX(0);opacity:1} }
+        @keyframes spin { to{transform:rotate(360deg)} }
+
+        @media(max-width:1200px){.cards-grid{grid-template-columns:repeat(2,1fr)}}
+        @media(max-width:768px){ 
+            .cards-grid{grid-template-columns:1fr} 
+            .simple-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+            .agent-container { width: 100%; justify-content: flex-end; }
+        }
+    </style>
+    <!-- GLobally Applied Theme Hook -->
+    <link rel="stylesheet" href="settings.css">
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const configT = localStorage.getItem('vivo_theme') || 'theme-default';
+            if(configT !== 'theme-default') document.body.classList.add(configT);
+        });
+    </script>
+</head>
+<body>
+    <header class="simple-header">
+        <a href="javascript:history.back()" class="back-btn">
+            <i class="fas fa-arrow-left"></i> <span>Back to Browse</span>
+        </a>
+        
+        <div class="agent-container" id="headerAgentInfo" style="display: none;">
+            <div class="agent-info-small">
+                <h2 id="headerAgentName">Loading...</h2>
+                <div class="artist-count-small" id="headerArtistCount"><i class="fas fa-users"></i> 0 Artists</div>
+            </div>
+            <div class="agent-avatar-small" id="headerAgentAvatar">
+                <i class="fas fa-user-tie"></i>
+            </div>
+        </div>
+    </header>
+
+    <div class="hub-main">
+        <div class="container">
+            <!-- Artists Grid -->
+            <h2 class="section-title"><i class="fas fa-microphone"></i> Artists in Roster</h2>
+            <div class="cards-grid" id="artistsGrid">
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Connect Modal -->
+    <div class="connect-modal-overlay" id="connectModal"><div class="connect-modal"><div style="padding:1.4rem 1.5rem; border-bottom:1px solid rgba(108,99,255,0.12); display:flex; justify-content:space-between; align-items:center;"><h3 style="font-size:1rem; font-weight:700;"><i class="fas fa-link" style="color:#6C63FF; margin-right:0.5rem;"></i>Connect with <span id="connectUserName"></span></h3><button onclick="closeConnectModal()" style="background:none;border:none;color:#475569;font-size:1.4rem;cursor:pointer;">&times;</button></div><div class="connect-modal-body" id="connectModalBody" style="padding:1.4rem;"></div></div></div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            const supabaseUrl = 'https://msjinuumxmezrijqemmp.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zamludXVteG1lenJpanFlbW1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwOTAyNjMsImV4cCI6MjA4NzY2NjI2M30.ic50fSC7MQfhSkhfE5E8B0R5-BGCQStMRZNHiy6Zakw';
+            const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const agentId = urlParams.get('id');
+
+            if (!agentId) {
+                showError('No agent specified');
+                return;
+            }
+
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            const currentUserId = user ? user.id : null;
+            let currentConnectProfile = null;
+
+            function escapeHtml(str) {
+                if (!str) return '';
+                return String(str).replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
+            }
+
+            function getSocialColorClass(platform) {
+                const map = {
+                    'whatsapp':'whatsapp', 'instagram':'instagram', 'facebook':'facebook',
+                    'twitter':'twitter', 'tiktok':'tiktok', 'youtube':'youtube',
+                    'spotify':'spotify', 'soundcloud':'soundcloud', 'linkedin':'linkedin',
+                    'email':'email', 'website':'website'
+                };
+                return map[platform] || '';
+            }
+
+            function getSocialIconClass(platform) {
+                const map = {
+                    'instagram': 'fab fa-instagram', 'facebook': 'fab fa-facebook',
+                    'twitter': 'fab fa-twitter', 'tiktok': 'fab fa-tiktok',
+                    'youtube': 'fab fa-youtube', 'spotify': 'fab fa-spotify',
+                    'soundcloud': 'fab fa-soundcloud', 'website': 'fas fa-globe'
+                };
+                return map[platform] || 'fas fa-link';
+            }
+
+            await loadAgentDetails();
+            await loadArtists();
+
+            async function loadAgentDetails() {
+                const { data: agent, error } = await supabaseClient.from('agents').select('*').eq('id', agentId).single();
+                if (error || !agent) return showError('Agent not found');
+                
+                window.currentAgentAuthId = agent.auth_id;
+                window.currentAgentName = agent.name;
+
+                document.getElementById('headerAgentInfo').style.display = 'flex';
+                document.getElementById('headerAgentName').textContent = agent.name || 'Agency Name';
+
+                if (agent.logo_url) {
+                    document.getElementById('headerAgentAvatar').innerHTML = `<img src="${escapeHtml(agent.logo_url)}" alt="${escapeHtml(agent.name)}">`;
+                }
+            }
+
+            async function loadArtists() {
+                const { data: artists, error } = await supabaseClient.from('roster_artists').select('*').eq('agent_id', agentId).order('created_at', { ascending: false });
+                if (error) return showError('Failed to load artists');
+
+                document.getElementById('headerArtistCount').innerHTML = `<i class="fas fa-users"></i> ${artists.length} Artist${artists.length !== 1 ? 's' : ''}`;
+
+                if (artists.length === 0) {
+                    document.getElementById('artistsGrid').innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-users-slash"></i>
+                            <h3>No Artists Yet</h3>
+                            <p>This agent hasn't built out their roster yet.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                renderArtists(artists);
+            }
+
+            function renderArtists(artists) {
+                const grid = document.getElementById('artistsGrid');
+                
+                grid.innerHTML = artists.map(artist => {
+                    const socialHTML = (artist.social_links || []).map(link => 
+                        `<a href="${escapeHtml(link.url)}" target="_blank" class="social-icon ${getSocialColorClass(link.platform)}" onclick="event.stopPropagation()"><i class="${getSocialIconClass(link.platform)}"></i></a>`
+                    ).join('');
+
+                    const memberSince = artist.created_at ? new Date(artist.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short' }) : '—';
+                    const types = artist.types && artist.types.length ? artist.types : ['Performer'];
+
+                    return `
+                        <div class="profile-card">
+                            <div class="close-expanded"><i class="fas fa-times"></i></div>
+                            <div class="card-type-badge badge-performer"><i class="fas fa-microphone"></i> Artist</div>
+                            
+                            <div class="card-inner">
+                                <div class="card-header">
+                                    <div class="avatar">
+                                        ${artist.image_url ? `<img src="${escapeHtml(artist.image_url)}" alt="${escapeHtml(artist.name)}">` : '<i class="fas fa-user"></i>'}
+                                    </div>
+                                    <div class="title-info">
+                                        <h2>${escapeHtml(artist.name)}</h2>
+                                        <div class="location-display">
+                                            <i class="fas fa-map-marker-alt"></i> ${escapeHtml(artist.location || 'Location not set')}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="role-tags">
+                                    ${types.slice(0, 3).map(t => `<span class="role-tag">${escapeHtml(t)}</span>`).join('')}
+                                </div>
+
+                                <div class="bio">${escapeHtml(artist.bio) || 'No bio added yet.'}</div>
+                                <div class="expand-hint"><i class="fas fa-chevron-down"></i> Tap to expand</div>
+
+                                <div class="social-links">${socialHTML}</div>
+
+                                <div class="action-buttons">
+                                    <button class="action-btn connect-btn" onclick="event.stopPropagation(); openConnectModal('${artist.id}', '${escapeHtml(artist.name).replace(/'/g, "\\'")}')">
+                                        <i class="fas fa-link"></i> Connect
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="expanded-content">
+                                <div class="expanded-section">
+                                    <h4>Artist Bio</h4>
+                                    <p style="color:#94a3b8;">${escapeHtml(artist.bio) || 'No extended bio provided.'}</p>
+                                </div>
+                                <div class="details-grid">
+                                    <div class="detail-item">
+                                        <div class="detail-label">Location</div>
+                                        <div class="detail-value">${escapeHtml(artist.location || 'Location TBA')}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="detail-label">Added</div>
+                                        <div class="detail-value">${memberSince}</div>
+                                    </div>
+                                    ${types.length > 3 ? `
+                                    <div class="detail-item" style="grid-column:1/-1">
+                                        <div class="detail-label">Specialties</div>
+                                        <div class="detail-value">${types.join(', ')}</div>
+                                    </div>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                // Click-to-expand card logic identical to browse.html
+                document.querySelectorAll('.profile-card').forEach(card => {
+                    card.addEventListener('click', function (e) {
+                        if (e.target.closest('button') || e.target.closest('a') || e.target.closest('.close-expanded')) return;
+                        document.querySelectorAll('.profile-card.expanded').forEach(c => c.classList.remove('expanded'));
+                        card.classList.add('expanded');
+                    });
+                    const closeBtn = card.querySelector('.close-expanded');
+                    if (closeBtn) {
+                        closeBtn.addEventListener('click', e => { 
+                            e.stopPropagation(); 
+                            card.classList.remove('expanded'); 
+                        });
+                    }
+                });
+            }
+
+            // Connect Logic
+            window.showToast = function(msg, type) {
+                const t = document.createElement('div');
+                t.className = 'toast ' + type;
+                t.textContent = msg;
+                document.body.appendChild(t);
+                setTimeout(() => t.remove(), 3200);
+            };
+
+            window.openConnectModal = function(pid, pname) {
+                if (!currentUserId) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                currentConnectProfile = { id: pid, name: pname };
+                document.getElementById('connectUserName').textContent = pname;
+                showConnectOptions();
+                document.getElementById('connectModal').classList.add('active');
+            };
+
+            window.closeConnectModal = function() {
+                document.getElementById('connectModal').classList.remove('active');
+                currentConnectProfile = null;
+            };
+
+            window.showConnectOptions = function() {
+                document.getElementById('connectModalBody').innerHTML = `
+                    <div class="connect-options">
+                        <div class="connect-option" onclick="showBookingForm()">
+                            <div class="connect-option-icon"><i class="fas fa-calendar-check"></i></div>
+                            <div><h4 style="margin:0;font-size:0.95rem;">Book ${currentConnectProfile.name}</h4><p style="margin:0;font-size:0.8rem;color:#888;">Send a detailed booking request to ${window.currentAgentName}</p></div>
+                        </div>
+                        <div class="connect-option" onclick="showChatForm()">
+                            <div class="connect-option-icon"><i class="fas fa-comment"></i></div>
+                            <div><h4 style="margin:0;font-size:0.95rem;">Message</h4><p style="margin:0;font-size:0.8rem;color:#888;">Send a direct message regarding ${currentConnectProfile.name}</p></div>
+                        </div>
+                        <div class="connect-option" onclick="sendProfile()">
+                            <div class="connect-option-icon"><i class="fas fa-id-card"></i></div>
+                            <div><h4 style="margin:0;font-size:0.95rem;">Share Profile</h4><p style="margin:0;font-size:0.8rem;color:#888;">Send your profile card for their consideration</p></div>
+                        </div>
+                    </div>`;
+            };
+
+            window.showBookingForm = function() {
+                document.getElementById('connectModalBody').innerHTML = `
+                    <h4 style="margin-bottom:1rem;font-size:1rem;font-weight:700;"><i class="fas fa-calendar-check"></i> Book ${currentConnectProfile.name}</h4>
+                    <form id="bookingForm">
+                        <div class="form-group"><label>Event Name *</label><input type="text" id="evName" placeholder="e.g. Summer Festival 2024" required></div>
+                        <div class="form-group"><label>Venue *</label><input type="text" id="evVenue" placeholder="Venue name" required></div>
+                        <div class="form-group"><label>Location (City, State) *</label><input type="text" id="evLocation" placeholder="e.g. Los Angeles, CA" required></div>
+                        <div class="form-row">
+                            <div class="form-group"><label>Date *</label><input type="date" id="evDate" required></div>
+                            <div class="form-group"><label>Start Time *</label><input type="time" id="evStartTime" required></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label>End Time</label><input type="time" id="evEndTime"></div>
+                            <div class="form-group"><label>Indoor/Outdoor</label>
+                                <select id="evVenueType">
+                                    <option value="Indoor">Indoor</option>
+                                    <option value="Outdoor">Outdoor</option>
+                                    <option value="Both">Both</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group"><label>Expected Attendance *</label><input type="number" id="evAttendance" placeholder="Number of people expected" required></div>
+                        <div class="form-group"><label>Your Contact Number *</label><input type="tel" id="evContact" placeholder="+27..." required></div>
+                        <div class="modal-actions"><button type="button" class="btn-cancel" onclick="showConnectOptions()">Back</button><button type="submit" class="btn-send">Send Request</button></div>
+                    </form>`;
+                
+                document.getElementById('bookingForm').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const sendBtn = e.target.querySelector('.btn-send');
+                    sendBtn.disabled = true;
+                    sendBtn.innerHTML = '<span class="loading-spinner-small"></span> Sending...';
+                    try {
+                        await supabaseClient.from('inbox_items').insert([{
+                            sender_id: currentUserId,
+                            recipient_id: window.currentAgentAuthId,
+                            recipient_name: 'Booking for ' + currentConnectProfile.name,
+                            event_name: document.getElementById('evName').value,
+                            venue: document.getElementById('evVenue').value,
+                            event_date: document.getElementById('evDate').value,
+                            start_time: document.getElementById('evStartTime').value,
+                            sender_phone: document.getElementById('evContact').value,
+                            sender_profile: {
+                                event_name: document.getElementById('evName').value,
+                                venue: document.getElementById('evVenue').value,
+                                location: document.getElementById('evLocation').value,
+                                event_date: document.getElementById('evDate').value,
+                                start_time: document.getElementById('evStartTime').value,
+                                end_time: document.getElementById('evEndTime').value,
+                                venue_type: document.getElementById('evVenueType').value,
+                                expected_attendance: document.getElementById('evAttendance').value,
+                                sender_phone: document.getElementById('evContact').value
+                            },
+                            type: 'booking',
+                            status: 'pending',
+                            created_at: new Date().toISOString()
+                        }]);
+                        showToast('Booking request sent successfully!', 'success');
+                        closeConnectModal();
+                    } catch (err) {
+                        showToast('Error sending booking request.', 'error');
+                    }
+                });
+            };
+
+            window.showChatForm = function() {
+                document.getElementById('connectModalBody').innerHTML = `
+                    <h4 style="margin-bottom:1rem;font-size:1rem;font-weight:700;"><i class="fas fa-comment"></i> Message regarding ${currentConnectProfile.name}</h4>
+                    <form id="chatForm">
+                        <div class="form-group"><label>Message</label><textarea id="msgText" maxlength="500" placeholder="Write your message to ${window.currentAgentName}..." required></textarea></div>
+                        <div class="form-group"><label>Your Contact Number</label><input type="tel" id="msgContact" placeholder="+27..."></div>
+                        <div class="modal-actions"><button type="button" class="btn-cancel" onclick="showConnectOptions()">Back</button><button type="submit" class="btn-send">Send Message</button></div>
+                    </form>`;
+                
+                document.getElementById('chatForm').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const sendBtn = e.target.querySelector('.btn-send');
+                    sendBtn.disabled = true;
+                    sendBtn.innerHTML = '<span class="loading-spinner-small"></span> Sending...';
+                    try {
+                        await supabaseClient.from('inbox_items').insert([{
+                            sender_id: currentUserId,
+                            recipient_id: window.currentAgentAuthId,
+                            recipient_name: 'Message re: ' + currentConnectProfile.name,
+                            message: document.getElementById('msgText').value,
+                            sender_profile: { sender_phone: document.getElementById('msgContact').value },
+                            type: 'chat',
+                            status: 'pending',
+                            created_at: new Date().toISOString()
+                        }]);
+                        showToast('Message sent successfully!', 'success');
+                        closeConnectModal();
+                    } catch (err) {
+                        showToast('Error sending message', 'error');
+                    }
+                });
+            };
+
+            window.sendProfile = async function() {
+                const btn = document.querySelector('.connect-option:nth-child(3)');
+                btn.style.opacity = '0.5';
+                btn.style.pointerEvents = 'none';
+                
+                try {
+                    let userProfile = null;
+                    for (let table of ['performers', 'agents', 'bookers']) {
+                        const { data } = await supabaseClient.from(table).select('*').eq('auth_id', currentUserId).maybeSingle();
+                        if (data) { userProfile = data; break; }
+                    }
+                    if (!userProfile) { showToast('Complete your profile first so we can share it.', 'error'); return; }
+                    
+                    await supabaseClient.from('inbox_items').insert([{
+                        sender_id: currentUserId,
+                        recipient_id: window.currentAgentAuthId,
+                        recipient_name: 'Profile for ' + currentConnectProfile.name,
+                        sender_profile: userProfile,
+                        type: 'profile',
+                        status: 'pending',
+                        created_at: new Date().toISOString()
+                    }]);
+                    showToast('Profile shared successfully!', 'success');
+                    closeConnectModal();
+                } catch (err) {
+                    showToast('Error sharing profile', 'error');
+                }
+            };
+
+            function showError(message) {
+                document.getElementById('artistsGrid').innerHTML = `
+                    <div class="empty-state" style="border-color: rgba(239,68,68,0.3)">
+                        <i class="fas fa-exclamation-circle" style="color: #F56565; opacity:0.8;"></i>
+                        <h3>Error</h3>
+                        <p>${escapeHtml(message)}</p>
+                    </div>
+                `;
+            }
+
+            // Click outside the modal to close it
+            document.addEventListener('click', e => { 
+                if (!e.target.closest('.profile-card.expanded') && document.querySelector('.profile-card.expanded')) { 
+                    document.querySelectorAll('.profile-card.expanded').forEach(c => c.classList.remove('expanded')); 
+                } 
+                if (e.target.id === 'connectModal') {
+                    closeConnectModal();
+                }
+            });
+        });
+    </script>
+    <script src="settings-manager.js"></script>
+    <script src="navbar.js"></script>
+</body>
+</html>
+
+

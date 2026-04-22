@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technical Rider | Vivo Distro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        body { background: linear-gradient(135deg, #0a0e1a 0%, #151a2c 100%); color: #fff; min-height: 100vh; }
+
+        .simple-header {
+            background: rgba(21, 26, 44, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(108,99,255,0.15);
+            padding: 1rem 2rem;
+            display: flex; align-items: center; gap: 1rem;
+            position: sticky; top: 0; z-index: 100;
+        }
+        .back-btn {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(108,99,255,0.2);
+            border-radius: 10px; color: #fff; font-size: 0.9rem; font-weight: 500;
+            cursor: pointer; transition: all 0.3s ease;
+        }
+        .back-btn:hover { background: rgba(108,99,255,0.15); border-color: #6C63FF; transform: translateX(-3px); }
+        .back-btn i { color: #6C63FF; }
+        .page-title { font-size: 1.3rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; }
+        .page-title i { color: #6C63FF; }
+
+        .main-container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+
+        /* Document card */
+        .rider-doc {
+            background: rgba(17, 24, 39, 0.8);
+            backdrop-filter: blur(2px);
+            border: 1px solid rgba(108,99,255,0.2);
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+        }
+
+        /* Top banner */
+        .rider-banner {
+            background: linear-gradient(135deg, rgba(26, 16, 64, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%);
+            border-bottom: 1px solid rgba(108,99,255,0.2);
+            padding: 2.5rem 3rem;
+            display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;
+        }
+        .performer-avatar {
+            width: 100px; height: 100px; border-radius: 50%;
+            background: linear-gradient(135deg, #6C63FF, #FF6584);
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden; flex-shrink: 0;
+            border: 3px solid rgba(108,99,255,0.4);
+            box-shadow: 0 0 30px rgba(108,99,255,0.3);
+            transition: transform 0.3s ease;
+        }
+        .performer-avatar:hover { transform: scale(1.05); }
+        .performer-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .performer-avatar i { font-size: 2.8rem; color: #fff; }
+        .banner-info { flex: 1; min-width: 0; }
+        .banner-info h1 { 
+            font-size: 2.2rem; font-weight: 700; letter-spacing: -0.5px; 
+            background: linear-gradient(135deg, #fff, #a5b4fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+        .doc-label {
+            display: inline-flex; align-items: center; gap: 0.6rem;
+            background: rgba(108,99,255,0.12);
+            border: 1px solid rgba(108,99,255,0.3);
+            border-radius: 30px; padding: 0.4rem 1.2rem;
+            font-size: 0.75rem; font-weight: 600; color: #a5b4fc;
+            text-transform: uppercase; letter-spacing: 1.5px;
+        }
+        .banner-meta { 
+            background: rgba(0,0,0,0.3);
+            border-radius: 20px;
+            padding: 0.8rem 1.5rem;
+            text-align: right; 
+            flex-shrink: 0; 
+            border: 1px solid rgba(108,99,255,0.1);
+        }
+        .banner-meta .meta-row { color: #64748b; font-size: 0.8rem; margin-bottom: 0.3rem; }
+        .banner-meta .meta-row span { color: #cbd5e1; font-weight: 600; }
+        .banner-meta .meta-row.power-row span { color: #fbbf24; }
+
+        /* Group section */
+        .group-block { 
+            padding: 2rem 3rem; 
+            border-bottom: 1px solid rgba(108,99,255,0.08);
+            transition: background 0.2s ease;
+        }
+        .group-block:hover { background: rgba(108,99,255,0.02); }
+        .group-block:last-of-type { border-bottom: none; }
+
+        .group-heading {
+            display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid rgba(108,99,255,0.15);
+        }
+        .group-icon {
+            width: 44px; height: 44px; border-radius: 14px;
+            background: linear-gradient(135deg, rgba(108,99,255,0.15), rgba(108,99,255,0.05));
+            border: 1px solid rgba(108,99,255,0.25);
+            display: flex; align-items: center; justify-content: center;
+            color: #6C63FF; font-size: 1.1rem; flex-shrink: 0;
+        }
+        .group-name { 
+            font-size: 1.2rem; 
+            font-weight: 700; 
+            color: #e2e8f0; 
+            letter-spacing: 0.5px;
+        }
+        .group-count {
+            margin-left: auto;
+            background: rgba(108,99,255,0.08);
+            border: 1px solid rgba(108,99,255,0.15);
+            border-radius: 30px; 
+            padding: 0.25rem 1rem;
+            font-size: 0.7rem; 
+            color: #818cf8; 
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* Modern card-style item layout for view page */
+        .items-list {
+            padding: 0.5rem;
+        }
+
+        .item-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid #2c2c3a;
+            border-radius: 12px;
+            margin-bottom: 0.75rem;
+            padding: 1rem 1.25rem;
+            transition: all 0.2s ease;
+        }
+
+        .item-card:hover {
+            background: rgba(108,99,255,0.05);
+            border-color: rgba(108,99,255,0.3);
+            transform: translateX(4px);
+        }
+
+        .item-row-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .item-name-section {
+            flex: 2;
+            min-width: 180px;
+        }
+
+        .item-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #f1f5f9;
+        }
+
+        .item-details {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .detail-badge {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #2c2c3a;
+            border-radius: 20px;
+            padding: 0.3rem 0.9rem;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detail-badge i {
+            font-size: 0.7rem;
+            opacity: 0.8;
+        }
+
+        .qty-badge {
+            background: #4f46e5;
+            color: #fff;
+            border: none;
+        }
+
+        .unit-badge {
+            color: #fbbf24;
+        }
+        .unit-badge i {
+            color: #fbbf24;
+        }
+
+        .type-badge {
+            background: rgba(79, 70, 229, 0.15);
+            border-color: rgba(79, 70, 229, 0.3);
+        }
+
+        .type-digital {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: rgba(16, 185, 129, 0.3);
+            color: #10b981;
+        }
+
+        .type-analog {
+            background: rgba(245, 158, 11, 0.15);
+            border-color: rgba(245, 158, 11, 0.3);
+            color: #fbbf24;
+        }
+
+        /* Footer */
+        .rider-footer {
+            background: rgba(0,0,0,0.3);
+            border-top: 1px solid rgba(108,99,255,0.1);
+            padding: 1.2rem 3rem;
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            flex-wrap: wrap; 
+            gap: 1rem;
+        }
+        .footer-brand { 
+            display: flex; 
+            align-items: center; 
+            gap: 0.6rem; 
+            color: #475569; 
+            font-size: 0.8rem; 
+        }
+        .footer-brand span { color: #6C63FF; font-weight: 700; }
+        .footer-total { 
+            color: #64748b; 
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .footer-total strong { color: #94a3b8; font-weight: 600; }
+
+        .power-summary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.3rem 1rem;
+            background: rgba(251, 191, 36, 0.08);
+            border-radius: 30px;
+            font-size: 0.75rem;
+            color: #fbbf24;
+        }
+        .power-summary i { font-size: 0.7rem; }
+
+        /* Loading / Empty */
+        .loading-screen { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 500px; 
+            gap: 1.5rem; 
+            background: rgba(17, 24, 39, 0.5);
+            border-radius: 32px;
+            backdrop-filter: blur(10px);
+        }
+        .loading-spinner { 
+            width: 60px; 
+            height: 60px; 
+            border: 3px solid rgba(108,99,255,0.15); 
+            border-top-color: #6C63FF; 
+            border-radius: 50%; 
+            animation: spin 1s linear infinite; 
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        .empty-state { 
+            text-align: center; 
+            padding: 5rem 3rem; 
+            background: rgba(17, 24, 39, 0.5);
+            border-radius: 32px;
+        }
+        .empty-state i { 
+            font-size: 4rem; 
+            margin-bottom: 1.5rem; 
+            display: block; 
+            color: #334155;
+            background: rgba(108,99,255,0.05);
+            width: 80px;
+            height: 80px;
+            line-height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem auto;
+        }
+        .empty-state h3 { font-size: 1.3rem; color: #64748b; margin-bottom: 0.5rem; }
+        .empty-state p { font-size: 0.9rem; color: #475569; }
+
+        @media (max-width: 968px) {
+            .main-container { padding: 1rem; }
+            .rider-banner { padding: 1.5rem; }
+            .group-block { padding: 1.5rem; }
+            .rider-footer { padding: 1rem 1.5rem; }
+            .banner-info h1 { font-size: 1.5rem; }
+            .performer-avatar { width: 70px; height: 70px; }
+            .performer-avatar i { font-size: 2rem; }
+            .banner-meta { padding: 0.5rem 1rem; }
+        }
+
+        @media (max-width: 768px) {
+            .simple-header { padding: 0.8rem 1rem; }
+            .back-btn span { display: none; }
+            .item-row-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .item-details {
+                width: 100%;
+                justify-content: flex-start;
+            }
+            .power-summary { display: none; }
+        }
+
+        @media print {
+            body { background: white; }
+            .simple-header { display: none; }
+            .rider-doc { box-shadow: none; border: 1px solid #ddd; }
+            .back-btn { display: none; }
+        }
+    </style>
+    <link rel="stylesheet" href="settings.css">
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const configT = localStorage.getItem('vivo_theme') || 'theme-default';
+            if(configT !== 'theme-default') document.body.classList.add(configT);
+        });
+    </script>
+</head>
+<body>
+    <div class="simple-header">
+        <button class="back-btn" onclick="window.history.back()">
+            <i class="fas fa-arrow-left"></i>
+            <span>Back</span>
+        </button>
+        <div class="page-title">
+            <i class="fas fa-file-alt"></i>
+            <span>Technical Rider</span>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div id="content">
+            <div class="loading-screen">
+                <div class="loading-spinner"></div>
+                <p style="color:#64748b;">Loading technical rider...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const supabaseUrl = 'https://msjinuumxmezrijqemmp.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zamludXVteG1lenJpanFlbW1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwOTAyNjMsImV4cCI6MjA4NzY2NjI2M30.ic50fSC7MQfhSkhfE5E8B0R5-BGCQStMRZNHiy6Zakw';
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const performerId = urlParams.get('id');
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
+        }
+
+        function formatUnitDisplay(item) {
+            if (item.unit_type === 'power' && item.power) {
+                const watts = item.power;
+                if (watts >= 1000) {
+                    return (watts / 1000).toFixed(1) + ' kW';
+                }
+                return watts + ' W';
+            } else if (item.unit_type === 'channels' && item.channels) {
+                return item.channels + ' Ch';
+            } else if (item.unit_type === 'piece' && item.piece) {
+                return item.piece + ' Piece';
+            }
+            return null;
+        }
+
+        function getUnitIcon(unitType) {
+            if (unitType === 'power') return 'fa-bolt';
+            if (unitType === 'channels') return 'fa-sliders-h';
+            if (unitType === 'piece') return 'fa-cubes';
+            return 'fa-tag';
+        }
+
+        function formatTypeDisplay(item) {
+            return item.type || null;
+        }
+
+        function getTypeClass(type) {
+            if (type === 'Digital') return 'type-digital';
+            if (type === 'Analog') return 'type-analog';
+            return '';
+        }
+
+        function groupIcon(name) {
+            const n = (name || '').toLowerCase();
+            if (n.includes('speak') || n.includes('sub') || n.includes('monitor')) return 'fa-volume-up';
+            if (n.includes('light') || n.includes('led') || n.includes('beam') || n.includes('spot')) return 'fa-lightbulb';
+            if (n.includes('mic') || n.includes('vocal')) return 'fa-microphone';
+            if (n.includes('mix') || n.includes('desk') || n.includes('console')) return 'fa-sliders-h';
+            if (n.includes('power') || n.includes('amp') || n.includes('generator')) return 'fa-bolt';
+            if (n.includes('cable') || n.includes('wire')) return 'fa-ethernet';
+            if (n.includes('dj') || n.includes('deck') || n.includes('cdj') || n.includes('turntable')) return 'fa-compact-disc';
+            if (n.includes('video') || n.includes('screen') || n.includes('projector')) return 'fa-tv';
+            if (n.includes('smoke') || n.includes('haze') || n.includes('effect')) return 'fa-wind';
+            if (n.includes('drum') || n.includes('kit')) return 'fa-drum';
+            return 'fa-list-ul';
+        }
+
+        async function loadTechlist() {
+            const contentDiv = document.getElementById('content');
+            if (!performerId) {
+                contentDiv.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-circle"></i><h3>No performer specified</h3></div>`;
+                return;
+            }
+
+            try {
+                const { data: performer } = await supabaseClient
+                    .from('performers')
+                    .select('name, image_url, auth_id')
+                    .eq('id', performerId)
+                    .single();
+
+                const lookupIds = [performerId];
+                if (performer?.auth_id && performer.auth_id !== performerId) lookupIds.push(performer.auth_id);
+
+                let groups = null;
+                const r1 = await supabaseClient
+                    .from('techlist_groups')
+                    .select('*, techlist_items(*)')
+                    .in('performer_id', lookupIds)
+                    .order('order_index');
+
+                if (!r1.error && r1.data && r1.data.length > 0) {
+                    groups = r1.data;
+                } else {
+                    const r2 = await supabaseClient
+                        .from('techlist_groups')
+                        .select('*, techlist_items(*)')
+                        .in('auth_id', lookupIds)
+                        .order('order_index');
+                    groups = r2.data;
+                }
+
+                const displayName = performer?.name || 'Performer';
+                const performerImage = performer?.image_url;
+                const today = new Date().toLocaleDateString('en-ZA', { year:'numeric', month:'long', day:'numeric' });
+                const totalItems = (groups || []).reduce((a, g) => a + (g.techlist_items?.length || 0), 0);
+
+                const avatarHtml = performerImage
+                    ? `<img src="${performerImage}" alt="${escapeHtml(displayName)}">`
+                    : `<i class="fas fa-user"></i>`;
+
+                if (!groups || groups.length === 0) {
+                    contentDiv.innerHTML = `
+                        <div class="rider-doc">
+                            <div class="rider-banner">
+                                <div class="performer-avatar">${avatarHtml}</div>
+                                <div class="banner-info">
+                                    <h1>${escapeHtml(displayName)}</h1>
+                                    <div class="doc-label"><i class="fas fa-file-alt"></i> Technical Rider</div>
+                                </div>
+                            </div>
+                            <div class="empty-state">
+                                <i class="fas fa-inbox"></i>
+                                <h3>No Equipment Listed</h3>
+                                <p>This performer hasn't added any equipment yet.</p>
+                            </div>
+                        </div>`;
+                    return;
+                }
+
+                let groupsHtml = '';
+                let totalPowerWatts = 0;
+
+                groups.forEach(group => {
+                    const items = group.techlist_items || [];
+                    const icon = groupIcon(group.group_name);
+                    
+                    const itemsHtml = items.map(item => {
+                        const unitDisplay = formatUnitDisplay(item);
+                        const unitIcon = getUnitIcon(item.unit_type);
+                        const typeDisplay = formatTypeDisplay(item);
+                        const typeClass = getTypeClass(typeDisplay);
+                        const quantity = item.quantity || 1;
+                        
+                        // Calculate total power
+                        if (item.unit_type === 'power' && item.power && item.power > 0) {
+                            totalPowerWatts += (item.power * quantity);
+                        }
+                        
+                        return `
+                            <div class="item-card">
+                                <div class="item-row-content">
+                                    <div class="item-name-section">
+                                        <div class="item-name">${escapeHtml(item.name)}</div>
+                                    </div>
+                                    <div class="item-details">
+                                        <span class="detail-badge qty-badge"><i class="fas fa-hashtag"></i> ${quantity}x</span>
+                                        ${unitDisplay ? `<span class="detail-badge unit-badge"><i class="fas ${unitIcon}"></i> ${escapeHtml(unitDisplay)}</span>` : ''}
+                                        ${typeDisplay ? `<span class="detail-badge type-badge ${typeClass}"><i class="fas ${typeDisplay === 'Digital' ? 'fa-microchip' : 'fa-waveform'}"></i> ${escapeHtml(typeDisplay)}</span>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+
+                    groupsHtml += `
+                        <div class="group-block">
+                            <div class="group-heading">
+                                <div class="group-icon"><i class="fas ${icon}"></i></div>
+                                <span class="group-name">${escapeHtml(group.group_name)}</span>
+                                <span class="group-count">${items.length} item${items.length !== 1 ? 's' : ''}</span>
+                            </div>
+                            <div class="items-list">
+                                ${itemsHtml}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                const totalPowerFormatted = totalPowerWatts >= 1000 
+                    ? (totalPowerWatts / 1000).toFixed(1) + ' kW' 
+                    : totalPowerWatts > 0 ? totalPowerWatts + ' W' : null;
+                
+                const totalPowerHtml = totalPowerFormatted 
+                    ? `<div class="power-summary"><i class="fas fa-bolt"></i> Total Power: ${totalPowerFormatted}</div>`
+                    : '';
+
+                contentDiv.innerHTML = `
+                    <div class="rider-doc">
+                        <div class="rider-banner">
+                            <div class="performer-avatar">${avatarHtml}</div>
+                            <div class="banner-info">
+                                <h1>${escapeHtml(displayName)}</h1>
+                                <div class="doc-label"><i class="fas fa-file-alt"></i> Technical Rider</div>
+                            </div>
+                            <div class="banner-meta">
+                                <div class="meta-row">Date: <span>${today}</span></div>
+                                <div class="meta-row">Groups: <span>${groups.length}</span></div>
+                                <div class="meta-row">Total Items: <span>${totalItems}</span></div>
+                                ${totalPowerWatts > 0 ? `<div class="meta-row power-row">⚡ Power: <span style="color: #fbbf24;">${totalPowerFormatted}</span></div>` : ''}
+                            </div>
+                        </div>
+                        ${groupsHtml}
+                        <div class="rider-footer">
+                            <div class="footer-brand">
+                                <i class="fas fa-music"></i> Generated via <span>Vivo Distro</span>
+                            </div>
+                            <div class="footer-total">
+                                <strong>${groups.length}</strong> group${groups.length !== 1 ? 's' : ''} &nbsp;·&nbsp; 
+                                <strong>${totalItems}</strong> item${totalItems !== 1 ? 's' : ''}
+                                ${totalPowerHtml}
+                            </div>
+                        </div>
+                    </div>`;
+
+            } catch (err) {
+                console.error('Error:', err);
+                contentDiv.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><h3>Error loading rider</h3><p>Please try again later.</p></div>`;
+            }
+        }
+
+        loadTechlist();
+    </script>
+    <script src="settings-manager.js"></script>
+    <script src="navbar.js"></script>
+</body>
+</html>

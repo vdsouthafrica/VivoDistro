@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inbox | Vivo Distro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: #050505;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Premium Background Glows */
+        .bg-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(120px);
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.45;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: rgba(108, 99, 255, 0.6);
+            top: -100px;
+            left: -100px;
+        }
+
+        .orb-2 {
+            width: 500px;
+            height: 500px;
+            background: rgba(255, 101, 132, 0.3);
+            bottom: -150px;
+            right: -100px;
+        }
+
+        .orb-3 {
+            width: 300px;
+            height: 300px;
+            background: rgba(16, 185, 129, 0.2);
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Main Container */
+        .app-wrapper {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Sleek Header */
+        .app-header {
+            background: rgba(10, 10, 10, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 1rem 2rem;
+        }
+
+        .header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.05);
+        }
+
+        .page-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .page-title i {
+            color: #6C63FF;
+            font-size: 1.1rem;
+        }
+
+        /* Modern Tabs */
+        .header-tabs {
+            display: flex;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 0.3rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .header-tab {
+            padding: 0.5rem 1.2rem;
+            border-radius: 8px;
+            background: transparent;
+            border: none;
+            color: #888;
+            font-weight: 500;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-tab i {
+            font-size: 0.8rem;
+        }
+
+        .header-tab.active {
+            background: #6C63FF;
+            color: white;
+            box-shadow: 0 4px 15px rgba(108, 99, 255, 0.3);
+        }
+
+        .header-tab:hover:not(.active) {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .badge-sm {
+            background: #ff4757;
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 20px;
+        }
+
+        /* Select Tool */
+        .select-toggle-btn {
+            padding: 0.5rem 1.2rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .select-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .select-toggle-btn.active {
+            background: rgba(108, 99, 255, 0.2);
+            border-color: #6C63FF;
+            color: #a49eff;
+        }
+
+        /* Stats Row - Ultra Premium */
+        .stats-container {
+            max-width: 1200px;
+            margin: 2rem auto 1rem;
+            width: 100%;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(108, 99, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .stat-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, rgba(108, 99, 255, 0.2), rgba(108, 99, 255, 0.05));
+            border: 1px solid rgba(108, 99, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: #6C63FF;
+        }
+
+        .stat-icon.green {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .stat-icon.orange {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+
+        .stat-icon.pink {
+            background: rgba(236, 72, 153, 0.1);
+            border-color: rgba(236, 72, 153, 0.2);
+            color: #ec4899;
+        }
+
+        .stat-info h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+
+        .stat-info p {
+            font-size: 0.7rem;
+            color: #737373;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        /* Inbox List Structure */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 1rem 2rem 6rem;
+        }
+
+        .inbox-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        /* The Premium Row Design */
+        .inbox-row {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border-radius: 16px;
+            padding: 1.2rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1.2rem;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .inbox-row:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.1);
+            transform: scale(1.005);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .inbox-row::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 4px;
+            border-radius: 4px 0 0 4px;
+            background: transparent;
+        }
+
+        .inbox-row.type-booking::before {
+            background: #10b981;
+        }
+
+        .inbox-row.type-chat::before {
+            background: #6C63FF;
+        }
+
+        .inbox-row.type-profile::before {
+            background: #f59e0b;
+        }
+
+        .inbox-row.unread {
+            background: rgba(108, 99, 255, 0.04);
+            border-color: rgba(108, 99, 255, 0.2);
+        }
+
+        /* Checkbox for Select Mode */
+        .row-checkbox {
+            width: 22px;
+            height: 22px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 10px;
+            flex-shrink: 0;
+            display: none;
+        }
+
+        .select-mode .row-checkbox {
+            display: flex;
+        }
+
+        .row-checkbox:hover {
+            border-color: #6C63FF;
+        }
+
+        .inbox-row.selected {
+            background: rgba(108, 99, 255, 0.1);
+            border-color: #6C63FF;
+        }
+
+        .inbox-row.selected .row-checkbox {
+            background: #6C63FF;
+            border-color: #6C63FF;
+        }
+
+        .inbox-row.selected .row-checkbox::after {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: #fff;
+            font-size: 11px;
+        }
+
+        /* Sender Avatar */
+        .row-avatar-wrap {
+            position: relative;
+            width: 48px;
+            height: 48px;
+            flex-shrink: 0;
+        }
+
+        .row-avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2a2a35, #151520);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #888;
+        }
+
+        .row-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .row-type-icon {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            color: #fff;
+            border: 2px solid #050505;
+        }
+
+        .type-booking .row-type-icon {
+            background: #10b981;
+        }
+
+        .type-chat .row-type-icon {
+            background: #6C63FF;
+        }
+
+        .type-profile .row-type-icon {
+            background: #f59e0b;
+        }
+
+        /* Row Content */
+        .row-content {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .row-header-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .row-sender-name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .read-status {
+            font-size: 0.65rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.1);
+            color: #aaa;
+        }
+
+        .unread .read-status {
+            background: rgba(108, 99, 255, 0.2);
+            color: #a49eff;
+        }
+
+        .status-accepted {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+        }
+
+        .row-time {
+            font-size: 0.75rem;
+            color: #666;
+            white-space: nowrap;
+            font-weight: 500;
+        }
+
+        .row-subject {
+            font-size: 0.9rem;
+            color: #ccc;
+            line-height: 1.4;
+        }
+
+        .row-subject strong {
+            color: #fff;
+        }
+
+        /* Sleek Pills for Details */
+        .details-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.4rem;
+        }
+
+        .detail-pill {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 8px;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.75rem;
+            color: #aaa;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .detail-pill i {
+            color: #6C63FF;
+            opacity: 0.8;
+        }
+
+        .detail-pill strong {
+            color: #eee;
+            font-weight: 500;
+        }
+
+        /* Chat view specifically */
+        .chat-preview {
+            background: rgba(0, 0, 0, 0.3);
+            border-left: 2px solid #6C63FF;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #bbb;
+            margin-top: 0.4rem;
+            max-width: 800px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+
+        /* WhatsApp special button */
+        .wa-contact-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(37, 211, 102, 0.15);
+            border: 1px solid rgba(37, 211, 102, 0.3);
+            color: #4ade80;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 0.4rem;
+        }
+
+        .wa-contact-btn:hover {
+            background: rgba(37, 211, 102, 0.3);
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.2);
+        }
+
+        /* Row Actions */
+        .row-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            align-items: flex-end;
+            margin-left: 1rem;
+        }
+
+        .row-actions-horizontal {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: auto;
+        }
+
+        .btn-action {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            height: 34px;
+            padding: 0 12px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-action i {
+            font-size: 0.85rem;
+        }
+
+        .btn-accept {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+        }
+
+        .btn-accept:hover {
+            background: rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-decline {
+            background: rgba(255, 255, 255, 0.05);
+            color: #ccc;
+        }
+
+        .btn-decline:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .btn-delete {
+            background: rgba(255, 71, 87, 0.1);
+            color: #ff4757;
+        }
+
+        .btn-delete:hover {
+            background: rgba(255, 71, 87, 0.2);
+        }
+
+        .btn-reply {
+            background: rgba(108, 99, 255, 0.15);
+            color: #a49eff;
+        }
+
+        .btn-reply:hover {
+            background: rgba(108, 99, 255, 0.3);
+            color: #fff;
+        }
+
+        .btn-rate {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+        }
+
+        .btn-rate:hover {
+            background: rgba(245, 158, 11, 0.3);
+            color: #fff;
+        }
+
+        /* Selection Floating Toolbar */
+        .selection-toolbar {
+            position: fixed;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(20, 20, 25, 0.85);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 40px;
+            padding: 10px 14px 10px 24px;
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            z-index: 6000;
+            transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .selection-toolbar.show {
+            bottom: 40px;
+        }
+
+        .select-count {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #fff;
+        }
+
+        .toolbar-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .toolbar-btn {
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .toolbar-btn.all {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+        }
+
+        .toolbar-btn.all:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .toolbar-btn.delete {
+            background: #ff4757;
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+        }
+
+        .toolbar-btn.delete:hover {
+            background: #ff6b81;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 71, 87, 0.5);
+        }
+
+        .toolbar-btn.cancel {
+            background: transparent;
+            color: #aaa;
+        }
+
+        .toolbar-btn.cancel:hover {
+            color: #fff;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 5rem 2rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 20px;
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+            color: #666;
+            margin-top: 2rem;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: rgba(108, 99, 255, 0.5);
+        }
+
+        .empty-state h3 {
+            font-size: 1.2rem;
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Modals... keep clean */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 7000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            width: 450px;
+            background: #111;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 20px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 15px;
+        }
+
+        textarea {
+            width: 100%;
+            background: #000;
+            border: 1px solid #333;
+            color: #fff;
+            padding: 15px;
+            border-radius: 12px;
+            resize: none;
+            min-height: 120px;
+            font-size: 0.9rem;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #6C63FF;
+        }
+
+        .rating-stars {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .rating-stars i {
+            font-size: 2rem;
+            color: #333;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .rating-stars i:hover,
+        .rating-stars i.active {
+            color: #fbbf24;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .modal-btn.cancel {
+            background: #222;
+            color: #aaa;
+        }
+
+        .modal-btn.submit {
+            background: #6C63FF;
+            color: #fff;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(20, 20, 25, 0.95);
+            border: 1px solid rgba(108, 99, 255, 0.3);
+            padding: 12px 24px;
+            border-radius: 12px;
+            color: #fff;
+            font-weight: 500;
+            font-size: 0.85rem;
+            z-index: 9000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            animation: fadeUp 0.3s forwards;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 800px) {
+            .stats-container {
+                grid-template-columns: 1fr 1fr;
+                padding: 0 1.5rem;
+            }
+
+            .inbox-row {
+                flex-direction: column;
+            }
+
+            .row-actions-horizontal {
+                width: 100%;
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+
+            .btn-action {
+                width: 100%;
+            }
+        }
+    </style>
+    <!-- GLobally Applied Theme Hook -->
+    <link rel="stylesheet" href="settings.css">
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const configT = localStorage.getItem('vivo_theme') || 'theme-default';
+            if (configT !== 'theme-default') document.body.classList.add(configT);
+        });
+    </script>
+</head>
+
+<body>
+    <!-- Premium Orbs -->
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
+
+    <div class="app-wrapper">
+        <div class="app-header">
+            <div class="header-row">
+                <div class="header-left">
+                    <button class="back-btn" onclick="window.history.back()"><i class="fas fa-arrow-left"></i></button>
+                    <div class="page-title"><i class="fas fa-inbox"></i> Inbox</div>
+                </div>
+
+                <div class="header-tabs" id="headerTabs">
+                    <button class="header-tab active" data-tab="all"><i class="fas fa-layer-group"></i> All <span
+                            id="allBadge" class="badge-sm" style="display:none">0</span></button>
+                    <button class="header-tab" data-tab="bookings"><i class="fas fa-calendar-check"></i> Bookings <span
+                            id="bookingBadge" class="badge-sm" style="display:none">0</span></button>
+                    <button class="header-tab" data-tab="chats"><i class="fas fa-comment"></i> Messages <span
+                            id="chatBadge" class="badge-sm" style="display:none">0</span></button>
+                    <button class="header-tab" data-tab="profiles"><i class="fas fa-id-card"></i> Profiles <span
+                            id="profileBadge" class="badge-sm" style="display:none">0</span></button>
+                </div>
+
+                <div class="header-right">
+                    <button id="selectModeToggle" class="select-toggle-btn" onclick="toggleSelectMode()">
+                        <i class="fas fa-list-check"></i> Select
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-inbox"></i></div>
+                <div class="stat-info">
+                    <h3 id="totalItems">0</h3>
+                    <p>Total Items</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green"><i class="fas fa-check-double"></i></div>
+                <div class="stat-info">
+                    <h3 id="acceptedBookings">0</h3>
+                    <p>Accepted</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon orange"><i class="fas fa-clock"></i></div>
+                <div class="stat-info">
+                    <h3 id="pendingBookings">0</h3>
+                    <p>Pending Requests</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon pink"><i class="fas fa-star"></i></div>
+                <div class="stat-info">
+                    <h3 id="avgRating">0.0</h3>
+                    <p>Avg Rating</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-container">
+            <div id="itemsContainer" class="inbox-list">
+                <div class="empty-state"><i class="fas fa-spinner fa-pulse"></i>
+                    <h3>Loading Inbox...</h3>
+                    <p>Fetching your latest connections securely.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Selection Toolbar -->
+    <div id="selectionToolbar" class="selection-toolbar">
+        <span id="selectCount" class="select-count">0 items selected</span>
+        <div class="toolbar-actions">
+            <button class="toolbar-btn all" onclick="selectAll()"><i class="fas fa-check-double"></i> Select
+                All</button>
+            <button class="toolbar-btn delete" onclick="deleteSelectedItems()"><i class="fas fa-trash"></i>
+                Delete</button>
+            <div style="width:1px; background:rgba(255,255,255,0.1); margin: 0 5px;"></div>
+            <button class="toolbar-btn cancel" onclick="toggleSelectMode()">Done</button>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="ratingModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 style="font-size:1.1rem; color:#fff"><i class="fas fa-star" style="color:#fbbf24"></i> Rate <span
+                        id="rateUserName"></span></h3>
+            </div>
+            <div class="rating-stars" id="ratingStars">
+                <i class="far fa-star" data-rating="1"></i><i class="far fa-star" data-rating="2"></i><i
+                    class="far fa-star" data-rating="3"></i><i class="far fa-star" data-rating="4"></i><i
+                    class="far fa-star" data-rating="5"></i>
+            </div>
+            <textarea id="ratingComment" placeholder="Write your review here..."></textarea>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="closeRatingModal()">Cancel</button>
+                <button class="modal-btn submit" id="submitRatingBtn">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="replyModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 style="font-size:1.1rem; color:#fff"><i class="fas fa-reply" style="color:#6C63FF"></i> Reply to
+                    <span id="replyToName"></span></h3>
+            </div>
+            <textarea id="replyMessage" placeholder="Type your message..."></textarea>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="closeReplyModal()">Cancel</button>
+                <button class="modal-btn submit" id="sendReplyBtn">Send Message</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://msjinuumxmezrijqemmp.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zamludXVteG1lenJpanFlbW1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwOTAyNjMsImV4cCI6MjA4NzY2NjI2M30.ic50fSC7MQfhSkhfE5E8B0R5-BGCQStMRZNHiy6Zakw';
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let currentUserId = null;
+        let allItems = [], bookings = [], chats = [], profiles = [];
+        let currentTab = 'all';
+        let isSelectMode = false;
+        let selectedIds = new Set();
+        let usernameCache = {}; // Cache for sender usernames
+
+        const formatHtml = (s) => (s || '').replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]));
+        const showToast = (msg, icon = 'check-circle') => {
+            const t = document.createElement('div');
+            t.className = 'toast';
+            t.innerHTML = `<i class="fas fa-${icon}" style="color:${icon === 'check-circle' ? '#10b981' : '#ff4757'}"></i> ${msg}`;
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 3000);
+        };
+
+        async function hasUserRated(id) {
+            const sevenDaysAgo = new Date();
+            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+            const { data } = await sb.from('ratings')
+                .select('created_at')
+                .eq('reviewer_id', currentUserId)
+                .eq('rated_user_id', id)
+                .order('created_at', { ascending: false })
+                .limit(1);
+
+            if (data && data.length > 0) {
+                const lastRatingDate = new Date(data[0].created_at);
+                if (lastRatingDate > sevenDaysAgo) return true;
+            }
+            return false;
+        }
+
+        function updateStats() {
+            document.getElementById('totalItems').innerText = allItems.length;
+            document.getElementById('acceptedBookings').innerText = bookings.filter(b => b.status === 'accepted').length;
+            document.getElementById('pendingBookings').innerText = bookings.filter(b => b.status === 'pending').length;
+
+            const uAll = allItems.filter(i => i.status === 'pending').length;
+            const uBook = bookings.filter(b => b.status === 'pending').length;
+            const uChat = chats.filter(c => c.status === 'pending').length;
+            const uProf = profiles.filter(p => p.status === 'pending').length;
+
+            ['allBadge', 'bookingBadge', 'chatBadge', 'profileBadge'].forEach((id, idx) => {
+                const count = [uAll, uBook, uChat, uProf][idx];
+                const el = document.getElementById(id);
+                el.style.display = count > 0 ? 'inline-block' : 'none';
+                el.innerText = count > 99 ? '99+' : count;
+            });
+
+            sb.from('ratings').select('rating').eq('rated_user_id', currentUserId).then(({ data }) => {
+                if (data && data.length) document.getElementById('avgRating').innerText = (data.reduce((a, b) => a + b.rating, 0) / data.length).toFixed(1);
+            });
+        }
+
+        async function renderCardText(item) {
+            const date = new Date(item.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+            // Fix: Get sender name from cache or fallback
+            let senderName = usernameCache[item.sender_id] || 'User';
+            if (item.sender_id === currentUserId) senderName = 'You';
+
+            let iconClass = '', badgeClass = '', pillDetails = '', actions = '', contentBody = '';
+
+            const isUnread = item.status !== 'accepted' && item.status !== 'declined' && item.status !== 'read';
+
+            if (item.type === 'booking') {
+                iconClass = 'fa-calendar-check'; badgeClass = 'type-booking';
+                const bd = item.sender_profile || {};
+                const evName = item.event_name || bd.event_name || '';
+                const evDate = item.event_date || bd.event_date || '';
+                const st = item.start_time || bd.start_time || '';
+                const et = item.end_time || bd.end_time || '';
+                const loc = item.location || bd.location || item.venue || bd.venue || '';
+                const px = item.expected_attendance || bd.expected_attendance || '';
+                const ph = item.sender_phone || bd.sender_phone || '';
+
+                contentBody = `<p class="row-subject">Booking Request for <strong>${formatHtml(evName)}</strong></p>`;
+                pillDetails = `
+                    <div class="details-pills">
+                        ${evDate ? `<span class="detail-pill"><i class="fas fa-calendar"></i> <strong>${new Date(evDate).toLocaleDateString()}</strong></span>` : ''}
+                        ${st || et ? `<span class="detail-pill"><i class="fas fa-clock"></i> <strong>${st}${et ? ' - ' + et : ''}</strong></span>` : ''}
+                        ${loc ? `<span class="detail-pill"><i class="fas fa-map-marker-alt"></i> <strong>${formatHtml(loc)}</strong></span>` : ''}
+                        ${px ? `<span class="detail-pill"><i class="fas fa-users"></i> <strong>${formatHtml(String(px))} pax</strong></span>` : ''}
+                        ${ph ? `<button class="wa-contact-btn" title="Contact via WhatsApp" onclick="event.stopPropagation(); copyNumber('${ph}')"><i class="fab fa-whatsapp"></i></button>` : ''}
+                    </div>
+                `;
+
+                if (item.status !== 'accepted' && item.status !== 'declined') {
+                    actions = `<div class="row-actions-horizontal" style="margin-top: 5px;">
+                        <button class="btn-action btn-accept" style="padding: 10px 18px; font-size: 0.85rem;" onclick="updateStatus('${item.id}', 'accepted')"><i class="fas fa-check"></i> Accept</button>
+                        <button class="btn-action btn-decline" style="padding: 10px 18px; font-size: 0.85rem;" onclick="updateStatus('${item.id}', 'declined')"><i class="fas fa-times"></i> Decline</button>
+                    </div>`;
+                }
+            } else if (item.type === 'chat') {
+                iconClass = 'fa-comment'; badgeClass = 'type-chat';
+                contentBody = `<div class="chat-preview">${formatHtml(item.message || '').replace(/\\n/g, '<br>')}</div>`;
+                const chatPhone = item.sender_phone || (item.sender_profile && item.sender_profile.sender_phone) || '';
+                if (chatPhone) pillDetails = `<div class="details-pills"><button class="wa-contact-btn" title="Contact via WhatsApp" onclick="event.stopPropagation(); copyNumber('${chatPhone}')"><i class="fab fa-whatsapp"></i></button></div>`;
+                actions = `<div class="row-actions-horizontal">
+                    <button class="btn-action btn-reply" onclick="openReplyModal('${item.id}','${senderName}')"><i class="fas fa-reply"></i> Reply</button>
+                    <button class="btn-action btn-delete" onclick="deleteItem('${item.id}')"><i class="fas fa-trash"></i> Delete</button>
+                </div>`;
+            } else if (item.type === 'profile') {
+                iconClass = 'fa-id-card'; badgeClass = 'type-profile';
+                contentBody = `<p class="row-subject">${senderName} shared their profile with you.</p>`;
+                const rated = await hasUserRated(item.sender_id);
+                actions = `<div class="row-actions-horizontal">
+                    ${!rated ? `<button class="btn-action btn-rate" onclick="openRatingModal('${item.sender_id}','${senderName}')"><i class="fas fa-star"></i> Rate</button>` : `<span class="detail-pill"><i class="fas fa-check"></i> <strong>Rated</strong></span>`}
+                    <button class="btn-action btn-delete" onclick="deleteItem('${item.id}')"><i class="fas fa-trash"></i></button>
+                </div>`;
+            }
+
+            const isSel = selectedIds.has(item.id);
+            const avatarHtml = (item.type === 'profile' && item.sender_profile?.image_url)
+                ? `<img src="${item.sender_profile.image_url}">`
+                : `<i class="fas fa-user"></i>`;
+
+            return `
+            <div class="inbox-row ${badgeClass} ${isUnread ? 'unread' : ''} ${isSel ? 'selected' : ''}" onclick="isSelectMode ? toggleCardSelection('${item.id}', this) : null">
+                <div class="row-checkbox"><i class="fas fa-check"></i></div>
+                <div class="row-avatar-wrap">
+                    <div class="row-avatar">${avatarHtml}</div>
+                    <div class="row-type-icon"><i class="fas ${iconClass}"></i></div>
+                </div>
+                <div class="row-content">
+                    <div class="row-header-info">
+                        <div class="row-sender-name">${senderName} ${isUnread ? '<span class="read-status">New</span>' : (item.status === 'accepted' ? '<span class="read-status status-accepted">Accepted</span>' : '')}</div>
+                        <div class="row-time">${date}</div>
+                    </div>
+                    ${contentBody}
+                    ${pillDetails}
+                </div>
+                ${!isSelectMode && item.type !== 'chat' ? `
+                <div class="row-actions" onclick="event.stopPropagation()">
+                    ${actions}
+                    ${item.type === 'booking' ? `<button class="btn-action btn-delete" style="width:100%" onclick="deleteItem('${item.id}')"><i class="fas fa-trash"></i> Delete</button>` : ''}
+                </div>` : (!isSelectMode ? `<div class="row-actions" onclick="event.stopPropagation()">${actions}</div>` : '')}
+            </div>`;
+        }
+
+        async function renderCurrentTab() {
+            let items = currentTab === 'all' ? allItems : (currentTab === 'bookings' ? bookings : (currentTab === 'chats' ? chats : profiles));
+            const c = document.getElementById('itemsContainer');
+            if (!items.length) {
+                const map = { all: 'inbox', bookings: 'calendar-check', chats: 'comment', profiles: 'id-card' };
+                c.innerHTML = `<div class="empty-state"><i class="fas fa-${map[currentTab]}"></i><h3>No ${currentTab}</h3><p>You're all caught up!</p></div>`;
+                return;
+            }
+            let html = '';
+            for (let i of items) html += await renderCardText(i);
+            c.innerHTML = html;
+        }
+
+        async function loadInbox() {
+            if (!currentUserId) return;
+            const { data, error } = await sb.from('inbox_items').select('*').eq('recipient_id', currentUserId).order('created_at', { ascending: false });
+            if (error) { console.error('Error loading inbox:', error); return; }
+
+            allItems = data || [];
+
+            // Pre-fetch all sender usernames
+            const senderIds = [...new Set(allItems.map(i => i.sender_id))];
+            if (senderIds.length > 0) {
+                const { data: userData } = await sb
+                    .from('usernames')
+                    .select('user_id, username')
+                    .in('user_id', senderIds);
+
+                if (userData) {
+                    userData.forEach(u => usernameCache[u.user_id] = u.username);
+                }
+            }
+
+            bookings = allItems.filter(i => i.type === 'booking');
+            chats = allItems.filter(i => i.type === 'chat');
+            profiles = allItems.filter(i => i.type === 'profile');
+            updateStats();
+            await renderCurrentTab();
+
+            // Mark all 'pending' items as 'read' now that they've been viewed
+            const unreadIds = allItems.filter(i => i.status === 'pending').map(i => i.id);
+            if (unreadIds.length > 0) {
+                await sb.from('inbox_items').update({ status: 'read' }).in('id', unreadIds);
+                // We don't necessarily need to reload, just update the local state if we want to hide "New" badges immediately
+                // but usually a slight delay or next visit is fine. 
+                // To be snappy, let's update local status too:
+                allItems.forEach(i => { if (i.status === 'pending') i.status = 'read'; });
+                // We don't re-render everything unless we want "New" badges to vanish instantly.
+            }
+        }
+
+        // Selection Handlers
+        window.toggleSelectMode = () => {
+            isSelectMode = !isSelectMode;
+            document.getElementById('itemsContainer').classList.toggle('select-mode', isSelectMode);
+            document.getElementById('selectionToolbar').classList.toggle('show', isSelectMode);
+            document.getElementById('selectModeToggle').classList.toggle('active', isSelectMode);
+            if (!isSelectMode) {
+                selectedIds.clear();
+                document.getElementById('selectCount').innerText = `0 items selected`;
+                loadInbox(); // Quick re-render removal of selection styling
+            }
+        };
+
+        window.toggleCardSelection = (id, el) => {
+            if (!isSelectMode) return;
+            selectedIds.has(id) ? selectedIds.delete(id) : selectedIds.add(id);
+            el.classList.toggle('selected');
+            document.getElementById('selectCount').innerText = `${selectedIds.size} items selected`;
+        };
+
+        window.selectAll = () => {
+            let items = currentTab === 'all' ? allItems : (currentTab === 'bookings' ? bookings : (currentTab === 'chats' ? chats : profiles));
+            items.forEach(i => selectedIds.add(i.id));
+            document.querySelectorAll('.inbox-row').forEach(r => r.classList.add('selected'));
+            document.getElementById('selectCount').innerText = `${selectedIds.size} items selected`;
+        };
+
+        window.deleteSelectedItems = async () => {
+            if (!selectedIds.size) return;
+            if (confirm(`Delete ${selectedIds.size} items completely?`)) {
+                await sb.from('inbox_items').delete().in('id', Array.from(selectedIds));
+                showToast(`Deleted successfully`);
+                toggleSelectMode();
+            }
+        };
+
+        // Actions
+        window.updateStatus = async (id, status) => {
+            const { data: item } = await sb.from('inbox_items').select('*').eq('id', id).single();
+            await sb.from('inbox_items').update({ status }).eq('id', id);
+
+            // Send notification back to sender
+            if (item && item.sender_id && item.type === 'booking') {
+                const bd = item.booking_details || {};
+                const evName = item.event_name || bd.event_name || 'your proposed event';
+                await sb.from('inbox_items').insert({
+                    sender_id: currentUserId,
+                    recipient_id: item.sender_id,
+                    recipient_name: 'Vivo Calendar',
+                    type: 'chat',
+                    message: `Booking Update: Your booking request for ${evName} has been ${status.toUpperCase()}!`,
+                    status: 'pending'
+                });
+            }
+            showToast(`Booking ${status}`);
+            loadInbox();
+        };
+        window.deleteItem = async (id) => { if (confirm('Delete this item?')) { await sb.from('inbox_items').delete().eq('id', id); showToast('Deleted'); loadInbox(); } };
+        window.copyNumber = (num) => { navigator.clipboard.writeText(num); showToast('Number copied to clipboard'); };
+
+        // Tab Switching
+        document.querySelectorAll('.header-tab').forEach(b => {
+            b.addEventListener('click', () => {
+                document.querySelectorAll('.header-tab').forEach(t => t.classList.remove('active'));
+                b.classList.add('active');
+                currentTab = b.dataset.tab;
+                if (isSelectMode) toggleSelectMode();
+                renderCurrentTab();
+            });
+        });
+
+        // Modals
+        let activeUserId = null; let activeItemId = null;
+        window.openRatingModal = (id, name) => { activeUserId = id; document.getElementById('rateUserName').innerText = name; document.getElementById('ratingModal').classList.add('active'); };
+        window.closeRatingModal = () => document.getElementById('ratingModal').classList.remove('active');
+        let selRate = 0;
+        document.getElementById('ratingStars').addEventListener('click', (e) => {
+            if (e.target.tagName === 'I') {
+                selRate = parseInt(e.target.dataset.rating);
+                document.querySelectorAll('#ratingStars i').forEach((s, i) => s.className = i < selRate ? 'fas fa-star' : 'far fa-star');
+            }
+        });
+        document.getElementById('submitRatingBtn').addEventListener('click', async () => {
+            if (!selRate) return showToast('Please select a star rating', 'exclamation-circle');
+            await sb.from('ratings').insert({ rated_user_id: activeUserId, reviewer_id: currentUserId, rating: selRate, comment: document.getElementById('ratingComment').value });
+            showToast('Rating submitted'); closeRatingModal(); loadInbox();
+        });
+
+        window.openReplyModal = (id, name) => { activeItemId = id; document.getElementById('replyToName').innerText = name; document.getElementById('replyModal').classList.add('active'); };
+        window.closeReplyModal = () => document.getElementById('replyModal').classList.remove('active');
+        document.getElementById('sendReplyBtn').addEventListener('click', async () => {
+            const msg = document.getElementById('replyMessage').value.trim();
+            if (!msg) return showToast('Type a message', 'exclamation-circle');
+            const { data } = await sb.from('inbox_items').select('sender_id, recipient_name').eq('id', activeItemId).single();
+            await sb.from('inbox_items').insert({ sender_id: currentUserId, recipient_id: data.sender_id, recipient_name: data.recipient_name, message: msg, type: 'chat', status: 'pending' });
+            showToast('Reply sent!'); closeReplyModal(); loadInbox();
+        });
+
+        // Boot
+        (async () => {
+            const { data } = await sb.auth.getUser();
+            if (!data.user) return window.location.href = 'login.html';
+            currentUserId = data.user.id;
+            await loadInbox();
+        })();
+    </script>
+    <script src="settings-manager.js"></script>
+    <script src="navbar.js"></script>
+</body>
+
+</html>

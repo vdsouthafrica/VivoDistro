@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quote Builder | Vivo Distro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+    <link rel="shortcut icon" href="/icons/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+    <link rel="manifest" href="/manifest.json">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0a0c14;
+            --bg-card: #12141c;
+            --bg-sidebar: #0e1018;
+            --border-light: rgba(255, 255, 255, 0.05);
+            --border-medium: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: #a0a8c0;
+            --text-muted: #6b7280;
+            --accent: #2b5f8a;
+            --accent-light: rgba(43, 95, 138, 0.15);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --primary: #3b82f6;
+        }
+
+        body {
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.5;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
+
+        /* Simple Header with Back Button */
+        .simple-header {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-medium);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-medium);
+            border-radius: 8px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .back-btn:hover {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: var(--primary);
+            transform: translateX(-3px);
+        }
+        .back-btn i {
+            color: var(--primary);
+        }
+        .header-logo {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+        }
+        .header-logo i {
+            color: var(--primary);
+            margin-right: 0.5rem;
+        }
+
+        /* Main Content - No margin-left since no sidebar */
+        .hub-main {
+            min-height: 100vh;
+            background: var(--bg-dark);
+        }
+
+        .quote-header {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-medium);
+            padding: 1.5rem 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Quote Container */
+        .quote-container { display: flex; gap: 0; min-height: calc(100vh - 80px); }
+        .fee-panel { width: 400px; background: var(--bg-sidebar); border-right: 1px solid var(--border-medium); display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0; }
+        .fee-panel-header { padding: 1.8rem 1.8rem 1rem; border-bottom: 1px solid var(--border-medium); }
+        .fee-panel-header-top { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 0.5rem; }
+        .fee-panel-header h2 { font-size: 1.3rem; font-weight: 600; margin: 0; }
+        .fee-panel-header p { color: var(--text-secondary); font-size: 0.9rem; }
+        .service-mode-actions { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+        .multi-select-btn, .build-selection-btn {
+            border: 1px solid var(--border-medium);
+            border-radius: 999px;
+            padding: 0.55rem 1rem;
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-primary);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        .multi-select-btn.active {
+            background: rgba(59, 130, 246, 0.18);
+            border-color: rgba(59, 130, 246, 0.45);
+            color: #bfdbfe;
+        }
+        .build-selection-btn { display: none; background: var(--primary); border-color: var(--primary); }
+        .build-selection-btn.visible { display: inline-flex; align-items: center; gap: 0.5rem; }
+        .fee-types-container { flex: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+
+        .fee-category { background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 10px; overflow: hidden; }
+        .fee-category-header { padding: 1.2rem 1.5rem; background: rgba(255, 255, 255, 0.02); border-bottom: 1px solid var(--border-light); font-weight: 600; display: flex; align-items: center; gap: 0.8rem; }
+        .fee-category-header i { color: var(--primary); font-size: 1.1rem; }
+        .fee-items { padding: 1rem; display: flex; flex-direction: column; gap: 0.8rem; }
+        .fee-item-card { background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-light); border-radius: 8px; padding: 1.2rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 1rem; }
+        .fee-item-card:hover { background: var(--accent-light); border-color: var(--accent); transform: translateY(-2px); }
+        .fee-item-icon { width: 40px; height: 40px; background: rgba(255, 255, 255, 0.05); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.2rem; }
+        .fee-item-title { font-weight: 600; margin-bottom: 0.2rem; }
+        .fee-item-desc { color: var(--text-secondary); font-size: 0.85rem; }
+        .fee-item-select { display: none; width: 20px; height: 20px; accent-color: var(--primary); flex-shrink: 0; }
+        body.multi-select-mode .fee-item-select { display: block; }
+        .fee-item-card.selected { border-color: rgba(59, 130, 246, 0.5); background: rgba(59, 130, 246, 0.12); }
+
+        .quote-panel { flex: 1; background: var(--bg-dark); overflow-y: auto; padding: 2rem; }
+        .quote-sheet { max-width: 900px; margin: 0 auto; background: var(--bg-card); border-radius: 20px; border: 1px solid var(--border-medium); overflow: hidden; }
+        .quote-header-section { padding: 2rem; background: linear-gradient(145deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 100%); border-bottom: 1px solid var(--border-medium); }
+        .quote-title { font-size: 2rem; font-weight: 700; margin-bottom: 1.5rem; }
+        .quote-info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+        .info-field { display: flex; flex-direction: column; gap: 0.5rem; }
+        .info-field label { color: var(--text-secondary); font-size: 0.85rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+        .info-field input, .info-field select { background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-light); border-radius: 8px; padding: 0.8rem 1rem; color: var(--text-primary); font-size: 1rem; width: 100%; transition: all 0.3s; }
+        .info-field input:focus, .info-field select:focus { outline: none; border-color: var(--primary); background: rgba(255, 255, 255, 0.05); }
+        select option { background: #12141c !important; color: white !important; }
+        select { background-color: #12141c !important; color: white !important; }
+        .info-field select#currencySymbol {
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 16px;
+            padding-right: 35px;
+            font-weight: 600;
+            color: #3b82f6;
+            border-color: rgba(59, 130, 246, 0.3);
+            width: 90px;
+        }
+
+        .saved-quotes-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
+            display: none; align-items: center; justify-content: center; z-index: 3000;
+        }
+        .saved-quotes-modal.active { display: flex; }
+        .saved-quotes-content {
+            background: var(--bg-card); width: 450px; border-radius: 16px;
+            border: 1px solid var(--border-medium); overflow: hidden;
+        }
+        .saved-quotes-header { padding: 1.5rem; background: rgba(0,0,0,0.2); border-bottom: 1px solid var(--border-medium); display: flex; justify-content: space-between; align-items: center; }
+        .saved-quotes-list { padding: 1rem; max-height: 400px; overflow-y: auto; }
+        .saved-quote-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 1rem; background: rgba(255,255,255,0.02); border: 1px solid var(--border-light);
+            border-radius: 10px; margin-bottom: 0.8rem; cursor: pointer; transition: all 0.2s;
+        }
+        .saved-quote-item:hover { background: rgba(59, 130, 246, 0.1); border-color: var(--primary); }
+        .saved-quote-info { flex: 1; }
+        .saved-quote-name { font-weight: 600; font-size: 1rem; margin-bottom: 0.2rem; }
+        .saved-quote-meta { font-size: 0.8rem; color: var(--text-secondary); }
+        .delete-saved-quote { color: var(--text-muted); padding: 0.5rem; transition: color 0.2s; }
+        .delete-saved-quote:hover { color: var(--danger); }
+
+        .quote-items-section { padding: 2rem; }
+        .section-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; }
+        .items-table { width: 100%; border-collapse: collapse; }
+        .items-table th { text-align: left; padding: 1rem; color: var(--text-secondary); font-weight: 500; border-bottom: 1px solid var(--border-medium); }
+        .items-table td { padding: 1rem; border-bottom: 1px solid var(--border-light); }
+        .item-description { color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.2rem; }
+        .item-amount { font-weight: 600; text-align: right; }
+        .remove-item { color: var(--text-muted); cursor: pointer; transition: color 0.2s; font-size: 1.1rem; }
+        .remove-item:hover { color: var(--danger); }
+        .empty-items { text-align: center; padding: 3rem; color: var(--text-muted); border: 2px dashed var(--border-light); border-radius: 12px; }
+
+        .adjustments-section {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin: 2rem;
+        }
+        .adjustment-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+        .adjustment-title { font-size: 1rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+        .adjustment-input-group { display: flex; gap: 0.5rem; margin-bottom: 1rem; align-items: center; flex-wrap: wrap; }
+        .adjustment-input-group input { flex: 1; padding: 0.6rem 0.8rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-light); border-radius: 6px; color: var(--text-primary); min-width: 80px; }
+        .adjustment-input-group select { width: 70px; padding: 0.6rem; background: #1e1e2a; border: 1px solid var(--border-light); border-radius: 6px; color: var(--text-primary); }
+        .adjustment-input-group button { padding: 0.6rem 1rem; background: var(--primary); border: none; border-radius: 6px; color: white; font-weight: 500; cursor: pointer; }
+        .adjustment-input-group button.is-remove { background: var(--danger); }
+        .adjustment-input-group input:disabled,
+        .adjustment-input-group select:disabled {
+            background: rgba(148, 163, 184, 0.12);
+            color: #94a3b8;
+            cursor: not-allowed;
+        }
+        .adjustment-preview { color: var(--success); font-size: 0.9rem; }
+
+        .quote-summary {
+            margin: 2rem;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            border: 1px solid var(--border-light);
+        }
+        .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 0; border-bottom: 1px solid var(--border-light); }
+        .grand-total { font-size: 1.3rem; font-weight: 700; color: var(--primary); margin-top: 1rem; padding-top: 1rem; border-top: 2px solid var(--border-medium); }
+
+        .quote-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-light);
+            flex-wrap: wrap;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-medium);
+            border-radius: 8px;
+            padding: 0.8rem 1.5rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-outline:hover { border-color: var(--primary); color: var(--text-primary); background: rgba(59, 130, 246, 0.1); }
+        .btn-success {
+            background: var(--success);
+            border: none;
+            border-radius: 8px;
+            padding: 0.8rem 2rem;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-success:hover { background: #0d9668; transform: translateY(-2px); }
+
+        /* Modal */
+        .fee-form-modal, .preview-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+        .fee-form-modal.active, .preview-modal.active { display: flex; }
+        .fee-form-content, .preview-content {
+            background: var(--bg-card);
+            border-radius: 16px;
+            width: 500px;
+            max-width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid var(--border-medium);
+        }
+        .preview-content { width: 900px; background: white; color: #1a1a1a; }
+        .fee-form-header, .preview-header {
+            padding: 1.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid var(--border-medium);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .fee-form-body { padding: 2rem; }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem; }
+        .form-group input, .form-group select { width: 100%; padding: 0.8rem 1rem; background: #12141c; border: 1px solid var(--border-light); border-radius: 8px; color: var(--text-primary); }
+        .form-group select option { background: #12141c; color: white; }
+        .fee-preview {
+            background: var(--accent-light);
+            border: 1px solid rgba(43, 95, 138, 0.3);
+            border-radius: 10px;
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+        }
+        .fee-preview-amount { font-size: 1.8rem; font-weight: 700; color: var(--primary); }
+        .form-actions { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem; }
+        .btn-secondary { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-light); border-radius: 8px; padding: 0.8rem 1.5rem; color: var(--text-secondary); cursor: pointer; }
+        .btn-primary { background: var(--primary); border: none; border-radius: 8px; padding: 0.8rem 1.5rem; color: white; font-weight: 500; cursor: pointer; }
+
+        .preview-body { padding: 2rem; overflow-y: auto; flex: 1; }
+        .preview-footer { padding: 1.5rem; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 1rem; }
+        .btn-preview { padding: 0.8rem 2rem; border-radius: 8px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+        .btn-preview-primary { background: var(--primary); color: white; border: none; }
+        .btn-preview-primary:hover { background: #2563eb; transform: translateY(-2px); }
+        .btn-preview-secondary { background: transparent; border: 1px solid #cbd5e1; color: #475569; }
+        .btn-preview-secondary:hover { background: #f1f5f9; }
+
+        /* Watermark Styles */
+        .quote-watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            opacity: 0.07;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+            filter: grayscale(100%);
+            transform: translate(-50%, -50%);
+        }
+        .quote-watermark img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .quote-sheet { position: relative; }
+
+        .preview-watermark {
+            position: absolute;
+            top: 42%;
+            left: 50%;
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            border: 6px solid #f1f5f9;
+            overflow: hidden;
+            opacity: 0.06;
+            pointer-events: none;
+            filter: grayscale(100%);
+            transform: translate(-50%, -50%);
+        }
+        .preview-watermark img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @media (max-width: 1200px) { .quote-container { flex-direction: column; } .fee-panel { width: 100%; } .adjustments-section { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) { 
+            .hub-main { margin-left: 0; } 
+            .quote-info-grid { grid-template-columns: 1fr; }
+            .simple-header { padding: 0.8rem 1rem; }
+            .back-btn span { display: none; }
+            .back-btn { padding: 0.6rem; }
+        }
+    </style>
+    <!-- GLobally Applied Theme Hook -->
+    <link rel="stylesheet" href="settings.css">
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const configT = localStorage.getItem('vivo_theme') || 'theme-default';
+            if(configT !== 'theme-default') document.body.classList.add(configT);
+        });
+    </script>
+</head>
+<body>
+    <!-- Simple Header with Back Button - No Sidebar -->
+    <div class="simple-header">
+        <button class="back-btn" onclick="window.history.back()">
+            <i class="fas fa-arrow-left"></i>
+            <span>Back</span>
+        </button>
+        <div class="header-logo">
+            <i class="fas fa-file-invoice"></i> QUOTE BUILDER
+            <button class="back-btn" id="openSavedQuotesBtn" style="margin-left: 15px; padding: 0.5rem 0.8rem;">
+                <i class="fas fa-folder-open"></i>
+                <span style="font-size: 0.8rem;">Saved</span>
+            </button>
+        </div>
+    </div>
+
+    <main class="hub-main">
+        <div class="quote-container">
+            <div class="fee-panel">
+                <div class="fee-panel-header">
+                    <div class="fee-panel-header-top">
+                        <h2>Add Services</h2>
+                        <div class="service-mode-actions">
+                            <button class="multi-select-btn" id="multiSelectBtn"><i class="fas fa-check-double"></i> Multi Select</button>
+                            <button class="build-selection-btn" id="buildSelectionBtn"><i class="fas fa-layer-group"></i> Build Selected</button>
+                        </div>
+                    </div>
+                    <p>Select from the categories below to build your quote</p>
+                </div>
+                <div class="fee-types-container" id="feeTypesContainer"></div>
+            </div>
+            <div class="quote-panel">
+                <div class="quote-sheet">
+                    <div class="quote-watermark" id="quoteWatermark" style="display: none;"></div>
+                    <div class="quote-header-section">
+                        <div class="quote-title" id="quoteTitleDisplay">New Quote</div>
+                        <div class="quote-info-grid">
+                            <div class="info-field"><label>Client Name</label><input type="text" id="clientName" placeholder="e.g. John Smith"></div>
+                            <div class="info-field"><label>Client Email</label><input type="email" id="clientEmail" placeholder="client@example.com"></div>
+                            <div class="info-field"><label>Event Name</label><input type="text" id="eventName" placeholder="e.g. Summer Festival 2026"></div>
+                            <div class="info-field">
+                                <label>Currency & Date</label>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <select id="currencySymbol" style="width: 80px;">
+                                        <option value="R">ZAR (R)</option>
+                                        <option value="$">USD ($)</option>
+                                        <option value="£">GBP (£)</option>
+                                        <option value="€">EUR (€)</option>
+                                        <option value="A$">AUD (A$)</option>
+                                        <option value="C$">CAD (C$)</option>
+                                    </select>
+                                    <input type="date" id="eventDate" style="flex: 1;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="quote-items-section">
+                        <div class="section-title"><i class="fas fa-list"></i> Fee Breakdown</div>
+                        <div id="itemsList" class="items-table-container"></div>
+                    </div>
+                    <div class="adjustments-section">
+                        <div class="adjustment-card"><div class="adjustment-title"><i class="fas fa-percent"></i> Discount</div>
+                            <div class="adjustment-input-group"><input type="number" id="discountInput" placeholder="0" min="0" step="0.1"><select id="discountType"><option value="percent">%</option><option value="fixed" class="currency-symbol-label">R</option></select><button id="applyDiscountBtn">Apply</button></div>
+                            <div class="adjustment-preview" id="discountPreview"></div>
+                        </div>
+                        <div class="adjustment-card"><div class="adjustment-title"><i class="fas fa-hand-holding-usd"></i> Deposit</div>
+                            <div class="adjustment-input-group"><input type="number" id="depositInput" placeholder="0" min="0" step="0.01"><select id="depositType"><option value="percent">%</option><option value="fixed" class="currency-symbol-label">R</option></select><button id="applyDepositBtn">Apply</button></div>
+                            <div class="adjustment-preview" id="depositPreview"></div>
+                        </div>
+                        <div class="adjustment-card"><div class="adjustment-title"><i class="fas fa-ban"></i> Cancellation Fee</div>
+                            <div class="adjustment-input-group"><input type="number" id="cancelInput" placeholder="0" min="0" step="0.1"><select id="cancelType"><option value="percent">%</option><option value="fixed" class="currency-symbol-label">R</option></select><button id="applyCancelBtn">Apply</button></div>
+                            <div class="adjustment-preview" id="cancelPreview"></div>
+                        </div>
+                    </div>
+                    <div class="quote-summary">
+                        <div class="summary-row"><span class="summary-label">Subtotal</span><span class="summary-value" id="subtotal">R 0.00</span></div>
+                        <div class="summary-row" id="discountRow" style="display: none;"><span class="summary-label">Discount</span><span class="summary-value" id="discountAmount">-R 0.00</span></div>
+                        <div class="summary-row" id="cancelRow" style="display: none;"><span class="summary-label">Cancellation Fee</span><span class="summary-value" id="cancelAmount" style="color: var(--warning);">+R 0.00</span></div>
+                        <div class="summary-row grand-total"><span class="summary-label">Total</span><span class="summary-value" id="grandTotal">R 0.00</span></div>
+                        <div class="summary-row" id="depositRow" style="display: none;"><span class="summary-label">Deposit Required</span><span class="summary-value" id="depositAmount">R 0.00</span></div>
+                    </div>
+                    <div class="quote-actions">
+                        <button class="btn-outline" id="clearQuoteBtn"><i class="fas fa-trash"></i> Clear</button>
+                        <button class="btn-outline" id="saveQuoteBtn"><i class="fas fa-save"></i> Save Draft</button>
+                        <button class="btn-success" id="previewQuoteBtn"><i class="fas fa-eye"></i> Preview Quote</button>
+                        <button class="btn-success" id="downloadQuoteBtn"><i class="fas fa-download"></i> Download PDF</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="fee-form-modal" id="feeFormModal"><div class="fee-form-content"><div class="fee-form-header"><h3 id="feeFormTitle">Add Fee</h3><div class="close-form-btn" id="closeFeeForm"><i class="fas fa-times"></i></div></div><div class="fee-form-body" id="feeFormBody"></div></div></div>
+    <div class="preview-modal" id="previewModal"><div class="preview-content" id="previewContent"></div></div>
+    <div class="saved-quotes-modal" id="savedQuotesModal">
+        <div class="saved-quotes-content">
+            <div class="saved-quotes-header">
+                <h3><i class="fas fa-folder-open"></i> Saved Templates</h3>
+                <div class="close-form-btn" id="closeSavedQuotes"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="saved-quotes-list" id="savedQuotesList">
+                <!-- Items populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+       document.addEventListener('DOMContentLoaded', function() {
+    const supabaseUrl = 'https://msjinuumxmezrijqemmp.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zamludXVteG1lenJpanFlbW1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwOTAyNjMsImV4cCI6MjA4NzY2NjI2M30.ic50fSC7MQfhSkhfE5E8B0R5-BGCQStMRZNHiy6Zakw';
+    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+    // Fee Categories
+    const feeCategories = [
+        { name: 'Performance Services', icon: 'fas fa-microphone-alt', items: [
+            { id: 'performance', name: 'Live Performance', description: 'Solo or band performance fee', fields: [{ id: 'hours', label: 'Performance Hours', type: 'number', default: 2 }, { id: 'rate', label: 'Hourly Rate (R)', type: 'number', default: 1000 }], calculate: (d) => (parseFloat(d.hours) || 0) * (parseFloat(d.rate) || 0), format: (d, a) => `Live Performance: ${d.hours}h × R${d.rate}/hour` },
+            { id: 'dj', name: 'DJ Services', description: 'Professional DJ setup and performance', fields: [{ id: 'hours', label: 'Performance Hours', type: 'number', default: 4 }, { id: 'rate', label: 'Hourly Rate (R)', type: 'number', default: 800 }], calculate: (d) => (parseFloat(d.hours) || 0) * (parseFloat(d.rate) || 0), format: (d, a) => `DJ Services: ${d.hours}h × R${d.rate}/hour` }
+        ]},
+        { name: 'Equipment & Technical', icon: 'fas fa-volume-up', items: [
+            { id: 'sound', name: 'Sound System', description: 'PA system, speakers, mixing console', fields: [{ id: 'system', label: 'System Type', type: 'select', options: ['Small', 'Medium', 'Large'] }, { id: 'days', label: 'Days', type: 'number', default: 1 }, { id: 'rate', label: 'Daily Rate (R)', type: 'number', default: 2500 }], calculate: (d) => (parseFloat(d.days) || 0) * (parseFloat(d.rate) || 0), format: (d, a) => `${d.system} Sound: ${d.days} days × R${d.rate}/day` },
+            { id: 'lighting', name: 'Lighting Package', description: 'Stage lighting, effects', fields: [{ id: 'package', label: 'Package', type: 'select', options: ['Basic', 'Standard', 'Premium'] }, { id: 'days', label: 'Days', type: 'number', default: 1 }, { id: 'rate', label: 'Daily Rate (R)', type: 'number', default: 1800 }], calculate: (d) => (parseFloat(d.days) || 0) * (parseFloat(d.rate) || 0), format: (d, a) => `${d.package} Lighting: ${d.days} days × R${d.rate}/day` }
+        ]},
+        { name: 'Travel & Logistics', icon: 'fas fa-truck', items: [
+            { id: 'travel', name: 'Travel Distance', description: 'Round trip travel', fields: [{ id: 'distance', label: 'Distance (km)', type: 'number', default: 50 }, { id: 'rate', label: 'Rate per km', type: 'number', default: 5 }], calculate: (d) => (parseFloat(d.distance) || 0) * (parseFloat(d.rate) || 0) * 2, format: (d, a) => `Travel: ${d.distance}km × ${getCurrency()}${d.rate}/km × 2` },
+            { id: 'accommodation', name: 'Accommodation', description: 'Hotel or lodging', fields: [{ id: 'nights', label: 'Nights', type: 'number', default: 1 }, { id: 'rooms', label: 'Rooms', type: 'number', default: 1 }, { id: 'rate', label: 'Rate per night', type: 'number', default: 1200 }], calculate: (d) => (parseFloat(d.nights) || 0) * (parseFloat(d.rooms) || 0) * (parseFloat(d.rate) || 0), format: (d, a) => `Accommodation: ${d.nights} nights × ${d.rooms} rooms × ${getCurrency()}${d.rate}/night` }
+        ]},
+        { name: 'Additional Services', icon: 'fas fa-plus-circle', items: [
+            { id: 'setup', name: 'Setup & Rehearsal', description: 'Additional setup time', fields: [{ id: 'hours', label: 'Hours', type: 'number', default: 2 }, { id: 'rate', label: 'Hourly Rate', type: 'number', default: 500 }], calculate: (d) => (parseFloat(d.hours) || 0) * (parseFloat(d.rate) || 0), format: (d, a) => `Setup/Rehearsal: ${d.hours}h × ${getCurrency()}${d.rate}/hour` },
+            { id: 'flat', name: 'Flat Fee', description: 'Custom flat fee amount', fields: [{ id: 'description', label: 'Description', type: 'text', placeholder: 'e.g. Special request', default: '' }, { id: 'amount', label: 'Amount', type: 'number', default: 1000 }], calculate: (d) => parseFloat(d.amount) || 0, format: (d, a) => `${d.description || 'Flat Fee'}: ${getCurrency()}${a}` }
+        ]}
+    ];
+
+    let quoteItems = [], discountValue = 0, discountType = 'percent', depositValue = 0, depositType = 'percent', cancelValue = 0, cancelType = 'percent';
+    let subtotal = 0, discountAmount = 0, cancelAmount = 0, total = 0, depositAmount = 0;
+    let userProfile = null;
+    let multiSelectMode = false;
+    let selectedFeeIds = new Set();
+    let batchQueue = [];
+
+    ['performance', 'dj', 'setup'].forEach(id => {
+        const item = feeCategories.flatMap(cat => cat.items).find(entry => entry.id === id);
+        if (!item) return;
+        item.hourlyRateItem = true;
+        item.fields = [
+            { id: 'hours', label: item.fields.find(f => f.id === 'hours')?.label || 'Hours', type: 'number', default: item.fields.find(f => f.id === 'hours')?.default || 1 },
+            { id: 'totalAmount', label: 'Total Amount', type: 'number', default: (item.fields.find(f => f.id === 'hours')?.default || 1) * (item.fields.find(f => f.id === 'rate')?.default || 0), step: '0.01' },
+            { id: 'rate', label: item.fields.find(f => f.id === 'rate')?.label?.replace(' (R)', '') || 'Hourly Rate', type: 'number', default: item.fields.find(f => f.id === 'rate')?.default || 0, step: '0.01' }
+        ];
+    });
+
+    function getCurrency() {
+        return document.getElementById('currencySymbol').value || 'R';
+    }
+
+    document.getElementById('currencySymbol').addEventListener('change', () => {
+        const symbol = getCurrency();
+        document.querySelectorAll('.currency-symbol-label').forEach(el => el.textContent = symbol);
+        updateQuoteDisplay();
+        saveQuoteToStorage();
+    });
+
+    async function loadUserProfile() {
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        if (user) {
+            let profile = null;
+            const { data: perf } = await supabaseClient.from('performers').select('name, image_url').eq('auth_id', user.id).single();
+            if (perf) {
+                profile = perf;
+            } else {
+                const { data: agent } = await supabaseClient.from('agents').select('name, logo_url').eq('auth_id', user.id).single();
+                if (agent) profile = { name: agent.name, image_url: agent.logo_url };
+                else {
+                    const { data: booker } = await supabaseClient.from('bookers').select('name, logo_url').eq('auth_id', user.id).single();
+                    if (booker) profile = { name: booker.name, image_url: booker.logo_url };
+                }
+            }
+            if (profile) {
+                userProfile = profile;
+                const watermark = document.getElementById('quoteWatermark');
+                if (profile.image_url) {
+                    watermark.innerHTML = `<img src="${profile.image_url}" alt="Watermark">`;
+                    watermark.style.display = 'flex';
+                }
+            }
+        }
+    }
+    loadUserProfile();
+
+    function findFeeItem(itemId) {
+        return feeCategories.flatMap(category => category.items).find(item => item.id === itemId);
+    }
+
+    function normalizeFeeData(item, data, preferredField = 'totalAmount') {
+        const normalized = { ...data };
+        if (item.hourlyRateItem) {
+            const hours = parseFloat(normalized.hours) || 0;
+            let totalAmount = parseFloat(normalized.totalAmount) || 0;
+            let rate = parseFloat(normalized.rate) || 0;
+            if (hours > 0) {
+                if (preferredField === 'rate' && rate > 0) {
+                    totalAmount = rate * hours;
+                } else if (totalAmount > 0) {
+                    rate = totalAmount / hours;
+                } else if (rate > 0) {
+                    totalAmount = rate * hours;
+                }
+            }
+            normalized.hours = hours;
+            normalized.totalAmount = totalAmount;
+            normalized.rate = rate;
+        }
+        return normalized;
+    }
+
+    function calculateFeeAmount(item, data) {
+        const normalized = normalizeFeeData(item, data);
+        if (item.hourlyRateItem) return normalized.totalAmount || 0;
+        if (item.id === 'sound' || item.id === 'lighting') return (parseFloat(normalized.days) || 0) * (parseFloat(normalized.rate) || 0);
+        if (item.id === 'travel') return (parseFloat(normalized.distance) || 0) * (parseFloat(normalized.rate) || 0) * 2;
+        if (item.id === 'accommodation') return (parseFloat(normalized.nights) || 0) * (parseFloat(normalized.rooms) || 0) * (parseFloat(normalized.rate) || 0);
+        if (item.id === 'flat') return parseFloat(normalized.amount) || 0;
+        return 0;
+    }
+
+    function formatFeeDescription(item, data, amount) {
+        const normalized = normalizeFeeData(item, data);
+        const currency = getCurrency();
+        if (item.hourlyRateItem) {
+            return `${item.name}: ${normalized.hours}h for ${currency}${amount.toFixed(2)} (${currency}${normalized.rate.toFixed(2)}/hour)`;
+        }
+        if (item.id === 'sound') return `${normalized.system} Sound: ${normalized.days} day(s) × ${currency}${(parseFloat(normalized.rate) || 0).toFixed(2)}/day`;
+        if (item.id === 'lighting') return `${normalized.package} Lighting: ${normalized.days} day(s) × ${currency}${(parseFloat(normalized.rate) || 0).toFixed(2)}/day`;
+        if (item.id === 'travel') return `Travel: ${normalized.distance}km × ${currency}${(parseFloat(normalized.rate) || 0).toFixed(2)}/km × 2`;
+        if (item.id === 'accommodation') return `Accommodation: ${normalized.nights} night(s) × ${normalized.rooms} room(s) × ${currency}${(parseFloat(normalized.rate) || 0).toFixed(2)}/night`;
+        return `${normalized.description || item.name}: ${currency}${amount.toFixed(2)}`;
+    }
+
+    function loadFeeTypes() {
+        const container = document.getElementById('feeTypesContainer');
+        container.innerHTML = feeCategories.map(cat => `
+            <div class="fee-category"><div class="fee-category-header"><i class="${cat.icon}"></i> ${cat.name}</div><div class="fee-items">${cat.items.map(item => `<div class="fee-item-card ${selectedFeeIds.has(item.id) ? 'selected' : ''}" data-item-id="${item.id}"><input type="checkbox" class="fee-item-select" ${selectedFeeIds.has(item.id) ? 'checked' : ''}><div class="fee-item-icon"><i class="${cat.icon}"></i></div><div class="fee-item-content"><div class="fee-item-title">${item.name}</div><div class="fee-item-desc">${item.description}</div></div></div>`).join('')}</div></div>
+        `).join('');
+        document.querySelectorAll('.fee-item-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                if (e.target.type === 'checkbox') return;
+                const itemId = card.dataset.itemId;
+                if (multiSelectMode) {
+                    if (selectedFeeIds.has(itemId)) selectedFeeIds.delete(itemId);
+                    else selectedFeeIds.add(itemId);
+                    updateMultiSelectUi();
+                    loadFeeTypes();
+                    return;
+                }
+                const feeItem = findFeeItem(itemId);
+                if (feeItem) openFeeForm(feeItem);
+            });
+            const checkbox = card.querySelector('.fee-item-select');
+            if (checkbox) {
+                checkbox.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const itemId = card.dataset.itemId;
+                    if (checkbox.checked) selectedFeeIds.add(itemId);
+                    else selectedFeeIds.delete(itemId);
+                    updateMultiSelectUi();
+                    loadFeeTypes();
+                });
+            }
+        });
+    }
+
+    const feeFormModal = document.getElementById('feeFormModal'), feeFormBody = document.getElementById('feeFormBody');
+    let currentFeeItem = null;
+    
+    function openFeeForm(item) {
+        currentFeeItem = item;
+        document.getElementById('feeFormTitle').textContent = `Add ${item.name}`;
+        let formHtml = '';
+        item.fields.forEach(field => {
+            const labelWithCurrency = field.label.includes('Rate') || field.label.includes('Amount') ? `${field.label} (${getCurrency()})` : field.label;
+            if (field.type === 'select') formHtml += `<div class="form-group"><label>${labelWithCurrency}</label><select id="field_${field.id}" class="fee-field">${field.options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}</select></div>`;
+            else formHtml += `<div class="form-group"><label>${labelWithCurrency}</label><input type="${field.type}" id="field_${field.id}" class="fee-field" value="${field.default || ''}" placeholder="${field.placeholder || ''}" min="0" step="${field.step || 1}"></div>`;
+        });
+        formHtml += `<div class="fee-preview"><div class="fee-preview-label">Calculated Amount:</div><div class="fee-preview-amount" id="feePreviewAmount">${getCurrency()} 0.00</div><div class="fee-preview-description" id="feePreviewDesc"></div></div><div class="form-actions"><button class="btn-secondary" id="cancelFeeBtn">Cancel</button><button class="btn-primary" id="addFeeBtn">Add to Quote</button></div>`;
+        feeFormBody.innerHTML = formHtml;
+        feeFormModal.classList.add('active');
+        document.querySelectorAll('.fee-field').forEach(f => f.addEventListener('input', updateFeePreview));
+        updateFeePreview();
+        document.getElementById('cancelFeeBtn').addEventListener('click', closeFeeForm);
+        document.getElementById('addFeeBtn').addEventListener('click', addFeeToQuote);
+    }
+    
+    function updateFeePreview() {
+        if (!currentFeeItem) return;
+        const data = {};
+        currentFeeItem.fields.forEach(f => { const input = document.getElementById(`field_${f.id}`); if (input) data[f.id] = input.value; });
+        const activeId = document.activeElement?.id?.replace('field_', '') || 'totalAmount';
+        const preferredField = activeId === 'rate' ? 'rate' : 'totalAmount';
+        const normalized = normalizeFeeData(currentFeeItem, data, preferredField);
+        const amount = calculateFeeAmount(currentFeeItem, normalized);
+        if (currentFeeItem.hourlyRateItem) {
+            const rateInput = document.getElementById('field_rate');
+            const totalInput = document.getElementById('field_totalAmount');
+            if (rateInput && document.activeElement !== rateInput) rateInput.value = normalized.rate ? normalized.rate.toFixed(2) : '';
+            if (totalInput && document.activeElement !== totalInput) totalInput.value = normalized.totalAmount ? normalized.totalAmount.toFixed(2) : '';
+        }
+        document.getElementById('feePreviewAmount').textContent = `${getCurrency()} ${amount.toFixed(2)}`;
+        document.getElementById('feePreviewDesc').textContent = formatFeeDescription(currentFeeItem, normalized, amount);
+    }
+    
+    // FIXED: This function now properly processes the batch queue
+    function addFeeToQuote() {
+        if (!currentFeeItem) return;
+        const data = {};
+        currentFeeItem.fields.forEach(f => { 
+            const input = document.getElementById(`field_${f.id}`); 
+            if (input) data[f.id] = input.value; 
+        });
+        const normalized = normalizeFeeData(currentFeeItem, data);
+        const amount = calculateFeeAmount(currentFeeItem, normalized);
+        quoteItems.push({ 
+            id: Date.now() + Math.random(), 
+            name: currentFeeItem.name, 
+            description: formatFeeDescription(currentFeeItem, normalized, amount), 
+            amount: amount 
+        });
+        closeFeeForm();
+        updateQuoteDisplay();
+        saveQuoteToStorage();
+        
+        // Process next item in batch queue
+        if (batchQueue.length > 0) {
+            setTimeout(() => {
+                openNextBatchItem();
+            }, 150);
+        } else if (!multiSelectMode && selectedFeeIds.size === 0) {
+            updateMultiSelectUi();
+            loadFeeTypes();
+        }
+    }
+    
+    function closeFeeForm() { 
+        feeFormModal.classList.remove('active'); 
+        currentFeeItem = null;
+    }
+    
+    // FIXED: This function now properly handles the batch queue
+    function openNextBatchItem() {
+        if (batchQueue.length === 0) {
+            multiSelectMode = false;
+            selectedFeeIds.clear();
+            updateMultiSelectUi();
+            loadFeeTypes();
+            return;
+        }
+        const nextId = batchQueue.shift();
+        const nextItem = findFeeItem(nextId);
+        if (nextItem) {
+            openFeeForm(nextItem);
+        } else {
+            openNextBatchItem();
+        }
+    }
+    
+    document.getElementById('closeFeeForm').addEventListener('click', closeFeeForm);
+
+    function updateMultiSelectUi() {
+        const multiBtn = document.getElementById('multiSelectBtn');
+        const buildBtn = document.getElementById('buildSelectionBtn');
+        document.body.classList.toggle('multi-select-mode', multiSelectMode);
+        multiBtn.classList.toggle('active', multiSelectMode);
+        buildBtn.classList.toggle('visible', multiSelectMode && selectedFeeIds.size > 0);
+        buildBtn.innerHTML = `<i class="fas fa-layer-group"></i> Build Selected (${selectedFeeIds.size})`;
+    }
+
+    function updateQuoteDisplay() {
+        subtotal = quoteItems.reduce((s, i) => s + i.amount, 0);
+        discountAmount = discountType === 'percent' ? (subtotal * discountValue) / 100 : discountValue;
+        if (discountAmount > subtotal) discountAmount = subtotal;
+        let afterDiscount = subtotal - discountAmount;
+        cancelAmount = cancelType === 'percent' ? (afterDiscount * cancelValue) / 100 : cancelValue;
+        total = afterDiscount + cancelAmount;
+        depositAmount = depositType === 'percent' ? (total * depositValue) / 100 : depositValue;
+        if (depositAmount > total) depositAmount = total;
+
+        const itemsList = document.getElementById('itemsList');
+        if (quoteItems.length === 0) itemsList.innerHTML = '<div class="empty-items"><i class="fas fa-calculator"></i><p>No items added yet</p><small>Select from the left panel to add services</small></div>';
+        else itemsList.innerHTML = `<table class="items-table"><thead><tr><th>Description</th><th style="text-align: right">Amount</th><th style="width: 50px"></th></tr></thead><tbody>${quoteItems.map(item => `<tr><td><div>${item.name}</div><div class="item-description">${item.description}</div></td><td class="item-amount">${getCurrency()} ${item.amount.toFixed(2)}</td><td style="text-align: center"><i class="fas fa-times remove-item" data-id="${item.id}"></i></td></tr>`).join('')}</tbody></table>`;
+        document.querySelectorAll('.remove-item').forEach(btn => btn.addEventListener('click', (e) => { quoteItems = quoteItems.filter(i => i.id != e.target.dataset.id); updateQuoteDisplay(); saveQuoteToStorage(); }));
+
+        document.getElementById('subtotal').textContent = `${getCurrency()} ${subtotal.toFixed(2)}`;
+        const discountRow = document.getElementById('discountRow');
+        if (discountAmount > 0) { discountRow.style.display = 'flex'; document.getElementById('discountAmount').textContent = `-${getCurrency()} ${discountAmount.toFixed(2)}`; }
+        else discountRow.style.display = 'none';
+        const cancelRow = document.getElementById('cancelRow');
+        if (cancelAmount > 0) { cancelRow.style.display = 'flex'; document.getElementById('cancelAmount').textContent = `+${getCurrency()} ${cancelAmount.toFixed(2)}`; }
+        else cancelRow.style.display = 'none';
+        document.getElementById('grandTotal').textContent = `${getCurrency()} ${total.toFixed(2)}`;
+        const depositRow = document.getElementById('depositRow');
+        if (depositAmount > 0) { depositRow.style.display = 'flex'; document.getElementById('depositAmount').textContent = `${getCurrency()} ${depositAmount.toFixed(2)}`; }
+        else depositRow.style.display = 'none';
+        document.getElementById('quoteTitleDisplay').textContent = document.getElementById('eventName').value || 'New Quote';
+        syncAdjustmentControl('discount', discountValue, discountType);
+        syncAdjustmentControl('deposit', depositValue, depositType);
+        syncAdjustmentControl('cancel', cancelValue, cancelType);
+    }
+
+    function saveQuoteToStorage() {
+        localStorage.setItem('professionalQuote', JSON.stringify({ items: quoteItems, discount: { value: discountValue, type: discountType }, deposit: { value: depositValue, type: depositType }, cancel: { value: cancelValue, type: cancelType }, clientName: document.getElementById('clientName').value, clientEmail: document.getElementById('clientEmail').value, eventName: document.getElementById('eventName').value, eventDate: document.getElementById('eventDate').value, currency: getCurrency() }));
+    }
+    
+    function loadSavedQuote() {
+        const saved = localStorage.getItem('professionalQuote');
+        if (saved) {
+            const q = JSON.parse(saved);
+            quoteItems = q.items || [];
+            discountValue = q.discount?.value || 0; discountType = q.discount?.type || 'percent';
+            depositValue = q.deposit?.value || 0; depositType = q.deposit?.type || 'percent';
+            cancelValue = q.cancel?.value || 0; cancelType = q.cancel?.type || 'percent';
+            document.getElementById('clientName').value = q.clientName || '';
+            document.getElementById('clientEmail').value = q.clientEmail || '';
+            document.getElementById('eventName').value = q.eventName || '';
+            document.getElementById('eventDate').value = q.eventDate || '';
+            if (q.currency) {
+                document.getElementById('currencySymbol').value = q.currency;
+                const symbol = q.currency;
+                document.querySelectorAll('.currency-symbol-label').forEach(el => el.textContent = symbol);
+            }
+            if (discountValue > 0) { document.getElementById('discountInput').value = discountValue; document.getElementById('discountType').value = discountType; }
+            if (depositValue > 0) { document.getElementById('depositInput').value = depositValue; document.getElementById('depositType').value = depositType; }
+            if (cancelValue > 0) { document.getElementById('cancelInput').value = cancelValue; document.getElementById('cancelType').value = cancelType; }
+            updateQuoteDisplay();
+        }
+    }
+
+    function syncAdjustmentControl(prefix, value, type) {
+        const input = document.getElementById(`${prefix}Input`);
+        const select = document.getElementById(`${prefix}Type`);
+        const button = document.getElementById(`apply${prefix.charAt(0).toUpperCase() + prefix.slice(1)}Btn`);
+        const preview = document.getElementById(`${prefix}Preview`);
+        const isActive = value > 0;
+        if (button) {
+            button.textContent = isActive ? 'Remove' : 'Apply';
+            button.classList.toggle('is-remove', isActive);
+        }
+        if (input) input.disabled = isActive;
+        if (select) select.disabled = isActive;
+        if (preview) {
+            const label = prefix === 'cancel' ? 'Cancellation Fee' : `${prefix.charAt(0).toUpperCase() + prefix.slice(1)}`;
+            preview.textContent = isActive ? (type === 'percent' ? `${label}: ${value}%` : `${label}: ${getCurrency()} ${value.toFixed(2)}`) : '';
+        }
+    }
+
+    document.getElementById('applyDiscountBtn').addEventListener('click', () => {
+        if (discountValue > 0) {
+            discountValue = 0;
+        } else {
+            discountValue = parseFloat(document.getElementById('discountInput').value) || 0;
+            discountType = document.getElementById('discountType').value;
+        }
+        updateQuoteDisplay(); saveQuoteToStorage();
+    });
+    document.getElementById('applyDepositBtn').addEventListener('click', () => {
+        if (depositValue > 0) {
+            depositValue = 0;
+        } else {
+            depositValue = parseFloat(document.getElementById('depositInput').value) || 0;
+            depositType = document.getElementById('depositType').value;
+        }
+        updateQuoteDisplay(); saveQuoteToStorage();
+    });
+    document.getElementById('applyCancelBtn').addEventListener('click', () => {
+        if (cancelValue > 0) {
+            cancelValue = 0;
+        } else {
+            cancelValue = parseFloat(document.getElementById('cancelInput').value) || 0;
+            cancelType = document.getElementById('cancelType').value;
+        }
+        updateQuoteDisplay(); saveQuoteToStorage();
+    });
+
+    document.getElementById('multiSelectBtn').addEventListener('click', () => {
+        multiSelectMode = !multiSelectMode;
+        if (!multiSelectMode) selectedFeeIds.clear();
+        updateMultiSelectUi();
+        loadFeeTypes();
+    });
+    
+    // FIXED: Build button now properly starts the batch process
+    document.getElementById('buildSelectionBtn').addEventListener('click', () => {
+        if (selectedFeeIds.size === 0) {
+            alert('Please select at least one service to build.');
+            return;
+        }
+        batchQueue = Array.from(selectedFeeIds);
+        multiSelectMode = false;
+        selectedFeeIds.clear();
+        updateMultiSelectUi();
+        loadFeeTypes();
+        openNextBatchItem();
+    });
+    
+    document.getElementById('clearQuoteBtn').addEventListener('click', () => { 
+        if (confirm('Clear everything? This will reset all fields and items.')) { 
+            quoteItems = []; discountValue = 0; depositValue = 0; cancelValue = 0; subtotal = 0; discountAmount = 0; cancelAmount = 0; total = 0; depositAmount = 0;
+            document.getElementById('discountInput').value = ''; document.getElementById('depositInput').value = ''; document.getElementById('cancelInput').value = ''; 
+            document.getElementById('clientName').value = ''; document.getElementById('clientEmail').value = ''; 
+            document.getElementById('eventName').value = ''; document.getElementById('eventDate').value = ''; 
+            document.getElementById('discountPreview').textContent = ''; 
+            document.getElementById('depositPreview').textContent = ''; 
+            document.getElementById('cancelPreview').textContent = '';
+            document.getElementById('discountType').disabled = false;
+            document.getElementById('depositType').disabled = false;
+            document.getElementById('cancelType').disabled = false;
+            document.getElementById('discountInput').disabled = false;
+            document.getElementById('depositInput').disabled = false;
+            document.getElementById('cancelInput').disabled = false;
+            updateQuoteDisplay(); saveQuoteToStorage(); 
+        } 
+    });
+    
+    document.getElementById('saveQuoteBtn').addEventListener('click', () => { 
+        const name = prompt('Enter a name for this template:', document.getElementById('eventName').value || 'New Template');
+        if (name) {
+            saveAsTemplate(name);
+        }
+    });
+
+    function saveAsTemplate(name) {
+        const templates = JSON.parse(localStorage.getItem('vivo_quote_templates') || '[]');
+        const newTemplate = {
+            id: Date.now(),
+            name: name,
+            date: new Date().toISOString(),
+            currency: getCurrency(),
+            items: quoteItems,
+            discount: { value: discountValue, type: discountType },
+            deposit: { value: depositValue, type: depositType },
+            cancel: { value: cancelValue, type: cancelType },
+            clientName: document.getElementById('clientName').value,
+            clientEmail: document.getElementById('clientEmail').value,
+            eventName: document.getElementById('eventName').value,
+            eventDate: document.getElementById('eventDate').value
+        };
+        templates.push(newTemplate);
+        localStorage.setItem('vivo_quote_templates', JSON.stringify(templates));
+        alert('Quote template saved!');
+    }
+    window.saveAsTemplate = saveAsTemplate;
+
+    function loadTemplate(id) {
+        const templates = JSON.parse(localStorage.getItem('vivo_quote_templates') || '[]');
+        const t = templates.find(item => item.id == id);
+        if (t) {
+            quoteItems = JSON.parse(JSON.stringify(t.items)) || [];
+            discountValue = t.discount?.value || 0; discountType = t.discount?.type || 'percent';
+            depositValue = t.deposit?.value || 0; depositType = t.deposit?.type || 'percent';
+            cancelValue = t.cancel?.value || 0; cancelType = t.cancel?.type || 'percent';
+            document.getElementById('clientName').value = t.clientName || '';
+            document.getElementById('clientEmail').value = t.clientEmail || '';
+            document.getElementById('eventName').value = t.eventName || '';
+            document.getElementById('eventDate').value = t.eventDate || '';
+            document.getElementById('currencySymbol').value = t.currency || 'R';
+            
+            document.getElementById('discountInput').value = discountValue > 0 ? discountValue : '';
+            document.getElementById('discountType').value = discountType;
+            document.getElementById('depositInput').value = depositValue > 0 ? depositValue : '';
+            document.getElementById('depositType').value = depositType;
+            document.getElementById('cancelInput').value = cancelValue > 0 ? cancelValue : '';
+            document.getElementById('cancelType').value = cancelType;
+
+            updateQuoteDisplay();
+            document.querySelectorAll('.currency-symbol-label').forEach(el => el.textContent = getCurrency());
+            document.getElementById('savedQuotesModal').classList.remove('active');
+        }
+    }
+    window.loadTemplate = loadTemplate;
+
+    function deleteTemplate(id, event) {
+        if (event) event.stopPropagation();
+        if (confirm('Delete this template?')) {
+            let templates = JSON.parse(localStorage.getItem('vivo_quote_templates') || '[]');
+            templates = templates.filter(t => t.id != id);
+            localStorage.setItem('vivo_quote_templates', JSON.stringify(templates));
+            showSavedQuotes();
+        }
+    }
+    window.deleteTemplate = deleteTemplate;
+
+    function showSavedQuotes() {
+        const templates = JSON.parse(localStorage.getItem('vivo_quote_templates') || '[]');
+        const list = document.getElementById('savedQuotesList');
+        if (templates.length === 0) {
+            list.innerHTML = '<div style="text-align:center; padding: 2rem; color: var(--text-muted);">No saved templates found</div>';
+        } else {
+            list.innerHTML = templates.map(t => `
+                <div class="saved-quote-item" onclick="loadTemplate(${t.id})">
+                    <div class="saved-quote-info">
+                        <div class="saved-quote-name">${t.name}</div>
+                        <div class="saved-quote-meta">${t.items.length} items · ${t.currency} ${t.items.reduce((s,i)=>s+i.amount, 0).toFixed(2)}</div>
+                    </div>
+                    <div class="delete-saved-quote" onclick="deleteTemplate(${t.id}, event)"><i class="fas fa-trash"></i></div>
+                </div>
+            `).join('');
+        }
+        document.getElementById('savedQuotesModal').classList.add('active');
+    }
+    window.showSavedQuotes = showSavedQuotes;
+
+    document.getElementById('openSavedQuotesBtn').addEventListener('click', showSavedQuotes);
+    document.getElementById('closeSavedQuotes').addEventListener('click', () => document.getElementById('savedQuotesModal').classList.remove('active'));
+
+    const previewModal = document.getElementById('previewModal'), previewContent = document.getElementById('previewContent');
+    document.getElementById('previewQuoteBtn').addEventListener('click', showPreview);
+    
+    function showPreview() {
+        const clientName = document.getElementById('clientName').value || 'Client';
+        const clientEmail = document.getElementById('clientEmail').value || '';
+        const eventName = document.getElementById('eventName').value || 'Quote';
+        const eventDate = document.getElementById('eventDate').value || new Date().toISOString().split('T')[0];
+        const formattedDate = new Date(eventDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        const itemsHtml = quoteItems.map(item => `<tr style="border-bottom: 1px solid #e5e7eb;"><td style="padding: 12px 0; color: #1a1a1a;">${item.description}</td><td style="padding: 12px 0; text-align: right; color: #1a1a1a; font-weight: 500;">${getCurrency()} ${item.amount.toFixed(2)}</td></tr>`).join('');
+        const previewWatermarkHtml = userProfile?.image_url ? `<div class="preview-watermark"><img src="${userProfile.image_url}" alt="Watermark"></div>` : '';
+        previewContent.innerHTML = `
+            <div class="preview-header"><h2>${eventName}</h2><button class="close-modal" onclick="document.getElementById('previewModal').classList.remove('active')"><i class="fas fa-times"></i></button></div>
+            <div class="preview-body" style="position: relative;">
+                ${previewWatermarkHtml}
+                <div style="max-width: 800px; margin: 0 auto; position: relative; z-index: 10;">
+                <div style="text-align: center; margin-bottom: 40px;"><h1 style="color: #1a1a1a; font-size: 32px;">${eventName}</h1><p style="color: #666;">Professional Quote</p></div>
+                <div style="margin-bottom: 40px; padding: 25px; background: #f8fafc; border-radius: 10px;"><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;"><div><p style="color: #666;">Prepared for:</p><p style="color: #1a1a1a; font-size: 18px; font-weight: 600;">${clientName}</p>${clientEmail ? `<p style="color: #666;">${clientEmail}</p>` : ''}</div><div><p style="color: #666;">Event Date:</p><p style="color: #1a1a1a; font-size: 18px; font-weight: 600;">${formattedDate}</p><p style="color: #666;">Quote ID: Q-${Date.now().toString().slice(-6)}</p></div></div></div>
+                <table style="width: 100%; border-collapse: collapse;"><thead><tr style="border-bottom: 2px solid #1a1a1a;"><th style="text-align: left; padding: 15px 0;">Description</th><th style="text-align: right;">Amount</th></tr></thead><tbody>${itemsHtml || '<tr><td colspan="2" style="text-align: center; padding: 40px;">No items added</td></tr>'}</tbody></table>
+                
+                <div class="quote-signature-block">
+                    <div class="creator-info">
+                        <div class="creator-details">
+                            <span>Issued by:</span>
+                            <span class="creator-name">${userProfile ? userProfile.name : 'Professional Performer'}</span>
+                        </div>
+                    </div>
+                    <div style="width: 300px;">
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f5f9;"><span>Subtotal:</span><span>${getCurrency()} ${subtotal.toFixed(2)}</span></div>
+                        ${discountAmount > 0 ? `<div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f5f9;"><span>Discount:</span><span style="color: #10b981;">-${getCurrency()} ${discountAmount.toFixed(2)}</span></div>` : ''}
+                        ${cancelAmount > 0 ? `<div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f5f9;"><span>Cancellation Fee:</span><span style="color: #f59e0b;">+${getCurrency()} ${cancelAmount.toFixed(2)}</span></div>` : ''}
+                        <div style="display: flex; justify-content: space-between; padding: 12px 0; font-size: 18px; color: #1a1a1a;"><strong>Total:</strong><strong>${getCurrency()} ${total.toFixed(2)}</strong></div>
+                        ${depositAmount > 0 ? `<div style="margin-top: 15px; padding: 12px; background: #f0f9ff; border-radius: 8px; border-left: 4px solid #3b82f6;"><div style="display: flex; justify-content: space-between;"><span style="font-size: 13px;">Deposit Required:</span><strong style="color: #0369a1;">${getCurrency()} ${depositAmount.toFixed(2)}</strong></div></div>` : ''}
+                    </div>
+                </div>
+                <div style="margin-top: 56px; padding: 20px; background: #f8fafc; border-radius: 8px;">
+                    <p style="color: #666; font-weight: 600; margin-bottom: 8px;">Terms & Conditions:</p>
+                    <p style="color: #666; font-size: 13px; line-height: 1.6;">${depositAmount > 0 ? `A deposit of ${getCurrency()} ${depositAmount.toFixed(2)} is required to secure the booking. The performer will not perform until the deposit has been paid. The client/agent will not pay the remaining balance unless the performer arrives and starts their performance, ensuring fair treatment for both parties.` : `No deposit required. Full payment is due before the event. The performer will not perform until payment is received.`} ${cancelAmount > 0 ? ` If the event is cancelled, a cancellation fee of ${cancelType === 'percent' ? `${cancelValue}%` : `${getCurrency()} ${cancelValue.toFixed(2)}`} of the total will apply.` : ''}</p>
+                </div>
+                <div style="margin-top: 40px; text-align: center; color: #999; font-size: 12px;"><p>Generated on ${new Date().toLocaleDateString()} · Vivo Distro Quote Builder</p></div>
+            </div></div>
+            <div class="preview-footer"><button class="btn-preview btn-preview-secondary" onclick="document.getElementById('previewModal').classList.remove('active')">Close</button><button class="btn-preview btn-preview-primary" id="downloadFromPreview"><i class="fas fa-download"></i> Download PDF</button></div>
+        `;
+        previewModal.classList.add('active');
+        document.getElementById('downloadFromPreview')?.addEventListener('click', downloadPDF);
+    }
+    
+    previewModal.addEventListener('click', (e) => { if (e.target === previewModal) previewModal.classList.remove('active'); });
+
+    function downloadPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const currency = getCurrency();
+        const clientName = document.getElementById('clientName').value || 'Client';
+        const clientEmail = document.getElementById('clientEmail').value || '';
+        const eventName = document.getElementById('eventName').value || 'Quote';
+        const eventDate = document.getElementById('eventDate').value || new Date().toISOString().split('T')[0];
+        const formattedDate = new Date(eventDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        
+        let y = 20;
+
+        if (userProfile && userProfile.image_url) {
+            try {
+                const img = new Image();
+                img.crossOrigin = 'Anonymous';
+                img.src = userProfile.image_url;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 300; canvas.height = 300;
+                    const ctx = canvas.getContext('2d');
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.arc(150, 150, 150, 0, Math.PI * 2);
+                    ctx.clip();
+                    ctx.drawImage(img, 0, 0, 300, 300);
+                    ctx.restore();
+                    const dataUrl = canvas.toDataURL('image/png');
+                    
+                    doc.saveGraphicsState();
+                    doc.setGState(new doc.GState({ opacity: 0.06 }));
+                    doc.addImage(dataUrl, 'PNG', 55, 62, 100, 100);
+                    doc.restoreGraphicsState();
+                    
+                    completePDF(doc, y, clientName, clientEmail, eventName, formattedDate, currency);
+                };
+                img.onerror = () => completePDF(doc, y, clientName, clientEmail, eventName, formattedDate, currency);
+            } catch (e) {
+                completePDF(doc, y, clientName, clientEmail, eventName, formattedDate, currency);
+            }
+        } else {
+            completePDF(doc, y, clientName, clientEmail, eventName, formattedDate, currency);
+        }
+    }
+
+    function completePDF(doc, y, clientName, clientEmail, eventName, formattedDate, currency) {
+        doc.setFontSize(28); doc.setTextColor(20, 20, 30); doc.setFont('helvetica', 'bold'); doc.text(eventName, 20, y); y += 15;
+        doc.setFontSize(10); doc.setTextColor(100, 100, 100); doc.setFont('helvetica', 'normal');
+        doc.text(`Prepared for: ${clientName}`, 20, y); y += 6;
+        if (clientEmail) { doc.text(`Email: ${clientEmail}`, 20, y); y += 6; }
+        doc.text(`Event Date: ${formattedDate}`, 20, y); y += 6;
+        doc.text(`Quote ID: Q-${Date.now().toString().slice(-6)}`, 20, y); y += 15;
+        doc.setFillColor(240, 240, 245); doc.rect(20, y-5, 170, 8, 'F');
+        doc.setFontSize(10); doc.setTextColor(50, 50, 50); doc.setFont('helvetica', 'bold');
+        doc.text('Description', 25, y); doc.text('Amount', 160, y, { align: 'right' }); y += 8;
+        doc.setFont('helvetica', 'normal'); doc.setTextColor(50, 50, 50);
+        quoteItems.forEach((item, idx) => {
+            if (y > 250) { doc.addPage(); y = 20; }
+            if (idx % 2 === 0) { doc.setFillColor(248, 249, 250); doc.rect(20, y-4, 170, 8, 'F'); }
+            const desc = item.description.length > 60 ? item.description.substring(0, 57) + '...' : item.description;
+            doc.text(desc, 25, y); doc.text(`${currency} ${item.amount.toFixed(2)}`, 160, y, { align: 'right' }); y += 8;
+        });
+        y += 14;
+        doc.setFillColor(240, 240, 245); doc.rect(20, y-5, 170, 50, 'F');
+        doc.text('Subtotal:', 25, y); doc.text(`${currency} ${subtotal.toFixed(2)}`, 160, y, { align: 'right' }); y += 7;
+        if (discountAmount > 0) { doc.text('Discount:', 25, y); doc.text(`-${currency} ${discountAmount.toFixed(2)}`, 160, y, { align: 'right' }); y += 7; }
+        if (cancelAmount > 0) { doc.text('Cancellation Fee:', 25, y); doc.text(`+${currency} ${cancelAmount.toFixed(2)}`, 160, y, { align: 'right' }); y += 7; }
+        doc.setFont('helvetica', 'bold'); doc.text('TOTAL:', 25, y); doc.text(`${currency} ${total.toFixed(2)}`, 160, y, { align: 'right' }); y += 7;
+        if (depositAmount > 0) { doc.setFont('helvetica', 'normal'); doc.setTextColor(0, 100, 200); doc.text(`Deposit required: ${currency} ${depositAmount.toFixed(2)}`, 25, y); y += 5; doc.text(`Balance due: ${currency} ${(total - depositAmount).toFixed(2)}`, 25, y); y += 7; }
+        y += 16;
+        doc.setFontSize(9); doc.setTextColor(80, 80, 80);
+        doc.text('Terms & Conditions:', 20, y); y += 5;
+        doc.setFontSize(8);
+        const terms = `${depositAmount > 0 ? `A deposit of ${currency} ${depositAmount.toFixed(2)} is required to secure the booking. ` : ''}The performer will not perform until the deposit has been paid. The client/agent will not pay the remaining balance unless the performer arrives and starts their performance, ensuring fair treatment for both parties.${cancelAmount > 0 ? ` If cancelled, a fee of ${cancelType === 'percent' ? `${cancelValue}%` : `${currency} ${cancelValue.toFixed(2)}`} applies.` : ''}`;
+        const splitTerms = doc.splitTextToSize(terms, 170);
+        splitTerms.forEach(line => { doc.text(line, 20, y); y += 4; });
+        y = 270; doc.setFontSize(8); doc.setTextColor(150, 150, 150); doc.text('Vivo Distro Professional Quote', 20, y); doc.text(`Page 1 of 1`, 160, y, { align: 'right' });
+        doc.save(eventName.replace(/\s+/g, '_').toLowerCase() + '_quote.pdf');
+    }
+
+    document.getElementById('downloadQuoteBtn').addEventListener('click', downloadPDF);
+    updateMultiSelectUi();
+    loadFeeTypes();
+    loadSavedQuote();
+    updateQuoteDisplay();
+});
+    </script>
+    <script src="settings-manager.js"></script>
+    <script src="navbar.js"></script>
+</body>
+</html>
+

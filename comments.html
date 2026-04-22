@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comments & Ratings | Vivo Distro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0e1a 0%, #151a2c 100%);
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .simple-header {
+            background: #151a2c;
+            border-bottom: 1px solid rgba(108,99,255,0.2);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(108,99,255,0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: rgba(108,99,255,0.1);
+            border-color: #6C63FF;
+            transform: translateX(-3px);
+        }
+
+        .back-btn i { color: #6C63FF; }
+
+        .page-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .page-title i { color: #6C63FF; }
+
+        /* Main Container */
+        .main-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title-large {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #6C63FF, #9d8cff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: #94a3b8;
+            font-size: 0.95rem;
+        }
+
+        /* Stats Card */
+        .stats-card {
+            background: rgba(21, 26, 44, 0.8);
+            border: 1px solid rgba(108,99,255,0.2);
+            border-radius: 20px;
+            padding: 1.2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .rating-summary {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .average-rating {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #ffc107;
+        }
+
+        .stars-container {
+            display: flex;
+            gap: 4px;
+        }
+
+        .stars-container i {
+            font-size: 1.2rem;
+            color: #ffc107;
+        }
+
+        .stars-container i.empty {
+            color: #4a5568;
+        }
+
+        .total-reviews {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        /* Comments List */
+        .comments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .comment-card {
+            background: #151a2c;
+            border: 1px solid rgba(108,99,255,0.15);
+            border-radius: 20px;
+            padding: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .comment-card:hover {
+            border-color: #6C63FF;
+            transform: translateY(-2px);
+        }
+
+        .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .comment-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6C63FF, #FF6584);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .comment-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .comment-avatar i {
+            font-size: 1.2rem;
+            color: #fff;
+        }
+
+        .comment-info {
+            flex: 1;
+        }
+
+        .reviewer-name {
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 0.2rem;
+        }
+
+        .comment-rating {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 0.2rem;
+        }
+
+        .comment-rating i {
+            font-size: 0.75rem;
+            color: #ffc107;
+        }
+
+        .comment-rating i.empty {
+            color: #4a5568;
+        }
+
+        .comment-date {
+            font-size: 0.7rem;
+            color: #94a3b8;
+        }
+
+        .comment-text {
+            color: #cbd5e0;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid rgba(108,99,255,0.1);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            background: rgba(21,26,44,0.6);
+            border-radius: 20px;
+            border: 2px dashed rgba(108,99,255,0.3);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: #6C63FF;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #94a3b8;
+        }
+
+        @media (max-width: 768px) {
+            .simple-header {
+                padding: 0.8rem 1rem;
+            }
+            .back-btn span {
+                display: none;
+            }
+            .back-btn {
+                padding: 0.6rem;
+            }
+            .main-container {
+                padding: 1rem;
+            }
+            .stats-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+    <!-- GLobally Applied Theme Hook -->
+    <link rel="stylesheet" href="settings.css">
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const configT = localStorage.getItem('vivo_theme') || 'theme-default';
+            if(configT !== 'theme-default') document.body.classList.add(configT);
+        });
+    </script>
+</head>
+<body>
+    <div class="simple-header">
+        <button class="back-btn" onclick="window.history.back()">
+            <i class="fas fa-arrow-left"></i>
+            <span>Back</span>
+        </button>
+        <div class="page-title">
+            <i class="fas fa-star"></i>
+            <span>Comments & Ratings</span>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="page-header">
+            <h1 class="page-title-large">Your Reviews</h1>
+            <p class="page-subtitle">See what others are saying about you</p>
+        </div>
+
+        <div id="statsContainer" class="stats-card" style="display: none;">
+            <div class="rating-summary">
+                <div class="average-rating" id="avgRating">0.0</div>
+                <div class="stars-container" id="starSummary">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                </div>
+            </div>
+            <div class="total-reviews" id="totalReviews">0 reviews</div>
+        </div>
+
+        <div id="commentsContainer">
+            <div class="loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Loading your reviews...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Initialize Supabase - using a different variable name to avoid conflicts
+        const SB_URL = 'https://msjinuumxmezrijqemmp.supabase.co';
+        const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zamludXVteG1lenJpanFlbW1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwOTAyNjMsImV4cCI6MjA4NzY2NjI2M30.ic50fSC7MQfhSkhfE5E8B0R5-BGCQStMRZNHiy6Zakw';
+        const sbClient = supabase.createClient(SB_URL, SB_KEY);
+        
+        let currentUserId = null;
+
+        // Helper function to escape HTML
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        // Helper function to render stars
+        function renderStars(rating) {
+            let starsHtml = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= rating) {
+                    starsHtml += '<i class="fas fa-star"></i>';
+                } else {
+                    starsHtml += '<i class="far fa-star empty"></i>';
+                }
+            }
+            return starsHtml;
+        }
+
+        // Function to get reviewer name from auth_id
+        async function getReviewerName(reviewerId) {
+            try {
+                // First try performers table
+                const { data: performer } = await sbClient
+                    .from('performers')
+                    .select('name')
+                    .eq('auth_id', reviewerId)
+                    .single();
+                
+                if (performer && performer.name) {
+                    return performer.name;
+                }
+                
+                // Then try agents table
+                const { data: agent } = await sbClient
+                    .from('agents')
+                    .select('name')
+                    .eq('auth_id', reviewerId)
+                    .single();
+                
+                if (agent && agent.name) {
+                    return agent.name;
+                }
+                
+                // Then try bookers table
+                const { data: booker } = await sbClient
+                    .from('bookers')
+                    .select('name')
+                    .eq('auth_id', reviewerId)
+                    .single();
+                
+                if (booker && booker.name) {
+                    return booker.name;
+                }
+                
+                // If no name found, return a default
+                return 'User';
+                
+            } catch (error) {
+                console.log('Could not find name for reviewer:', reviewerId);
+                return 'User';
+            }
+        }
+
+        // Main function to load ratings
+        async function loadUserRatings() {
+            try {
+                // First check if user is logged in
+                const { data: { user }, error: userError } = await sbClient.auth.getUser();
+                
+                if (userError || !user) {
+                    console.error('User not logged in:', userError);
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                currentUserId = user.id;
+                console.log('Loading ratings for user:', currentUserId);
+                
+                // Fetch all ratings where this user is the rated_user
+                const { data: ratings, error: ratingsError } = await sbClient
+                    .from('ratings')
+                    .select('*')
+                    .eq('rated_user_id', currentUserId)
+                    .order('created_at', { ascending: false });
+                
+                if (ratingsError) {
+                    console.error('Error loading ratings:', ratingsError);
+                    document.getElementById('commentsContainer').innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <h3>Error loading reviews</h3>
+                            <p>Please try again later</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                console.log('Ratings loaded:', ratings?.length || 0);
+                
+                if (!ratings || ratings.length === 0) {
+                    document.getElementById('commentsContainer').innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-star"></i>
+                            <h3>No Reviews Yet</h3>
+                            <p>When people rate your profile, their comments will appear here</p>
+                        </div>
+                    `;
+                    document.getElementById('statsContainer').style.display = 'none';
+                    return;
+                }
+                
+                // Calculate average rating
+                const sum = ratings.reduce((a, b) => a + b.rating, 0);
+                const avg = (sum / ratings.length).toFixed(1);
+                document.getElementById('avgRating').textContent = avg;
+                document.getElementById('totalReviews').textContent = `${ratings.length} ${ratings.length === 1 ? 'review' : 'reviews'}`;
+                
+                // Update star summary
+                const fullStars = Math.floor(avg);
+                const hasHalf = avg % 1 >= 0.5;
+                let starsHtml = '';
+                for (let i = 1; i <= 5; i++) {
+                    if (i <= fullStars) starsHtml += '<i class="fas fa-star"></i>';
+                    else if (i === fullStars + 1 && hasHalf) starsHtml += '<i class="fas fa-star-half-alt"></i>';
+                    else starsHtml += '<i class="far fa-star empty"></i>';
+                }
+                document.getElementById('starSummary').innerHTML = starsHtml;
+                document.getElementById('statsContainer').style.display = 'flex';
+                
+                // Get reviewer names for each rating
+                const reviewerNames = {};
+                for (const rating of ratings) {
+                    if (!reviewerNames[rating.reviewer_id]) {
+                        reviewerNames[rating.reviewer_id] = await getReviewerName(rating.reviewer_id);
+                    }
+                }
+                
+                // Render comments
+                let commentsHtml = '<div class="comments-list">';
+                for (const rating of ratings) {
+                    const date = new Date(rating.created_at).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                    
+                    const reviewerName = reviewerNames[rating.reviewer_id] || 'User';
+                    const reviewerInitial = reviewerName.charAt(0).toUpperCase();
+                    
+                    commentsHtml += `
+                        <div class="comment-card">
+                            <div class="comment-header">
+                                <div class="comment-avatar">
+                                    <i class="fas fa-user-circle"></i>
+                                </div>
+                                <div class="comment-info">
+                                    <div class="reviewer-name">${escapeHtml(reviewerName)}</div>
+                                    <div class="comment-rating">${renderStars(rating.rating)}</div>
+                                    <div class="comment-date">${date}</div>
+                                </div>
+                            </div>
+                            <div class="comment-text">
+                                ${rating.comment ? escapeHtml(rating.comment) : '<em>No comment provided</em>'}
+                            </div>
+                        </div>
+                    `;
+                }
+                commentsHtml += '</div>';
+                document.getElementById('commentsContainer').innerHTML = commentsHtml;
+                
+            } catch (error) {
+                console.error('Unexpected error:', error);
+                document.getElementById('commentsContainer').innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <h3>Error loading reviews</h3>
+                        <p>Please refresh the page and try again</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Start loading when page is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserRatings();
+        });
+    </script>
+    <script src="settings-manager.js"></script>
+    <script src="navbar.js"></script>
+</body>
+</html>
+

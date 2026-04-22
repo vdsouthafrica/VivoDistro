@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Booker Dashboard | Vivo Distro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons@6.6.6/css/flag-icons.min.css">
+    <link rel="stylesheet" href="settings.css">
+    <link rel="stylesheet" href="tips.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: #0a0e1a;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        /* ========== COLLAPSIBLE SIDEBAR ========== */
+        .hub-sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 80px;
+            background: #151a2c;
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            transition: width 0.3s ease;
+            overflow: hidden;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .hub-sidebar:hover {
+            width: 280px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            overflow-y: auto;
+        }
+
+        .hub-sidebar:hover::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .hub-sidebar:hover::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .hub-sidebar:hover::-webkit-scrollbar-thumb {
+            background: #6C63FF;
+            border-radius: 4px;
+        }
+
+        .hub-sidebar:hover .sidebar-nav a span,
+        .hub-sidebar:hover .user-info,
+        .hub-sidebar:hover .logo span {
+            opacity: 1;
+        }
+
+        .sidebar-header {
+            padding: 25px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            white-space: nowrap;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .logo i {
+            color: #6C63FF;
+            font-size: 1.5rem;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .logo span {
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .logo-highlight {
+            color: #6C63FF;
+        }
+
+        .sidebar-nav {
+            padding: 20px 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 20px;
+            color: #8892b0;
+            text-decoration: none;
+            transition: all 0.3s;
+            white-space: nowrap;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: rgba(108, 99, 255, 0.1);
+            color: #fff;
+            border-left-color: #6C63FF;
+        }
+
+        .nav-item.active {
+            background: rgba(108, 99, 255, 0.15);
+            color: #6C63FF;
+            border-left-color: #6C63FF;
+        }
+
+        .nav-item i {
+            font-size: 1.2rem;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .nav-item span {
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-weight: 500;
+        }
+
+        /* Notifications Sidebar Item */
+        .notif-nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #8892b0;
+            text-decoration: none;
+            transition: all 0.3s;
+            white-space: nowrap;
+            gap: 15px;
+            border-left: 3px solid transparent;
+        }
+
+        .hub-sidebar:hover .notif-nav-item span {
+            opacity: 1;
+        }
+
+        .btn-notif-enable {
+            background: #6C63FF;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            margin-top: 5px;
+            display: none;
+        }
+
+        /* Dropdown styles */
+        .dropdown-container {
+            position: relative;
+        }
+
+        .dropdown-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-right: 20px;
+        }
+
+        .dropdown-toggle .chevron {
+            transition: transform 0.3s;
+            font-size: 0.8rem;
+            opacity: 0;
+        }
+
+        .hub-sidebar:hover .dropdown-toggle .chevron {
+            opacity: 1;
+        }
+
+        .dropdown-toggle.open .chevron {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .dropdown-menu.show {
+            max-height: 300px;
+        }
+
+        .dropdown-menu .nav-item {
+            padding-left: 75px !important;
+            font-size: 0.9rem;
+        }
+
+        .sidebar-footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            white-space: nowrap;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(108, 99, 255, 0.2);
+            border: 2px solid #6C63FF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .user-avatar i {
+            font-size: 1.2rem;
+            color: #6C63FF;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-info {
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .user-info h4 {
+            font-size: 0.95rem;
+            color: #fff;
+            margin-bottom: 3px;
+        }
+
+        .user-info p {
+            font-size: 0.8rem;
+            color: #8892b0;
+        }
+
+        /* ========== MAIN CONTENT ========== */
+        .hub-main {
+            margin-left: 80px;
+            padding: 30px;
+            min-height: 100vh;
+            transition: margin-left 0.3s;
+            background: linear-gradient(135deg, #0a0e1a 0%, #151a2c 100%);
+        }
+
+        .dashboard-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* ========== PROFILE CARD ========== */
+        .profile-card {
+            background: #151a2c;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .profile-header {
+            background: linear-gradient(90deg, rgba(108, 99, 255, 0.1), rgba(255, 101, 132, 0.05));
+            padding: 20px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .profile-header h2 {
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0;
+        }
+
+        .profile-header h2 i {
+            color: #6C63FF;
+        }
+
+        /* Country flag inside header */
+        .header-flag {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(4px);
+            border-radius: 30px;
+            padding: 6px 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header-flag .fi {
+            font-size: 1.1rem;
+        }
+
+        .header-flag .country-name {
+            color: #fff;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .profile-content {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        /* Left column - Avatar - Stays at top left */
+        .profile-left {
+            text-align: center;
+            position: sticky;
+            top: 30px;
+            align-self: start;
+        }
+
+        .profile-avatar-large {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: rgba(108, 99, 255, 0.1);
+            border: 4px solid #6C63FF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+
+        .profile-avatar-large i {
+            font-size: 5rem;
+            color: #6C63FF;
+        }
+
+        .profile-avatar-large img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Right column - Profile details */
+        .profile-details {
+            padding-top: 0;
+        }
+
+        .name-rating-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .profile-details h3 {
+            font-size: 2rem;
+            margin: 0;
+            background: linear-gradient(135deg, #6C63FF, #FF6584);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .rating-stars-large {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 5px 12px;
+            border-radius: 30px;
+        }
+
+        .rating-stars-large i {
+            font-size: 0.9rem;
+            color: #ffc107;
+        }
+
+        .rating-stars-large i.empty {
+            color: #4a5568;
+        }
+
+        .rating-number {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-left: 5px;
+        }
+
+        .profile-location {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #8892b0;
+            margin-bottom: 25px;
+            font-size: 1rem;
+        }
+
+        .profile-location i {
+            color: #6C63FF;
+        }
+
+        .profile-bio {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .profile-bio p {
+            color: #cbd5e0;
+            line-height: 1.7;
+        }
+
+        .profile-bio.empty {
+            color: #8892b0;
+            font-style: italic;
+        }
+
+        .profile-types {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 25px;
+        }
+
+        .type-badge {
+            background: rgba(108, 99, 255, 0.15);
+            color: #6C63FF;
+            padding: 6px 15px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            border: 1px solid rgba(108, 99, 255, 0.3);
+        }
+
+        .profile-contact {
+            margin-bottom: 25px;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+
+        .contact-card {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        .contact-card i {
+            color: #6C63FF;
+            width: 20px;
+        }
+
+        .contact-card a {
+            color: #6C63FF;
+            text-decoration: none;
+        }
+
+        /* Social Section */
+        .profile-social {
+            margin-bottom: 25px;
+        }
+
+        .social-section {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(108, 99, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .social-section .section-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .social-section .section-header i {
+            color: #6C63FF;
+            font-size: 1.2rem;
+        }
+
+        .social-section .section-header h4 {
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .social-icons-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .social-icon-link,
+        .social-icon-copy {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .social-icon-link:hover,
+        .social-icon-copy:hover {
+            transform: translateY(-3px);
+        }
+
+        .social-icon-link i,
+        .social-icon-copy i {
+            font-size: 1.5rem;
+        }
+
+        .copy-tooltip {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #151a2c;
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+            border: 1px solid rgba(108, 99, 255, 0.3);
+            pointer-events: none;
+        }
+
+        .social-icon-copy:hover .copy-tooltip {
+            opacity: 1;
+        }
+
+        /* Hide ugly white scroll arrows globally */
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hub-sidebar {
+                width: 0;
+            }
+
+            .hub-sidebar:hover {
+                width: 250px;
+                overflow-y: auto;
+            }
+
+            .hub-main {
+                margin-left: 0;
+            }
+
+            .profile-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .profile-left {
+                position: static;
+                text-align: center;
+            }
+
+            .profile-avatar-large {
+                width: 150px;
+                height: 150px;
+            }
+
+            .social-icon-link,
+            .social-icon-copy {
+                width: 44px;
+                height: 44px;
+            }
+
+            .social-icon-link i,
+            .social-icon-copy i {
+                font-size: 1.3rem;
+            }
+        }
+
+        /* Vivos Styles */
+        .vivos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            padding: 20px 0;
+        }
+
+        .vivo-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            aspect-ratio: 9/16;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .vivo-card:hover {
+            transform: translateY(-5px);
+            border-color: #6C63FF;
+            box-shadow: 0 15px 40px rgba(108, 99, 255, 0.2);
+        }
+
+        .vivo-embed-container {
+            width: 100%;
+            height: 100%;
+            background: #000;
+        }
+
+        .vivo-embed-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #000;
+        }
+
+        .vivos-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .vivos-empty {
+            text-align: center;
+            padding: 60px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 30px;
+            border: 2px dashed rgba(255, 255, 255, 0.1);
+            color: #8892b0;
+        }
+
+        .btn-add-vivo {
+            background: linear-gradient(135deg, #6C63FF, #FF6584);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .vivo-actions {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 10;
+        }
+
+        .vivo-btn-del {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(245, 101, 101, 0.9);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Loading Screen -->
+    <div id="pageLoader">
+        <div class="loader-inner">
+            <div class="loader-logo">VIVO <span>DISTRO</span></div>
+            <div class="loader-spinner"></div>
+            <p class="loader-text">Loading your hub...</p>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="hub-sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fas fa-calendar-check"></i>
+                <span>VIVO <span class="logo-highlight">DISTRO</span></span>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" id="navItemDashboard">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-item" id="navItemMyProfile">
+                <i class="fas fa-user-circle"></i>
+                <span>My Profile</span>
+            </a>
+            <a href="browse.html" class="nav-item" id="navItemBrowse">
+                <i class="fas fa-search"></i>
+                <span>Find Talent</span>
+            </a>
+            <a href="booker-edit.html" class="nav-item" id="navItemEditProfile">
+                <i class="fas fa-edit"></i>
+                <span>Edit Profile</span>
+            </a>
+
+            <!-- inbox -->
+            <a href="inbox.html" class="nav-item" id="navItemInbox">
+                <i class="fas fa-calendar-check"></i>
+                <span>Inbox</span>
+            </a>
+
+            <!-- Comments -->
+            <a href="comments.html" class="nav-item" id="navItemComments">
+                <i class="fas fa-star"></i>
+                <span>Comments</span>
+            </a>
+
+            <!-- TOOLS DROPDOWN -->
+            <div class="dropdown-container" id="navItemTools">
+                <a href="#" class="nav-item dropdown-toggle" id="toolsDropdownToggle">
+                    <span style="display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-tools"></i>
+                        <span>Tools</span>
+                    </span>
+                    <i class="fas fa-chevron-down chevron"></i>
+                </a>
+                <div class="dropdown-menu" id="toolsDropdownMenu">
+                    <a href="calculator.html" class="nav-item dropdown-item" id="navItemCalculator">
+                        <i class="fas fa-calculator"></i>
+                        <span>Vivo Calculator</span>
+                    </a>
+                    <a href="calendar.html" class="nav-item dropdown-item" id="navItemCalendar">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Vivo Calendar</span>
+                    </a>
+                    <a href="techlist.html" class="nav-item dropdown-item" id="navItemTechList">
+                        <i class="fas fa-microchip"></i>
+                        <span>TechList</span>
+                    </a>
+                    <a href="checklist.html" class="nav-item dropdown-item" id="navItemCheckList">
+                        <i class="fas fa-check-square"></i>
+                        <span>CheckList</span>
+                    </a>
+                    <a href="events.html" class="nav-item dropdown-item" id="navItemEvents">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Add Events</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Settings Button -->
+            <a href="#" class="nav-item" id="settingsBtn">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="user-avatar" id="userAvatar">
+                    <i class="fas fa-building"></i>
+                </div>
+                <div class="user-info">
+                    <h4 id="userName">Venue Name</h4>
+                    <p id="userRole">Booker</p>
+                </div>
+                <a href="index.html" class="logout-btn" title="Switch Account">
+                    <i class="fas fa-door-open"></i>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="hub-main">
+        <!-- Vivos Content -->
+        <div class="vivos-content" id="vivosContent" style="display: none;">
+            <div class="vivos-header">
+                <div>
+                    <h1><i class="fas fa-play-circle"></i> Event Vivos</h1>
+                    <p style="color: #8892b0; margin-top: 5px;">Post clips of your events to the "Vivo For You"
+                        discovery feed.</p>
+                </div>
+                <button class="btn-add-vivo" onclick="openVivoModal()">
+                    <i class="fas fa-plus"></i> Add Event Vivo
+                </button>
+            </div>
+
+            <div class="vivos-grid" id="vivosGrid">
+                <div class="vivos-empty">
+                    <i class="fas fa-video-slash"></i>
+                    <p>No Vivos added yet. Show off your events!</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-content" id="dashboardContent">
+            <!-- Profile Card -->
+            <div class="profile-card" id="profileCard">
+                <div class="profile-header">
+                    <h2><i class="fas fa-building"></i> Your Profile</h2>
+                    <!-- Country flag inside header -->
+                    <div class="header-flag" id="countryFlagBadge" style="display: none;">
+                        <span class="fi" id="countryFlag"></span>
+                        <span class="country-name" id="countryName"></span>
+                    </div>
+                </div>
+
+                <div class="profile-content">
+                    <!-- Left column - Avatar -->
+                    <div class="profile-left">
+                        <div class="profile-avatar-large" id="profileAvatar">
+                            <i class="fas fa-building"></i>
+                        </div>
+                    </div>
+
+                    <!-- Right column - Profile details -->
+                    <div class="profile-details">
+                        <div class="name-rating-row">
+                            <h3 id="profileName">Venue Name</h3>
+                            <div class="rating-stars-large" id="profileRating">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                    class="fas fa-star"></i><i class="fas fa-star"></i>
+                                <span class="rating-number" id="ratingCount">(0)</span>
+                            </div>
+                        </div>
+                        <p class="profile-location" id="profileLocation">
+                            <i class="fas fa-map-marker-alt"></i> Location
+                        </p>
+
+                        <div class="profile-bio" id="profileBio"></div>
+
+                        <div class="profile-types" id="profileTypes"></div>
+
+                        <!-- Contact section -->
+                        <div class="profile-contact" id="profileContact"></div>
+
+                        <!-- Social section with container that grows -->
+                        <div class="profile-social" id="profileSocial"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Settings Modal -->
+    <div class="settings-modal-overlay" id="settingsModalOverlay" style="display: none;">
+        <div class="settings-modal">
+            <div class="settings-header">
+                <h2><i class="fas fa-cog"></i> Settings</h2>
+                <button class="close-settings" onclick="window.settingsManager?.closeModal()">&times;</button>
+            </div>
+
+            <!-- Theme Selection -->
+            <div class="settings-section">
+                <h3><i class="fas fa-palette"></i> THEME</h3>
+                <div class="theme-grid">
+                    <div class="theme-option" data-theme="default"
+                        onclick="window.settingsManager?.setTheme('default')">
+                        <div class="theme-preview" style="background: #0A0E1A; border-color: #6C63FF;"></div>
+                        <span>Default</span>
+                    </div>
+                    <div class="theme-option" data-theme="blosm" onclick="window.settingsManager?.setTheme('blosm')">
+                        <div class="theme-preview" style="background: #1A0B15; border-color: #FF8FB1;"></div>
+                        <span>Blossom</span>
+                    </div>
+                    <div class="theme-option" data-theme="forest" onclick="window.settingsManager?.setTheme('forest')">
+                        <div class="theme-preview" style="background: #0B1A12; border-color: #48BB78;"></div>
+                        <span>Forest</span>
+                    </div>
+                    <div class="theme-option" data-theme="blackout"
+                        onclick="window.settingsManager?.setTheme('blackout')">
+                        <div class="theme-preview" style="background: #000000; border-color: #FFFFFF;"></div>
+                        <span>Blackout</span>
+                    </div>
+                    <div class="theme-option" data-theme="light" onclick="window.settingsManager?.setTheme('light')">
+                        <div class="theme-preview" style="background: #F7FAFC; border-color: #6C63FF;"></div>
+                        <span>Light</span>
+                    </div>
+                    <div class="theme-option" data-theme="ocean" onclick="window.settingsManager?.setTheme('ocean')">
+                        <div class="theme-preview" style="background: #001F3F; border-color: #00B4D8;"></div>
+                        <span>Ocean</span>
+                    </div>
+                    <div class="theme-option" data-theme="desert" onclick="window.settingsManager?.setTheme('desert')">
+                        <div class="theme-preview" style="background: #3E3E3E; border-color: #D4A373;"></div>
+                        <span>Desert</span>
+                    </div>
+                    <div class="theme-option" data-theme="neon" onclick="window.settingsManager?.setTheme('neon')">
+                        <div class="theme-preview" style="background: #050510; border-color: #FF00FF;"></div>
+                        <span>Neon</span>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Custom Background -->
+            <div class="settings-section">
+                <h3><i class="fas fa-image"></i> BACKGROUND</h3>
+                <div class="bg-upload-area">
+                    <label for="bgUploadInput" class="bg-upload-btn">
+                        <i class="fas fa-cloud-upload-alt"></i> Upload Background
+                    </label>
+                    <input type="file" id="bgUploadInput" class="bg-file-input" accept="image/*" style="display:none;">
+                    <button class="bg-remove-btn" onclick="window.settingsManager?.removeBackground()">
+                        <i class="fas fa-trash-alt"></i> Remove
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sidebar Customization -->
+            <div class="settings-section">
+                <h3><i class="fas fa-bars"></i> CUSTOMIZE SIDEBAR</h3>
+                <div class="switches-list">
+                    <div class="switch-item">
+                        <span><i class="fas fa-home"></i> Dashboard</span>
+                        <label class="switch">
+                            <input type="checkbox" class="nav-toggle-switch" data-nav-id="navItemDashboard" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="switch-item">
+                        <span><i class="fas fa-search"></i> Find Talent</span>
+                        <label class="switch">
+                            <input type="checkbox" class="nav-toggle-switch" data-nav-id="navItemBrowse" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="switch-item">
+                        <span><i class="fas fa-edit"></i> Edit Profile</span>
+                        <label class="switch">
+                            <input type="checkbox" class="nav-toggle-switch" data-nav-id="navItemEditProfile" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="switch-item">
+                        <span><i class="fas fa-calendar-check"></i> Inbox</span>
+                        <label class="switch">
+                            <input type="checkbox" class="nav-toggle-switch" data-nav-id="navItemInbox" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="switch-item">
+                        <span><i class="fas fa-star"></i> Comments</span>
+                        <label class="switch">
+                            <input type="checkbox" class="nav-toggle-switch" data-nav-id="navItemComments" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="switch-item">
+                        <span><i class="fas fa-tools"></i> Tools</span>
+                        <label class="switch">
+                            <input type="checkbox" class="nav-toggle-switch" data-nav-id="navItemTools" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notifications -->
+            <div class="settings-section">
+                <h3><i class="fas fa-bell"></i> REAL-TIME ALERTS</h3>
+                <div class="compact-notif-row">
+                    <div class="notif-status">
+                        <i class="fas fa-bell" id="notifStatusIconSettings"></i>
+                        <span id="notifStatusTextSettings">Checking status...</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="notifToggleSwitch">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <button id="enableNotifBtnSettings" class="btn-notif-request" style="display: none;">
+                    <i class="fas fa-power-off"></i> Enable Notifications
+                </button>
+            </div>
+
+            <div class="settings-actions">
+                <button class="btn-save"
+                    onclick="window.settingsManager?.saveSettings(); window.settingsManager?.closeModal();">
+                    <i class="fas fa-check"></i> Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Vivo Modal -->
+    <div class="modal-overlay" id="vivoModalOverlay"
+        style="display: none; align-items: center; justify-content: center; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 20000; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);">
+        <div class="settings-modal" style="max-width: 500px; margin: 0 auto; position: relative;">
+            <div class="settings-header">
+                <h2><i class="fas fa-plus-circle"></i> Add Event Vivo</h2>
+                <button class="close-btn" onclick="closeVivoModal()">&times;</button>
+            </div>
+            <div class="settings-body" style="padding: 20px;">
+                <p style="color: #8892b0; margin-bottom: 20px; font-size: 0.9rem;">
+                    Paste a link to a <b>YouTube Short</b> or <b>TikTok</b> video of your event.
+                </p>
+                <div class="settings-section" style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 10px; color: white;">Video URL</label>
+                    <input type="text" id="vivoUrlInput" placeholder="https://youtube.com/shorts/..."
+                        style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 12px; border-radius: 10px;">
+                </div>
+            </div>
+            <div class="settings-actions">
+                <button class="btn-save" id="btnSaveVivo">
+                    <i class="fas fa-magic"></i> Add to Feed
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- push_notifications.js is now handled globally by navbar.js -->
+    <script src="settings-manager.js"></script>
+    <script src="tips.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function () {
+            const supabaseUrl = 'https://msjinuumxmezrijqemmp.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zamludXVteG1lenJpanFlbW1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwOTAyNjMsImV4cCI6MjA4NzY2NjI2M30.ic50fSC7MQfhSkhfE5E8B0R5-BGCQStMRZNHiy6Zakw';
+            const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+            await loadProfile();
+
+            async function loadProfile() {
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                if (!user) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                const { data: profile, error } = await supabaseClient
+                    .from('bookers')
+                    .select('*')
+                    .eq('auth_id', user.id)
+                    .single();
+                if (error) {
+                    if (error.code === 'PGRST116') {
+                        window.location.href = 'booker-setup.html';
+                    }
+                    return;
+                }
+                if (profile) {
+                    updateDashboard(profile);
+                    await loadUserRating(profile.auth_id);
+                }
+            }
+
+            async function loadUserRating(userId) {
+                const { data, error } = await supabaseClient
+                    .from('ratings')
+                    .select('rating')
+                    .eq('rated_user_id', userId);
+
+                if (data && data.length > 0) {
+                    const sum = data.reduce((a, b) => a + b.rating, 0);
+                    const avg = (sum / data.length).toFixed(1);
+                    const fullStars = Math.floor(avg);
+                    const hasHalf = avg % 1 >= 0.5;
+
+                    let starsHtml = '';
+                    for (let i = 1; i <= 5; i++) {
+                        if (i <= fullStars) starsHtml += '<i class="fas fa-star"></i>';
+                        else if (i === fullStars + 1 && hasHalf) starsHtml += '<i class="fas fa-star-half-alt"></i>';
+                        else starsHtml += '<i class="far fa-star empty"></i>';
+                    }
+
+                    document.getElementById('profileRating').innerHTML = starsHtml + `<span class="rating-number">(${data.length})</span>`;
+                } else {
+                    document.getElementById('profileRating').innerHTML = '<i class="far fa-star empty"></i><i class="far fa-star empty"></i><i class="far fa-star empty"></i><i class="far fa-star empty"></i><i class="far fa-star empty"></i><span class="rating-number">(0)</span>';
+                }
+            }
+
+            function updateDashboard(profile) {
+                updateCountryFlag(profile.country_code, profile.country);
+
+                // Update avatar
+                const avatarElements = document.querySelectorAll('#userAvatar, #profileAvatar');
+                avatarElements.forEach(element => {
+                    if (profile.logo_url) {
+                        element.innerHTML = `<img src="${profile.logo_url}" alt="Profile">`;
+                    } else {
+                        element.innerHTML = '<i class="fas fa-building"></i>';
+                    }
+                });
+
+                // Update name
+                const nameElements = document.querySelectorAll('#userName, #profileName');
+                nameElements.forEach(element => {
+                    if (element) element.textContent = profile.name || 'Venue Name';
+                });
+
+                // Update location
+                document.getElementById('profileLocation').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${profile.location || 'Location not set'}`;
+                document.getElementById('userRole').textContent = 'Booker';
+
+                // Update bio
+                const bioElement = document.getElementById('profileBio');
+                if (bioElement) {
+                    if (profile.bio && profile.bio.trim()) {
+                        bioElement.innerHTML = `<p>${profile.bio}</p>`;
+                        bioElement.classList.remove('empty');
+                    } else {
+                        bioElement.innerHTML = '<p class="bio-placeholder">Add a bio to tell people about your venue or company...</p>';
+                        bioElement.classList.add('empty');
+                    }
+                }
+
+                // Update types
+                const typesElement = document.getElementById('profileTypes');
+                if (typesElement && profile.types && profile.types.length > 0) {
+                    typesElement.innerHTML = profile.types.map(type => `<span class="type-badge">${type}</span>`).join('');
+                } else {
+                    typesElement.innerHTML = '';
+                }
+
+                // Update contact
+                const contactElement = document.getElementById('profileContact');
+                if (contactElement) {
+                    const contactHTML = [];
+                    if (profile.phone) contactHTML.push(`<div class="contact-card"><i class="fas fa-phone-alt"></i><span>${profile.phone}</span></div>`);
+                    if (profile.email) contactHTML.push(`<div class="contact-card"><i class="fas fa-envelope"></i><span>${profile.email}</span></div>`);
+                    if (profile.website) {
+                        const displayWebsite = profile.website.replace('https://', '').replace('http://', '');
+                        contactHTML.push(`<div class="contact-card"><i class="fas fa-globe"></i><a href="${profile.website}" target="_blank">${displayWebsite}</a></div>`);
+                    }
+                    contactElement.innerHTML = contactHTML.length ? `<div class="contact-grid">${contactHTML.join('')}</div>` : '';
+                }
+
+                // Update social links with container that grows
+                const socialElement = document.getElementById('profileSocial');
+                if (socialElement) {
+                    if (profile.social_links && profile.social_links.length > 0) {
+                        socialElement.innerHTML = `
+                            <div class="social-section">
+                                <div class="section-header"><i class="fas fa-share-alt"></i><h4>Connect</h4></div>
+                                <div class="social-icons-grid">
+                                    ${profile.social_links.map(link => {
+                            const platform = getSocialPlatform(link.platform);
+                            if (!platform) return '';
+                            if (link.platform === 'whatsapp') {
+                                const number = link.url.replace(/\D/g, '');
+                                return `<div class="social-icon-copy" onclick="copyToClipboard('${number}', 'WhatsApp number')" style="background: ${platform.color}15; cursor: pointer;" title="Click to copy WhatsApp number"><i class="${platform.icon}" style="color: ${platform.color};"></i><span class="copy-tooltip">Copy</span></div>`;
+                            } else if (link.platform === 'email') {
+                                const email = link.url.replace('mailto:', '');
+                                return `<div class="social-icon-copy" onclick="copyToClipboard('${email}', 'Email address')" style="background: ${platform.color}15; cursor: pointer;" title="Click to copy email address"><i class="${platform.icon}" style="color: ${platform.color};"></i><span class="copy-tooltip">Copy</span></div>`;
+                            } else {
+                                return `<a href="${link.url}" target="_blank" class="social-icon-link" style="background: ${platform.color}15;" title="${platform.name}"><i class="${platform.icon}" style="color: ${platform.color};"></i></a>`;
+                            }
+                        }).join('')}
+                                </div>
+                            </div>`;
+                    } else {
+                        socialElement.innerHTML = '';
+                    }
+                }
+            }
+
+            function updateCountryFlag(countryCode, countryName) {
+                const flagBadge = document.getElementById('countryFlagBadge');
+                const flagElement = document.getElementById('countryFlag');
+                const nameElement = document.getElementById('countryName');
+                if (countryCode) {
+                    const code = countryCode.toLowerCase();
+                    flagElement.className = `fi fi-${code} fi-circle`;
+                    nameElement.textContent = countryName || '';
+                    flagBadge.style.display = 'flex';
+                } else {
+                    flagBadge.style.display = 'none';
+                }
+            }
+
+            function getSocialPlatform(platformKey) {
+                const socialPlatforms = {
+                    'whatsapp': { name: 'WhatsApp', icon: 'fab fa-whatsapp', color: '#25D366' },
+                    'email': { name: 'Email', icon: 'fas fa-envelope', color: '#EA4335' },
+                    'instagram': { name: 'Instagram', icon: 'fab fa-instagram', color: '#E4405F' },
+                    'facebook': { name: 'Facebook', icon: 'fab fa-facebook', color: '#1877F2' },
+                    'twitter': { name: 'Twitter', icon: 'fab fa-twitter', color: '#1DA1F2' },
+                    'tiktok': { name: 'TikTok', icon: 'fab fa-tiktok', color: 'rgba(255, 255, 255, 0.2)' },
+                    'youtube': { name: 'YouTube', icon: 'fab fa-youtube', color: '#FF0000' },
+                    'spotify': { name: 'Spotify', icon: 'fab fa-spotify', color: '#1DB954' },
+                    'soundcloud': { name: 'SoundCloud', icon: 'fab fa-soundcloud', color: '#FF3300' },
+                    'linkedin': { name: 'LinkedIn', icon: 'fab fa-linkedin', color: '#0077B5' },
+                    'website': { name: 'Website', icon: 'fas fa-globe', color: '#6C63FF' }
+                };
+                return socialPlatforms[platformKey];
+            }
+
+            window.copyToClipboard = function (text, type) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast(`${type} copied to clipboard!`, 'success');
+                }).catch(() => {
+                    showToast('Failed to copy', 'error');
+                });
+            };
+
+            function showToast(message, type) {
+                const toast = document.createElement('div');
+                toast.textContent = message;
+                toast.style.cssText = `
+                    position: fixed; top: 20px; right: 20px; padding: 15px 25px;
+                    background: ${type === 'success' ? '#48BB78' : '#F56565'};
+                    color: white; border-radius: 10px; z-index: 10001;
+                    animation: slideInRight 0.3s ease; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                `;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
+            }
+
+            // --- VIVOS NAVIGATION & LOGIC ---
+            const navItemDashboard = document.getElementById('navItemDashboard');
+            const navItemVivos = document.getElementById('navItemVivos');
+            const dashboardContent = document.getElementById('dashboardContent');
+            const vivosContent = document.getElementById('vivosContent');
+            const vivoModalOverlay = document.getElementById('vivoModalOverlay');
+            const btnSaveVivo = document.getElementById('btnSaveVivo');
+
+            window.openVivoModal = () => {
+                vivoModalOverlay.style.display = 'flex';
+            };
+
+            window.closeVivoModal = () => {
+                vivoModalOverlay.style.display = 'none';
+            };
+
+            if (navItemVivos) {
+                navItemVivos.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    switchPage('vivos');
+                    loadVivos();
+                });
+            }
+
+            if (navItemDashboard) {
+                navItemDashboard.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    switchPage('dashboard');
+                });
+            }
+
+            function switchPage(page) {
+                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                if (page === 'vivos') {
+                    navItemVivos.classList.add('active');
+                    dashboardContent.style.display = 'none';
+                    vivosContent.style.display = 'block';
+                } else {
+                    navItemDashboard.classList.add('active');
+                    dashboardContent.style.display = 'block';
+                    vivosContent.style.display = 'none';
+                }
+            }
+
+            if (btnSaveVivo) {
+                btnSaveVivo.onclick = async () => {
+                    const url = document.getElementById('vivoUrlInput').value.trim();
+                    if (!url) { showToast('Please enter a video URL', 'error'); return; }
+
+                    btnSaveVivo.disabled = true;
+                    btnSaveVivo.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+
+                    const platformData = parseVideoUrl(url);
+                    if (!platformData) {
+                        showToast('Invalid URL', 'error');
+                        btnSaveVivo.disabled = false;
+                        btnSaveVivo.innerHTML = '<i class="fas fa-magic"></i> Add to Feed';
+                        return;
+                    }
+
+                    const { data: { user } } = await supabaseClient.auth.getUser();
+                    const { error } = await supabaseClient.from('vivos').insert({
+                        performer_id: user.id,
+                        video_url: url,
+                        platform: platformData.platform,
+                        title: 'Event Vivo'
+                    });
+
+                    if (error) { showToast('Error: ' + error.message, 'error'); }
+                    else {
+                        showToast('Event Vivo added!', 'success');
+                        closeVivoModal();
+                        document.getElementById('vivoUrlInput').value = '';
+                        loadVivos();
+                    }
+                    btnSaveVivo.disabled = false;
+                    btnSaveVivo.innerHTML = '<i class="fas fa-magic"></i> Add to Feed';
+                };
+            }
+
+            async function loadVivos() {
+                const vivosGrid = document.getElementById('vivosGrid');
+                vivosGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px;"><i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #6C63FF;"></i></div>';
+
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                const { data: vivos, error } = await supabaseClient
+                    .from('vivos')
+                    .select('*')
+                    .eq('performer_id', user.id)
+                    .order('created_at', { ascending: false });
+
+                if (error) { showToast('Load error', 'error'); return; }
+
+                if (!vivos || vivos.length === 0) {
+                    vivosGrid.innerHTML = `<div class="vivos-empty" style="grid-column: 1/-1;"><p>No Vivos added yet.</p></div>`;
+                    return;
+                }
+
+                vivosGrid.innerHTML = '';
+                vivos.forEach(v => {
+                    const embedData = parseVideoUrl(v.video_url);
+                    const card = document.createElement('div');
+                    card.className = 'vivo-card';
+                    card.innerHTML = `
+                        <div class="vivo-actions">
+                            <button class="vivo-btn-del" onclick="deleteBookerVivo('${v.id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        <div class="vivo-embed-container">
+                            ${embedData ? `<iframe src="${embedData.embedUrl}"></iframe>` : `<div>Error</div>`}
+                        </div>`;
+                    vivosGrid.appendChild(card);
+                });
+            }
+
+            window.deleteBookerVivo = async (id) => {
+                const { error } = await supabaseClient.from('vivos').delete().eq('id', id);
+                if (error) showToast('Error', 'error'); else loadVivos();
+            };
+
+            function parseVideoUrl(url) {
+                if (url.includes('youtube.com/shorts/') || url.includes('youtu.be/')) {
+                    let id = url.includes('shorts/') ? url.split('shorts/')[1].split('?')[0] : url.split('youtu.be/')[1].split('?')[0];
+                    return { platform: 'youtube', embedUrl: `https://www.youtube.com/embed/${id}` };
+                }
+                if (url.includes('tiktok.com')) {
+                    const match = url.match(/\/video\/(\d+)/);
+                    return { platform: 'tiktok', embedUrl: match ? `https://www.tiktok.com/embed/v2/${match[1]}` : url };
+                }
+                return null;
+            }
+            // Notifications handled globally by navbar.js
+            
+            const settingsBtn = document.getElementById('settingsBtn');
+            if (settingsBtn) {
+                settingsBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.dispatchEvent(new Event('openSettings'));
+                });
+            }
+
+            // --- INITIALIZE SETTINGS MANAGER ---
+            try {
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                if (user) {
+                    const myProfileLink = document.getElementById('navItemMyProfile');
+                    if (myProfileLink) myProfileLink.href = `profile.html?id=${user.id}`;
+
+                    window.settingsManager = new window.SettingsManager(supabaseClient, user.id, 'bookers');
+                    const zoomSlider = document.getElementById('zoomSlider');
+                    if (zoomSlider && window.settingsManager) {
+                        zoomSlider.value = window.settingsManager.settings?.zoom || 100;
+                        zoomSlider.oninput = (e) => window.settingsManager.setZoom(e.target.value);
+                    }
+
+                    document.querySelectorAll('.nav-toggle-switch').forEach(sw => {
+                        sw.onchange = (e) => {
+                            const navId = sw.getAttribute('data-nav-id');
+                            window.settingsManager.toggleNavItem(navId, sw.checked);
+                        };
+                    });
+
+                    const notifToggle = document.getElementById('notifToggleSwitch');
+                    if (notifToggle) {
+                        notifToggle.onchange = (e) => {
+                            const manager = window.notifManager;
+                            if (manager) {
+                                if (e.target.checked) manager.enablePush?.();
+                                else manager.disablePush?.();
+                            } else {
+                                console.warn("Notification Manager not ready yet.");
+                            }
+                        };
+                    }
+                }
+            } catch (err) {
+                console.error("❌ Settings Init Error:", err);
+            }
+
+            // Hide loader once everything is ready
+            (function hideLoader() {
+                const el = document.getElementById('pageLoader');
+                if (!el) return;
+                el.style.opacity = '0';
+                setTimeout(() => el.remove(), 500);
+            })();
+        });
+    </script>
+    <script src="navbar.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TechList · Vivo Distro</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons@6.6.6/css/flag-icons.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background: #0f0f13;
+      color: #e5e5e5;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .simple-header {
+      background: #1a1a24;
+      border-bottom: 1px solid #2c2c3a;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid #2c2c3a;
+      border-radius: 8px;
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background: rgba(79, 70, 229, 0.1);
+      border-color: #4f46e5;
+      transform: translateX(-3px);
+    }
+
+    .back-btn i {
+      color: #4f46e5;
+    }
+
+    .page-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .page-title i {
+      color: #4f46e5;
+    }
+
+    .hub-main {
+      min-height: 100vh;
+      padding: 30px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #2c2c3a;
+    }
+
+    .header h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .header h1 i {
+      color: #4f46e5;
+      margin-right: 0.5rem;
+    }
+
+    .btn {
+      background: #2a2a35;
+      border: none;
+      color: #fff;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: background 0.2s;
+    }
+
+    .btn-primary {
+      background: #4f46e5;
+    }
+
+    .btn-primary:hover {
+      background: #6366f1;
+    }
+
+    .btn-success {
+      background: #10b981;
+    }
+    .btn-success:hover {
+      background: #059669;
+    }
+
+    .btn-danger {
+      background: #ef4444;
+    }
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+
+    .action-bar {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .techlist-name-section {
+      background: #1a1a24;
+      border: 1px solid #2c2c3a;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .techlist-name-section label {
+      color: #a0a0b0;
+      font-weight: 500;
+    }
+
+    .techlist-name-input {
+      flex: 1;
+      background: #2a2a35;
+      border: 1px solid #3a3a4a;
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 500;
+      min-width: 200px;
+    }
+
+    .techlist-name-input:focus {
+      outline: none;
+      border-color: #4f46e5;
+    }
+
+    .groups-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .group-card {
+      background: #1a1a24;
+      border: 1px solid #2c2c3a;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .group-header {
+      background: #22222e;
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #2c2c3a;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .group-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .group-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      color: #a0a0b0;
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 0.25rem 0.5rem;
+      transition: color 0.2s;
+    }
+
+    .icon-btn:hover {
+      color: #fff;
+    }
+
+    /* Modern card-style item layout */
+    .items-list {
+      padding: 0.5rem;
+    }
+
+    .item-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid #2c2c3a;
+      border-radius: 12px;
+      margin-bottom: 0.75rem;
+      padding: 1rem;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .item-card:hover {
+      background: rgba(79, 70, 229, 0.05);
+      border-color: #4f46e5;
+      transform: translateX(4px);
+    }
+
+    .item-card.swipe-delete {
+      animation: swipeOut 0.3s ease forwards;
+    }
+
+    @keyframes swipeOut {
+      0% { transform: translateX(0); opacity: 1; }
+      100% { transform: translateX(-100%); opacity: 0; display: none; }
+    }
+
+    .item-row-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .item-name-section {
+      flex: 2;
+      min-width: 150px;
+    }
+
+    .item-name {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #f1f5f9;
+    }
+
+    .item-details {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .detail-badge {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid #2c2c3a;
+      border-radius: 20px;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.8rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .detail-badge i {
+      font-size: 0.7rem;
+      opacity: 0.7;
+    }
+
+    .qty-badge {
+      background: #4f46e5;
+      color: #fff;
+      border: none;
+    }
+
+    .unit-badge {
+      color: #fbbf24;
+    }
+
+    .unit-badge i {
+      color: #fbbf24;
+    }
+
+    .type-badge {
+      background: rgba(79, 70, 229, 0.15);
+      border-color: rgba(79, 70, 229, 0.3);
+    }
+
+    .type-digital {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: rgba(16, 185, 129, 0.3);
+      color: #10b981;
+    }
+
+    .type-analog {
+      background: rgba(245, 158, 11, 0.15);
+      border-color: rgba(245, 158, 11, 0.3);
+      color: #fbbf24;
+    }
+
+    .item-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .item-checkbox {
+      width: 20px;
+      height: 20px;
+      accent-color: #4f46e5;
+      cursor: pointer;
+      margin-right: 1rem;
+    }
+
+    /* Checkbox mode - show checkboxes on all items */
+    body.checkbox-mode .item-checkbox {
+      display: inline-block;
+    }
+    
+    body.checkbox-mode .item-card {
+      cursor: default;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: #666;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: #1e1e28;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 500px;
+      padding: 2rem;
+      border: 1px solid #3a3a4a;
+    }
+
+    .modal-content h3 {
+      margin-bottom: 1.5rem;
+      color: #fff;
+    }
+
+    .modal-content input, .modal-content select {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      background: #2a2a35;
+      border: 1px solid #3a3a4a;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 1rem;
+    }
+
+    .modal-content input:focus, .modal-content select:focus {
+      outline: none;
+      border-color: #4f46e5;
+    }
+
+    .unit-input-group {
+      display: none;
+    }
+
+    .unit-input-group.show {
+      display: block;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 3rem;
+      color: #666;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #10b981;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      z-index: 2000;
+      animation: fadeInUp 0.3s ease;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .selection-info {
+      background: #4f46e5;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      display: none;
+    }
+
+    .selection-info.show {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .hub-main {
+        padding: 20px;
+      }
+      .simple-header {
+        padding: 0.8rem 1rem;
+      }
+      .back-btn span {
+        display: none;
+      }
+      .back-btn {
+        padding: 0.6rem;
+      }
+      .group-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .action-bar {
+        flex-direction: column;
+      }
+      .action-bar .btn {
+        width: 100%;
+        justify-content: center;
+      }
+      .item-row-content {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .item-details {
+        width: 100%;
+        justify-content: flex-start;
+      }
+      .item-actions {
+        width: 100%;
+        justify-content: flex-end;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="settings.css">
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const configT = localStorage.getItem('vivo_theme') || 'theme-default';
+      if(configT !== 'theme-default') document.body.classList.add(configT);
+    });
+  </script>
+</head>
+<body>
+
+  <div class="simple-header">
+    <button class="back-btn" onclick="window.history.back()">
+      <i class="fas fa-arrow-left"></i>
+      <span>Back</span>
+    </button>
+    <div class="page-title">
+      <i class="fas fa-microchip"></i>
+      <span>TechList</span>
+    </div>
+  </div>
+
+  <main class="hub-main">
+    <div class="container">
+      <div class="header">
+        <h1><i class="fas fa-microchip"></i> Technical Equipment List</h1>
+      </div>
+
+      <div class="techlist-name-section">
+        <label for="techlistName">Techlist Name:</label>
+        <input type="text" id="techlistName" class="techlist-name-input" placeholder="My Techlist" value="My Techlist">
+        <button class="btn save-name-btn" id="saveTechlistNameBtn">
+          <i class="fas fa-save"></i> Save
+        </button>
+      </div>
+
+      <div class="action-bar">
+        <button class="btn btn-primary" id="downloadPDF">
+          <i class="fas fa-download"></i> Download Techlist (PDF)
+        </button>
+        <button class="btn btn-primary" id="addGroupBtn">
+          <i class="fas fa-plus"></i> New Group
+        </button>
+        <button class="btn btn-success" id="sendToChecklistBtn">
+          <i class="fas fa-check-double"></i> Send to Checklist
+        </button>
+        <span class="selection-info" id="selectionInfo">
+          <i class="fas fa-check-circle"></i> <span id="selectedCount">0</span> selected
+        </span>
+      </div>
+
+      <div id="groupsContainer" class="groups-container">
+        <div class="loading">Loading your gear...</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Group Modal -->
+  <div class="modal" id="groupModal">
+    <div class="modal-content">
+      <h3 id="groupModalTitle">Add Group</h3>
+      <input type="text" id="groupName" placeholder="Group name (e.g. Speakers, Mixers, Microphones)" autocomplete="off">
+      <div class="modal-actions">
+        <button class="btn" id="cancelGroupBtn">Cancel</button>
+        <button class="btn btn-primary" id="saveGroupBtn">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Item Modal -->
+  <div class="modal" id="itemModal">
+    <div class="modal-content">
+      <h3 id="itemModalTitle">Add Item</h3>
+      <input type="text" id="itemName" placeholder="Item name (e.g. JBL SRX828, Pearl Drum Kit)" autocomplete="off">
+      <input type="number" id="itemQuantity" placeholder="Quantity" value="" min="1">
+      
+      <!-- Unit Type Selection -->
+      <select id="unitType">
+        <option value="">Select Unit Type</option>
+        <option value="power">Power (Watts)</option>
+        <option value="channels">Channels</option>
+        <option value="piece">Piece</option>
+      </select>
+      
+      <div id="powerInputGroup" class="unit-input-group">
+        <input type="number" id="itemPower" placeholder="Power (Watts)" min="0" step="1">
+      </div>
+      <div id="channelsInputGroup" class="unit-input-group">
+        <input type="number" id="itemChannels" placeholder="Number of Channels" min="1" step="1">
+      </div>
+      <div id="pieceInputGroup" class="unit-input-group">
+        <input type="number" id="itemPiece" placeholder="Number of Pieces" min="1" step="1">
+      </div>
+      
+      <!-- Type Selection -->
+      <select id="itemType">
+        <option value="">Select Type</option>
+        <option value="Digital">Digital</option>
+        <option value="Analog">Analog</option>
+        <option value="Active">Active</option>
+        <option value="Passive">Passive</option>
+        <option value="Corded">Corded</option>
+        <option value="Cordless">Cordless</option>
+      </select>
+      
+      <div class="modal-actions">
+        <button class="btn" id="cancelItemBtn">Cancel</button>
+        <button class="btn btn-primary" id="saveItemBtn">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Checklist Selection Modal -->
+  <div class="modal" id="checklistSelectModal">
+    <div class="modal-content">
+      <h3>Select or Create Checklist</h3>
+      <select id="checklistSelect" style="width: 100%; margin-bottom: 1rem;">
+        <option value="">Select existing checklist...</option>
+      </select>
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+        <input type="text" id="newChecklistName" placeholder="Or create new checklist name" style="flex: 1;">
+        <button class="btn btn-primary" id="createNewChecklistBtn">Create</button>
+      </div>
+      <div class="modal-actions">
+        <button class="btn" id="cancelChecklistSelect">Cancel</button>
+        <button class="btn btn-success" id="confirmSendToChecklist">Send Items</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async function() {
+      const SUPABASE_URL = 'https://msjinuumxmezrijqemmp.supabase.co';
+      const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zamludXVteG1lenJpanFlbW1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwOTAyNjMsImV4cCI6MjA4NzY2NjI2M30.ic50fSC7MQfhSkhfE5E8B0R5-BGCQStMRZNHiy6Zakw';
+      const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      
+      let currentUser = null;
+      let groups = [];
+      let editingGroupId = null;
+      let editingItemId = null;
+      let currentGroupId = null;
+      let techlistName = 'My Techlist';
+      let selectedItems = new Set();
+      let checkboxMode = false;
+      let touchStartX = null;
+      let touchStartTime = null;
+
+      const savedName = localStorage.getItem('techlistName');
+      if (savedName) techlistName = savedName;
+      document.getElementById('techlistName').value = techlistName;
+
+      document.getElementById('saveTechlistNameBtn').addEventListener('click', function() {
+        techlistName = document.getElementById('techlistName').value.trim() || 'My Techlist';
+        localStorage.setItem('techlistName', techlistName);
+        const btn = this;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check"></i> Saved!';
+        setTimeout(() => btn.innerHTML = originalText, 2000);
+      });
+
+      // Unit type selection handler
+      const unitTypeSelect = document.getElementById('unitType');
+      const powerInputGroup = document.getElementById('powerInputGroup');
+      const channelsInputGroup = document.getElementById('channelsInputGroup');
+      const pieceInputGroup = document.getElementById('pieceInputGroup');
+      
+      unitTypeSelect.addEventListener('change', function() {
+        powerInputGroup.classList.remove('show');
+        channelsInputGroup.classList.remove('show');
+        pieceInputGroup.classList.remove('show');
+        if (this.value === 'power') {
+          powerInputGroup.classList.add('show');
+        } else if (this.value === 'channels') {
+          channelsInputGroup.classList.add('show');
+        } else if (this.value === 'piece') {
+          pieceInputGroup.classList.add('show');
+        }
+      });
+
+      function formatUnitDisplay(item) {
+        if (item.unit_type === 'power' && item.power) {
+          const watts = item.power;
+          if (watts >= 1000) {
+            return (watts / 1000).toFixed(1) + ' kW';
+          }
+          return watts + ' W';
+        } else if (item.unit_type === 'channels' && item.channels) {
+          return item.channels + ' Ch';
+        } else if (item.unit_type === 'piece' && item.piece) {
+          return item.piece + ' Piece';
+        }
+        return '—';
+      }
+
+      function formatTypeDisplay(item) {
+        return item.type || '—';
+      }
+
+      async function initAuth() {
+        const { data: { user }, error } = await supabaseClient.auth.getUser();
+        if (error || !user) {
+          window.location.href = 'login.html';
+          return;
+        }
+        currentUser = user;
+        await loadTechList();
+      }
+
+      async function loadTechList() {
+        const container = document.getElementById('groupsContainer');
+        container.innerHTML = '<div class="loading">Loading your gear...</div>';
+        
+        try {
+          const { data, error } = await supabaseClient
+            .from('techlist_groups')
+            .select('*, techlist_items(*)')
+            .eq('performer_id', currentUser.id)
+            .order('order_index');
+          
+          if (error) throw error;
+          groups = data || [];
+          renderGroups();
+        } catch (err) {
+          console.error(err);
+          container.innerHTML = `<div class="loading" style="color: #f00;">Failed to load data</div>`;
+        }
+      }
+
+      function renderGroups() {
+        const container = document.getElementById('groupsContainer');
+        if (!groups.length) {
+          container.innerHTML = '<div class="empty-state">No groups yet. Click "New Group" to start.</div>';
+          return;
+        }
+
+        container.innerHTML = groups.map(group => `
+          <div class="group-card" data-group-id="${group.id}">
+            <div class="group-header">
+              <span class="group-title">${escapeHtml(group.group_name)}</span>
+              <div class="group-actions">
+                <button class="icon-btn edit-group" title="Edit group"><i class="fas fa-pen"></i></button>
+                <button class="icon-btn delete-group" title="Delete group"><i class="fas fa-trash"></i></button>
+                <button class="icon-btn add-item" title="Add item"><i class="fas fa-plus-circle"></i></button>
+              </div>
+            </div>
+            ${renderItems(group)}
+          </div>
+        `).join('');
+        attachEventListeners();
+        attachSwipeListeners();
+        attachDoubleClickListeners();
+      }
+
+      function renderItems(group) {
+        if (!group.techlist_items || !group.techlist_items.length) {
+          return '<div class="empty-state" style="padding: 2rem;">No items in this group. Click + to add.</div>';
+        }
+        
+        return `
+          <div class="items-list">
+            ${group.techlist_items.map(item => {
+              const unitDisplay = formatUnitDisplay(item);
+              const typeDisplay = formatTypeDisplay(item);
+              const isDigital = item.type === 'Digital';
+              const isAnalog = item.type === 'Analog';
+              let typeClass = '';
+              if (isDigital) typeClass = 'type-digital';
+              if (isAnalog) typeClass = 'type-analog';
+              
+              let unitIcon = 'fa-bolt';
+              if (item.unit_type === 'channels') unitIcon = 'fa-sliders-h';
+              if (item.unit_type === 'piece') unitIcon = 'fa-cubes';
+              
+              return `
+                <div class="item-card" data-item-id="${item.id}" data-group-id="${group.id}" data-group-name="${escapeHtml(group.group_name)}">
+                  <div class="item-row-content">
+                    <div style="display: flex; align-items: center; flex: 2;">
+                      ${checkboxMode ? `<input type="checkbox" class="item-checkbox" data-item-id="${item.id}" data-item-name="${escapeHtml(item.name)}" data-item-qty="${item.quantity}" data-item-unit="${unitDisplay}" data-item-type="${item.type || ''}" data-group-name="${escapeHtml(group.group_name)}">` : ''}
+                      <div class="item-name-section">
+                        <div class="item-name">${escapeHtml(item.name)}</div>
+                      </div>
+                    </div>
+                    <div class="item-details">
+                      <span class="detail-badge qty-badge"><i class="fas fa-hashtag"></i> ${item.quantity || 1}x</span>
+                      ${unitDisplay !== '—' ? `<span class="detail-badge unit-badge"><i class="fas ${unitIcon}"></i> ${unitDisplay}</span>` : ''}
+                      <span class="detail-badge type-badge ${typeClass}"><i class="fas fa-tag"></i> ${escapeHtml(typeDisplay)}</span>
+                    </div>
+                    <div class="item-actions">
+                      <button class="icon-btn edit-item" title="Edit item"><i class="fas fa-pen"></i></button>
+                      <button class="icon-btn delete-item" title="Delete item"><i class="fas fa-trash"></i></button>
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+      }
+
+      function attachEventListeners() {
+        document.querySelectorAll('.edit-group').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const groupId = e.target.closest('.group-card').dataset.groupId;
+            const group = groups.find(g => g.id === groupId);
+            if (group) openGroupModal(group.id, group.group_name);
+          });
+        });
+        document.querySelectorAll('.delete-group').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const groupId = e.target.closest('.group-card').dataset.groupId;
+            if (confirm('Delete this group and all its items?')) deleteGroup(groupId);
+          });
+        });
+        document.querySelectorAll('.add-item').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            currentGroupId = e.target.closest('.group-card').dataset.groupId;
+            openItemModal();
+          });
+        });
+        document.querySelectorAll('.delete-item').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const itemCard = e.target.closest('.item-card');
+            const itemId = itemCard.dataset.itemId;
+            if (confirm('Delete this item?')) deleteItem(itemId);
+          });
+        });
+        document.querySelectorAll('.edit-item').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const itemCard = e.target.closest('.item-card');
+            const itemId = itemCard.dataset.itemId;
+            const groupId = itemCard.dataset.groupId;
+            const group = groups.find(g => g.id === groupId);
+            const item = group.techlist_items.find(i => i.id === itemId);
+            if (item) {
+              openItemModal(item.id, groupId, item.name, item.power, item.quantity, item.type, item.channels, item.unit_type, item.piece);
+            }
+          });
+        });
+        
+        // Checkbox listeners for selection mode
+        document.querySelectorAll('.item-checkbox').forEach(cb => {
+          cb.addEventListener('change', (e) => {
+            e.stopPropagation();
+            const itemId = cb.dataset.itemId;
+            if (cb.checked) {
+              selectedItems.add(itemId);
+            } else {
+              selectedItems.delete(itemId);
+            }
+            updateSelectionUI();
+          });
+        });
+      }
+
+      // Swipe to delete on mobile
+      function attachSwipeListeners() {
+        const cards = document.querySelectorAll('.item-card');
+        cards.forEach(card => {
+          card.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+            touchStartTime = Date.now();
+          });
+          
+          card.addEventListener('touchend', async (e) => {
+            if (!touchStartX) return;
+            const touchEndX = e.changedTouches[0].clientX;
+            const diffX = touchStartX - touchEndX;
+            const diffTime = Date.now() - touchStartTime;
+            
+            if (diffX > 50 && diffTime < 300) {
+              const itemId = card.dataset.itemId;
+              if (confirm('Delete this item?')) {
+                card.classList.add('swipe-delete');
+                setTimeout(async () => {
+                  await deleteItem(itemId);
+                }, 300);
+              }
+            }
+            touchStartX = null;
+          });
+        });
+      }
+
+      // Double click to edit
+      function attachDoubleClickListeners() {
+        const cards = document.querySelectorAll('.item-card');
+        cards.forEach(card => {
+          card.addEventListener('dblclick', async (e) => {
+            if (checkboxMode) return;
+            e.stopPropagation();
+            const itemId = card.dataset.itemId;
+            const groupId = card.dataset.groupId;
+            const group = groups.find(g => g.id === groupId);
+            const item = group.techlist_items.find(i => i.id === itemId);
+            if (item) {
+              openItemModal(item.id, groupId, item.name, item.power, item.quantity, item.type, item.channels, item.unit_type, item.piece);
+            }
+          });
+        });
+      }
+
+      function updateSelectionUI() {
+        const count = selectedItems.size;
+        document.getElementById('selectedCount').textContent = count;
+        const selectionInfo = document.getElementById('selectionInfo');
+        
+        if (count > 0) {
+          selectionInfo.classList.add('show');
+          sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Selected (' + count + ')';
+          sendBtn.style.background = '#10b981';
+        } else {
+          selectionInfo.classList.remove('show');
+          sendBtn.innerHTML = '<i class="fas fa-check-double"></i> Send to Checklist';
+          sendBtn.style.background = '#10b981';
+        }
+      }
+
+      function openGroupModal(id = null, name = '') {
+        editingGroupId = id;
+        document.getElementById('groupModalTitle').textContent = id ? 'Edit Group' : 'Add Group';
+        document.getElementById('groupName').value = name;
+        document.getElementById('groupModal').style.display = 'flex';
+      }
+      
+      async function saveGroup() {
+        const name = document.getElementById('groupName').value.trim();
+        if (!name) return;
+        if (editingGroupId) {
+          await supabaseClient.from('techlist_groups').update({ group_name: name }).eq('id', editingGroupId);
+        } else {
+          await supabaseClient.from('techlist_groups').insert({ performer_id: currentUser.id, group_name: name, order_index: groups.length });
+        }
+        closeGroupModal();
+        loadTechList();
+      }
+      
+      function closeGroupModal() { 
+        document.getElementById('groupModal').style.display = 'none'; 
+        editingGroupId = null; 
+      }
+      
+      async function deleteGroup(groupId) {
+        await supabaseClient.from('techlist_groups').delete().eq('id', groupId);
+        loadTechList();
+      }
+      
+      function openItemModal(itemId = null, groupId = null, name = '', power = '', quantity = '', type = '', channels = '', unitType = '', piece = '') {
+        editingItemId = itemId;
+        currentGroupId = groupId || currentGroupId;
+        document.getElementById('itemModalTitle').textContent = itemId ? 'Edit Item' : 'Add Item';
+        document.getElementById('itemName').value = name;
+        document.getElementById('itemQuantity').value = quantity || '';
+        document.getElementById('unitType').value = unitType || '';
+        document.getElementById('itemPower').value = power || '';
+        document.getElementById('itemChannels').value = channels || '';
+        document.getElementById('itemPiece').value = piece || '';
+        document.getElementById('itemType').value = type || '';
+        
+        powerInputGroup.classList.remove('show');
+        channelsInputGroup.classList.remove('show');
+        pieceInputGroup.classList.remove('show');
+        
+        if (unitType === 'power') {
+          powerInputGroup.classList.add('show');
+        } else if (unitType === 'channels') {
+          channelsInputGroup.classList.add('show');
+        } else if (unitType === 'piece') {
+          pieceInputGroup.classList.add('show');
+        }
+        
+        document.getElementById('itemModal').style.display = 'flex';
+      }
+      
+      async function saveItem() {
+        const name = document.getElementById('itemName').value.trim();
+        if (!name || !currentGroupId) return;
+        const quantity = parseInt(document.getElementById('itemQuantity').value) || 1;
+        const unitType = document.getElementById('unitType').value;
+        let power = null;
+        let channels = null;
+        let piece = null;
+        
+        if (unitType === 'power') {
+          power = parseInt(document.getElementById('itemPower').value) || null;
+        } else if (unitType === 'channels') {
+          channels = parseInt(document.getElementById('itemChannels').value) || null;
+        } else if (unitType === 'piece') {
+          piece = parseInt(document.getElementById('itemPiece').value) || null;
+        }
+        
+        const type = document.getElementById('itemType').value || null;
+        
+        const itemData = { name, quantity, group_id: currentGroupId, unit_type: unitType || null, type };
+        if (power !== null) itemData.power = power;
+        if (channels !== null) itemData.channels = channels;
+        if (piece !== null) itemData.piece = piece;
+        
+        if (editingItemId) {
+          await supabaseClient.from('techlist_items').update(itemData).eq('id', editingItemId);
+        } else {
+          const group = groups.find(g => g.id === currentGroupId);
+          const order = group?.techlist_items?.length || 0;
+          itemData.order_index = order;
+          await supabaseClient.from('techlist_items').insert(itemData);
+        }
+        closeItemModal();
+        loadTechList();
+      }
+      
+      function closeItemModal() { 
+        document.getElementById('itemModal').style.display = 'none'; 
+        editingItemId = null; 
+        currentGroupId = null;
+        powerInputGroup.classList.remove('show');
+        channelsInputGroup.classList.remove('show');
+        pieceInputGroup.classList.remove('show');
+      }
+      
+      async function deleteItem(itemId) {
+        await supabaseClient.from('techlist_items').delete().eq('id', itemId);
+        loadTechList();
+      }
+      
+      // Send to Checklist - toggle checkbox mode and handle sending
+      const sendBtn = document.getElementById('sendToChecklistBtn');
+      const checklistSelectModal = document.getElementById('checklistSelectModal');
+      const checklistSelect = document.getElementById('checklistSelect');
+      const newChecklistName = document.getElementById('newChecklistName');
+      
+      sendBtn.addEventListener('click', async () => {
+        if (!checkboxMode) {
+          // Enter selection mode
+          checkboxMode = true;
+          document.body.classList.add('checkbox-mode');
+          selectedItems.clear();
+          renderGroups();
+          showToast('Select items to send to checklist', '#4f46e5');
+          updateSelectionUI();
+        } else {
+          // Already in selection mode - send selected items
+          if (selectedItems.size === 0) {
+            showToast('No items selected', '#f97316');
+            return;
+          }
+          
+          // Load checklists
+          const STORAGE_KEY = 'vivo_checklists';
+          let checklists = [];
+          const stored = localStorage.getItem(STORAGE_KEY);
+          if (stored) {
+            try { checklists = JSON.parse(stored); } catch(e) { checklists = []; }
+          }
+          if (checklists.length === 0) {
+            checklists = [{ id: Date.now() + '-default', name: 'My Checklist', items: [] }];
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(checklists));
+          }
+          checklistSelect.innerHTML = checklists.map(list => `<option value="${list.id}">${escapeHtml(list.name)}</option>`).join('');
+          checklistSelectModal.style.display = 'flex';
+        }
+      });
+      
+      document.getElementById('createNewChecklistBtn').addEventListener('click', () => {
+        const newName = newChecklistName.value.trim();
+        if (!newName) {
+          showToast('Enter a checklist name', '#f97316');
+          return;
+        }
+        const STORAGE_KEY = 'vivo_checklists';
+        let checklists = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        const newId = Date.now() + '-' + Math.random().toString(36).substr(2, 6);
+        checklists.push({ id: newId, name: newName, items: [] });
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(checklists));
+        checklistSelect.innerHTML = checklists.map(list => `<option value="${list.id}">${escapeHtml(list.name)}</option>`).join('');
+        checklistSelect.value = newId;
+        newChecklistName.value = '';
+        showToast(`Created "${newName}" checklist`, '#10b981');
+      });
+      
+      document.getElementById('confirmSendToChecklist').addEventListener('click', () => {
+        const selectedListId = checklistSelect.value;
+        if (!selectedListId) { showToast('Select a checklist', '#f97316'); return; }
+        
+        const STORAGE_KEY = 'vivo_checklists';
+        let checklists = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        const targetList = checklists.find(l => l.id === selectedListId);
+        if (targetList) {
+          const selectedItemsList = [];
+          document.querySelectorAll('.item-checkbox:checked').forEach(cb => {
+            const itemCard = cb.closest('.item-card');
+            const groupName = itemCard.dataset.groupName;
+            const itemName = cb.dataset.itemName;
+            const quantity = cb.dataset.itemQty;
+            const unit = cb.dataset.itemUnit;
+            const type = cb.dataset.itemType;
+            selectedItemsList.push({ name: itemName, groupName, quantity, unit, type });
+          });
+          
+          for (const item of selectedItemsList) {
+            const newItem = {
+              id: Date.now() + '-' + Math.random().toString(36).substr(2, 6),
+              name: `${item.name}`,
+              groupName: item.groupName,
+              quantity: item.quantity,
+              unit: item.unit || '—',
+              type: item.type || '—',
+              checked: false
+            };
+            targetList.items.push(newItem);
+          }
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(checklists));
+          showToast(`Added ${selectedItemsList.length} items to "${targetList.name}"`, '#10b981');
+          
+          // Exit selection mode
+          checkboxMode = false;
+          document.body.classList.remove('checkbox-mode');
+          selectedItems.clear();
+          updateSelectionUI();
+          checklistSelectModal.style.display = 'none';
+          renderGroups();
+        } else {
+          showToast('Checklist not found', '#f97316');
+        }
+      });
+      
+      document.getElementById('cancelChecklistSelect').addEventListener('click', () => {
+        checklistSelectModal.style.display = 'none';
+      });
+      
+      function showToast(message, bgColor = '#10b981') {
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = message;
+        toast.style.backgroundColor = bgColor;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2500);
+      }
+      
+      // PDF Download
+      document.getElementById('downloadPDF').addEventListener('click', async function() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        
+        const primaryColor = [79, 70, 229];
+        const darkColor = [30, 30, 40];
+        const lightText = [100, 100, 120];
+        
+        let y = 25;
+        
+        doc.setFontSize(24);
+        doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+        doc.setFont('helvetica', 'bold');
+        doc.text(techlistName, 20, y);
+        y += 12;
+        
+        doc.setFontSize(9);
+        doc.setTextColor(lightText[0], lightText[1], lightText[2]);
+        doc.setFont('helvetica', 'normal');
+        doc.text(`Generated: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`, 20, y);
+        y += 5;
+        doc.text(`Prepared by: ${currentUser.email || 'Performer'}`, 20, y);
+        y += 12;
+        
+        doc.setDrawColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+        doc.setLineWidth(0.5);
+        doc.line(20, y, 190, y);
+        y += 10;
+        
+        let totalPowerWatts = 0;
+        
+        for (const group of groups) {
+          const items = group.techlist_items || [];
+          if (items.length === 0) continue;
+          
+          if (y > 250) {
+            doc.addPage();
+            y = 20;
+          }
+          
+          doc.setFillColor(darkColor[0], darkColor[1], darkColor[2]);
+          doc.rect(20, y - 4, 170, 10, 'F');
+          doc.setFontSize(12);
+          doc.setTextColor(255, 255, 255);
+          doc.setFont('helvetica', 'bold');
+          doc.text(group.group_name, 25, y);
+          y += 8;
+          
+          items.forEach((item, idx) => {
+            if (y > 270) {
+              doc.addPage();
+              y = 20;
+              doc.setFillColor(darkColor[0], darkColor[1], darkColor[2]);
+              doc.rect(20, y - 4, 170, 10, 'F');
+              doc.text(group.group_name + ' (cont.)', 25, y);
+              y += 8;
+            }
+            
+            const quantity = item.quantity || 1;
+            const unitDisplay = formatUnitDisplay(item);
+            const typeDisplay = formatTypeDisplay(item);
+            
+            if (item.unit_type === 'power' && item.power && item.power > 0) {
+              totalPowerWatts += (item.power * quantity);
+            }
+            
+            if (idx % 2 === 0) {
+              doc.setFillColor(248, 249, 250);
+              doc.rect(20, y - 3, 170, 8, 'F');
+            }
+            
+            doc.setFontSize(9);
+            doc.setTextColor(50, 50, 60);
+            doc.setFont('helvetica', 'normal');
+            
+            let itemName = item.name;
+            if (itemName.length > 35) itemName = itemName.substring(0, 32) + '...';
+            
+            // Item name
+            doc.text(itemName, 25, y);
+            // Quantity
+            doc.text(`${quantity}x`, 120, y);
+            // Unit
+            doc.text(unitDisplay, 145, y);
+            // Type
+            doc.text(typeDisplay, 170, y);
+            y += 7;
+          });
+          
+          y += 6;
+        }
+        
+        const pageCount = doc.internal.getNumberOfPages();
+        const totalPowerFormatted = totalPowerWatts >= 1000 
+          ? (totalPowerWatts / 1000).toFixed(1) + ' kW' 
+          : totalPowerWatts > 0 ? totalPowerWatts + ' W' : null;
+        
+        for (let i = 1; i <= pageCount; i++) {
+          doc.setPage(i);
+          doc.setDrawColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+          doc.setLineWidth(0.3);
+          doc.line(20, 280, 190, 280);
+          doc.setFontSize(7);
+          doc.setTextColor(150, 150, 160);
+          doc.text(`Page ${i} of ${pageCount}`, 170, 287);
+          doc.text(`© ${new Date().getFullYear()} Vivo Distro · ${techlistName}`, 20, 287);
+          
+          if (i === pageCount && totalPowerFormatted) {
+            doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+            doc.text(`Total Power: ${totalPowerFormatted}`, 20, 275);
+          }
+        }
+        
+        doc.save(techlistName.replace(/\s+/g, '_').toLowerCase() + '_techlist.pdf');
+      });
+      
+      document.getElementById('addGroupBtn').addEventListener('click', () => openGroupModal());
+      document.getElementById('cancelGroupBtn').addEventListener('click', closeGroupModal);
+      document.getElementById('saveGroupBtn').addEventListener('click', saveGroup);
+      document.getElementById('cancelItemBtn').addEventListener('click', closeItemModal);
+      document.getElementById('saveItemBtn').addEventListener('click', saveItem);
+      window.addEventListener('click', (e) => { 
+        if (e.target === document.getElementById('groupModal')) closeGroupModal(); 
+        if (e.target === document.getElementById('itemModal')) closeItemModal(); 
+        if (e.target === checklistSelectModal) checklistSelectModal.style.display = 'none'; 
+      });
+      
+      function escapeHtml(str) { 
+        if (!str) return ''; 
+        return String(str).replace(/[&<>]/g, function(m) { 
+          if (m === '&') return '&amp;'; 
+          if (m === '<') return '&lt;'; 
+          if (m === '>') return '&gt;'; 
+          return m; 
+        }); 
+      }
+      
+      initAuth();
+    });
+  </script>
+  <script src="settings-manager.js"></script>
+  <script src="navbar.js"></script>
+</body>
+</html>
