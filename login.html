@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login | Vivo Distro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 400px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-align: center;
+            background: linear-gradient(90deg, #6C63FF, #FF6584);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.07);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #6C63FF;
+        }
+        
+        .password-container {
+            position: relative;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #8892b0;
+            transition: color 0.3s;
+        }
+        
+        .password-toggle:hover {
+            color: #fff;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(90deg, #6C63FF, #FF6584);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(108, 99, 255, 0.3);
+        }
+        
+        .signup-link {
+            text-align: center;
+            margin-top: 25px;
+            color: #8892b0;
+        }
+        
+        .signup-link a {
+            color: #6C63FF;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .error {
+            color: #F56565;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            text-align: center;
+            display: none;
+        }
+
+        /* ===== SAVED ACCOUNTS STRIP ===== */
+        #savedAccountsSection {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+            margin-top: 28px;
+            animation: fadeSlideUp 0.45s cubic-bezier(.4,0,.2,1) both;
+        }
+
+        #savedAccountsSection .strip-label {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.38);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .accounts-row {
+            display: flex;
+            gap: 18px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .saved-account-bubble {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .saved-account-bubble .avatar-ring {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            padding: 3px;
+            background: linear-gradient(135deg, #6C63FF, #FF6584);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .saved-account-bubble:hover .avatar-ring {
+            transform: translateY(-3px) scale(1.06);
+            box-shadow: 0 10px 28px rgba(108,99,255,0.45);
+        }
+
+        .saved-account-bubble .avatar-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: #1a1a2e;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .saved-account-bubble .avatar-inner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .saved-account-bubble .account-name {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.7);
+            max-width: 72px;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-weight: 500;
+        }
+
+        .saved-account-bubble .remove-btn {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #F56565;
+            border: 2px solid #1a1a2e;
+            color: #fff;
+            font-size: 0.65rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            z-index: 10;
+        }
+
+        .saved-account-bubble:hover .remove-btn {
+            opacity: 1;
+        }
+
+        /* Highlight ring when selected */
+        .saved-account-bubble.selected .avatar-ring {
+            box-shadow: 0 0 0 3px #fff, 0 0 0 5px #6C63FF;
+            transform: translateY(-3px) scale(1.06);
+        }
+
+        /* Plus bubble (add account) */
+        .add-account-bubble {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .add-account-bubble .plus-ring {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            border: 2px dashed rgba(255,255,255,0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: rgba(255,255,255,0.4);
+            transition: all 0.25s ease;
+            background: rgba(255,255,255,0.04);
+        }
+
+        .add-account-bubble:hover .plus-ring {
+            border-color: #6C63FF;
+            color: #6C63FF;
+            background: rgba(108,99,255,0.1);
+            transform: translateY(-3px) scale(1.06);
+            box-shadow: 0 8px 22px rgba(108,99,255,0.3);
+        }
+
+        .add-account-bubble .account-name {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.35);
+            text-align: center;
+            font-weight: 500;
+        }
+
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- GLOBAL FULLSCREEN BUTTON - ALWAYS VISIBLE -->
+    <button id="globalFullscreenBtn" style="
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: #6C63FF;
+        border: 2px solid white;
+        color: white;
+        font-size: 1.3rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 999999;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        transition: all 0.3s ease;
+    ">
+        <i class="fas fa-expand"></i>
+    </button>
+
+    <div style="display:flex; flex-direction:column; align-items:center; width:100%; max-width:400px;">
+    <div class="container" id="loginContainer" style="width:100%;">
+        <h1>Login</h1>
+        
+        <div class="form-group">
+            <input type="text" id="username" placeholder="Username">
+        </div>
+        
+        <div class="form-group password-container">
+            <input type="password" id="password" placeholder="Password">
+            <i class="fas fa-eye password-toggle" id="toggleLoginPassword"></i>
+        </div>
+        
+        <div class="form-group checkbox-group" style="display:flex;align-items:center;margin-top:-10px;margin-bottom:20px;gap:10px;">
+            <input type="checkbox" id="rememberMe" style="width:auto;margin:0;">
+            <label for="rememberMe" style="color:#8892b0;font-size:0.9rem;cursor:pointer;">Remember Me</label>
+        </div>
+        
+        <button class="btn" id="loginBtn">Login</button>
+        
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="#" id="forgotBtn" style="color:#6C63FF; text-decoration:none; font-size:0.95rem; font-weight:600;">Forgot Password?</a>
+        </div>
+        
+        <div class="signup-link" style="margin-top: 15px;">
+            Don't have an account? <a href="signup.html">Sign up</a>
+        </div>
+        
+        <div class="error" id="errorMsg">Invalid username or password</div>
+    </div>
+
+    <!-- ===== SAVED ACCOUNTS SECTION ===== -->
+    <div id="savedAccountsSection">
+        <span class="strip-label">Quick Switch</span>
+        <div class="accounts-row" id="accountsRow">
+            <!-- Populated by JS -->
+        </div>
+    </div>
+
+    </div><!-- /login column wrapper -->
+
+    <div class="container" id="forgotContainer" style="display:none;">
+        <h1>Recover Account</h1>
+        <p style="text-align:center; color:#8892b0; margin-bottom:20px; font-size:0.9rem;">Enter your username and email to securely recover your account.</p>
+        
+        <div id="recoverInputArea">
+            <div class="form-group">
+                <input type="text" id="forgotUsername" placeholder="Username">
+            </div>
+            
+            <div class="form-group">
+                <input type="email" id="forgotEmail" placeholder="Email">
+            </div>
+            
+            <button class="btn" id="recoverBtn">Verify Account</button>
+        </div>
+
+        <div id="recoverActionArea"></div>
+        
+        <div class="signup-link">
+            <a href="#" id="backToLoginBtn">Back to Login</a>
+        </div>
+        
+        <div class="error" id="forgotMsg" style="margin-top:15px; font-size:0.95rem; line-height:1.5;"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // ===== GLOBAL FULLSCREEN FUNCTIONALITY =====
+        (function() {
+            const fullscreenBtn = document.getElementById('globalFullscreenBtn');
+            
+            if (!fullscreenBtn) {
+                console.error('Fullscreen button not found!');
+                return;
+            }
+            
+            // Check if we were in fullscreen mode before
+            if (localStorage.getItem('fullscreenMode') === 'true') {
+                setTimeout(() => {
+                    if (!document.fullscreenElement) {
+                        if (document.documentElement.requestFullscreen) {
+                            document.documentElement.requestFullscreen().catch(err => {
+                                console.log('Auto fullscreen failed:', err);
+                            });
+                        }
+                        fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+                    }
+                }, 500);
+            }
+            
+            // Toggle fullscreen on button click
+            fullscreenBtn.addEventListener('click', function() {
+                if (!document.fullscreenElement) {
+                    // Enter fullscreen
+                    if (document.documentElement.requestFullscreen) {
+                        document.documentElement.requestFullscreen();
+                    } else if (document.documentElement.webkitRequestFullscreen) { // Safari
+                        document.documentElement.webkitRequestFullscreen();
+                    } else if (document.documentElement.msRequestFullscreen) { // IE/Edge
+                        document.documentElement.msRequestFullscreen();
+                    }
+                    
+                    localStorage.setItem('fullscreenMode', 'true');
+                    this.innerHTML = '<i class="fas fa-compress"></i>';
+                } else {
+                    // Exit fullscreen
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    } else if (document.webkitExitFullscreen) { // Safari
+                        document.webkitExitFullscreen();
+                    } else if (document.msExitFullscreen) { // IE/Edge
+                        document.msExitFullscreen();
+                    }
+                    
+                    localStorage.removeItem('fullscreenMode');
+                    this.innerHTML = '<i class="fas fa-expand"></i>';
+                }
+            });
+            
+            // Update button when fullscreen changes (like pressing ESC)
+            document.addEventListener('fullscreenchange', updateButton);
+            document.addEventListener('webkitfullscreenchange', updateButton);
+            document.addEventListener('mozfullscreenchange', updateButton);
+            document.addEventListener('MSFullscreenChange', updateButton);
+            
+            function updateButton() {
+                if (document.fullscreenElement) {
+                    fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+                    localStorage.setItem('fullscreenMode', 'true');
+                } else {
+                    fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+                    localStorage.removeItem('fullscreenMode');
+                }
+            }
+            
+            // Log that fullscreen button is ready
+            console.log('✅ Fullscreen button initialized');
+        })();
+
+        // ===== LOGIN FUNCTIONALITY =====
+        document.addEventListener('DOMContentLoaded', function() {
+            const supabaseUrl = 'https://msjinuumxmezrijqemmp.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zamludXVteG1lenJpanFlbW1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwOTAyNjMsImV4cCI6MjA4NzY2NjI2M30.ic50fSC7MQfhSkhfE5E8B0R5-BGCQStMRZNHiy6Zakw';
+            const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+            const loginBtn = document.getElementById('loginBtn');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const errorMsg = document.getElementById('errorMsg');
+
+            // Toggle Password View
+            document.getElementById('toggleLoginPassword').addEventListener('click', function() {
+                const pInput = document.getElementById('password');
+                if (pInput.type === 'password') {
+                    pInput.type = 'text';
+                    this.classList.replace('fa-eye', 'fa-eye-slash');
+                } else {
+                    pInput.type = 'password';
+                    this.classList.replace('fa-eye-slash', 'fa-eye');
+                }
+            });
+
+            // Forgot Password Navigation
+            document.getElementById('forgotBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                document.getElementById('loginContainer').style.display = 'none';
+                document.getElementById('forgotContainer').style.display = 'block';
+                document.getElementById('recoverInputArea').style.display = 'block';
+                document.getElementById('recoverActionArea').innerHTML = '';
+                document.getElementById('forgotMsg').style.display = 'none';
+            });
+
+            document.getElementById('backToLoginBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                document.getElementById('loginContainer').style.display = 'block';
+                document.getElementById('forgotContainer').style.display = 'none';
+            });
+
+            // Recover Password Logic
+            document.getElementById('recoverBtn').addEventListener('click', async function() {
+                const username = document.getElementById('forgotUsername').value.trim();
+                const email = document.getElementById('forgotEmail').value.trim();
+                const forgotMsg = document.getElementById('forgotMsg');
+
+                if (!username || !email) {
+                    forgotMsg.textContent = 'Please enter both username and email';
+                    forgotMsg.style.display = 'block';
+                    forgotMsg.style.color = '#F56565';
+                    return;
+                }
+
+                forgotMsg.style.display = 'none';
+                this.disabled = true;
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('usernames')
+                        .select('email')
+                        .eq('username', username)
+                        .eq('email', email)
+                        .maybeSingle();
+
+                    if (error || !data) {
+                        throw new Error('Username and email combination not found in our records.');
+                    }
+
+                    // Look for locally saved password first (as a hack for the prototype)
+                    const savedStr = localStorage.getItem('vivo_saved_accounts') || '[]';
+                    const savedData = JSON.parse(savedStr);
+                    const localAcc = savedData.find(a => a.email === email && a.username === username);
+                    
+                    if (localAcc) {
+                        const rawPw = atob(localAcc.password);
+                        document.getElementById('recoverInputArea').style.display = 'none';
+                        document.getElementById('recoverActionArea').innerHTML = `
+                            <p style="color:#48BB78;margin-bottom:15px;text-align:center;font-weight:bold;">Account Verified!</p>
+                            <div class="form-group password-container" style="margin-bottom:0;">
+                                <input type="text" value="${rawPw}" readonly style="background:rgba(108,99,255,0.1); border-color:#6C63FF; text-align:center; font-weight:bold; font-size:1.1rem; letter-spacing:1px; width:100%; padding:15px; border-radius:12px; color:#fff;">
+                            </div>
+                            <p style="color:#8892b0;font-size:0.8rem;text-align:center;margin-top:15px;">This is your current password retrieved securely from this device's memory. <br><br>Please return to login to access your account. You can then change your password securely from the Hub Settings.</p>
+                        `;
+                    } else {
+                        // Standard Supabase Reset
+                        await supabaseClient.auth.resetPasswordForEmail(email, {
+                            redirectTo: window.location.origin + '/login.html'
+                        });
+
+                        document.getElementById('recoverInputArea').style.display = 'none';
+                        forgotMsg.innerHTML = '<span style="font-weight:bold;">Account verified!</span><br><br>A fully secure reset link has been dispatched to your email address.<br><br><span style="font-size:0.8rem;color:#8892b0;">(Note: Current passwords are cryptographically hashed on the servers and cannot be natively displayed unless they were physically saved on this local machine earlier).</span>';
+                        forgotMsg.style.color = '#48BB78';
+                        forgotMsg.style.display = 'block';
+                    }
+                } catch (error) {
+                    forgotMsg.textContent = error.message;
+                    forgotMsg.style.color = '#F56565';
+                    forgotMsg.style.display = 'block';
+                } finally {
+                    this.disabled = false;
+                    this.innerHTML = 'Verify Account';
+                }
+            });
+
+            loginBtn.addEventListener('click', async function() {
+                const username = usernameInput.value.trim();
+                const password = passwordInput.value;
+
+                if (!username || !password) {
+                    errorMsg.textContent = 'Please enter username and password';
+                    errorMsg.style.display = 'block';
+                    return;
+                }
+
+                errorMsg.style.display = 'none';
+                loginBtn.disabled = true;
+                loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+
+                try {
+                    // First, try to sign in directly with email and password
+                    // For test users, we know their emails
+                    let email = '';
+                    
+                    if (username === 'agenttest') email = 'agenttest@vivodistro.com';
+                    else if (username === 'performertest') email = 'performertest@vivodistro.com';
+                    else if (username === 'bookertest') email = 'bookertest@vivodistro.com';
+                    else {
+                        // Try to look up in usernames table
+                        const { data: userData } = await supabaseClient
+                            .from('usernames')
+                            .select('email')
+                            .eq('username', username)
+                            .maybeSingle();
+                        
+                        if (userData) {
+                            email = userData.email;
+                        }
+                    }
+
+                    if (!email) {
+                        throw new Error('User not found');
+                    }
+
+                    // Login with email and password
+                    const { data, error } = await supabaseClient.auth.signInWithPassword({
+                        email: email,
+                        password: password
+                    });
+
+                    if (error) throw error;
+
+                    // Get user's role from metadata
+                    const role = data.user.user_metadata?.role;
+                    
+                    // Check if they have a profile
+                    let hasProfile = false;
+                    
+                    if (role === 'performer') {
+                        const { data: profile } = await supabaseClient
+                            .from('performers')
+                            .select('id, name, image_url')
+                            .eq('auth_id', data.user.id)
+                            .maybeSingle();
+                        hasProfile = !!profile;
+                        if (hasProfile) { window.profileName = profile.name; window.profileAvatar = profile.image_url; }
+                    } else if (role === 'agent') {
+                        const { data: profile } = await supabaseClient
+                            .from('agents')
+                            .select('id, name, logo_url')
+                            .eq('auth_id', data.user.id)
+                            .maybeSingle();
+                        hasProfile = !!profile;
+                        if (hasProfile) { window.profileName = profile.name; window.profileAvatar = profile.logo_url; }
+                    } else if (role === 'booker') {
+                        const { data: profile } = await supabaseClient
+                            .from('bookers')
+                            .select('id, name, logo_url')
+                            .eq('auth_id', data.user.id)
+                            .maybeSingle();
+                        hasProfile = !!profile;
+                        if (hasProfile) { window.profileName = profile.name; window.profileAvatar = profile.logo_url; }
+                    }
+
+                    // Handle Remember Me & Account Savings
+                    if (document.getElementById('rememberMe').checked) {
+                        try {
+                            const accountsStr = localStorage.getItem('vivo_saved_accounts') || '[]';
+                            const accounts = JSON.parse(accountsStr);
+                            const existingIndex = accounts.findIndex(a => a.email === email);
+                            if (existingIndex > -1) accounts.splice(existingIndex, 1);
+                            
+                            accounts.push({
+                                id: data.user.id,
+                                email: email,
+                                username: username,
+                                password: btoa(password),
+                                role: role,
+                                name: window.profileName || username,
+                                avatar: window.profileAvatar
+                            });
+                            localStorage.setItem('vivo_saved_accounts', JSON.stringify(accounts));
+                            localStorage.setItem('vivo_remember_me', 'true');
+                        } catch (e) { console.error('Failed saving account', e); }
+                    } else {
+                        localStorage.removeItem('vivo_remember_me');
+                    }
+
+                    // Redirect
+                    if (hasProfile) {
+                        if (role === 'performer') window.location.href = 'performer-hub.html';
+                        else if (role === 'agent') window.location.href = 'agent-hub.html';
+                        else if (role === 'booker') window.location.href = 'booker-hub.html';
+                        else window.location.href = 'performer-hub.html';
+                    } else {
+                        if (role === 'performer') window.location.href = 'performer-setup.html';
+                        else if (role === 'agent') window.location.href = 'agent-setup.html';
+                        else if (role === 'booker') window.location.href = 'booker-setup.html';
+                        else window.location.href = 'performer-setup.html';
+                    }
+                    
+                } catch (error) {
+                    console.error('Login error:', error);
+                    errorMsg.style.display = 'block';
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = 'Login';
+                }
+            });
+
+            passwordInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    loginBtn.click();
+                }
+            });
+
+            // ===== SAVED ACCOUNTS QUICK-SWITCH =====
+            function getSavedAccounts() {
+                try { return JSON.parse(localStorage.getItem('vivo_saved_accounts') || '[]'); }
+                catch(e) { return []; }
+            }
+
+            function saveSavedAccounts(arr) {
+                localStorage.setItem('vivo_saved_accounts', JSON.stringify(arr));
+            }
+
+            function getInitials(name) {
+                if (!name) return '?';
+                const parts = name.trim().split(' ');
+                return parts.length >= 2
+                    ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+                    : parts[0][0].toUpperCase();
+            }
+
+            function renderSavedAccounts() {
+                const accounts = getSavedAccounts();
+                const section = document.getElementById('savedAccountsSection');
+                const row = document.getElementById('accountsRow');
+                row.innerHTML = '';
+
+                if (accounts.length === 0) {
+                    section.style.display = 'none';
+                    return;
+                }
+
+                section.style.display = 'flex';
+
+                accounts.forEach(function(acc, index) {
+                    const bubble = document.createElement('div');
+                    bubble.className = 'saved-account-bubble';
+                    bubble.dataset.index = index;
+
+                    // Avatar inner content
+                    let avatarContent = '';
+                    if (acc.avatar) {
+                        avatarContent = `<img src="${acc.avatar}" alt="${acc.name || acc.username}" onerror="this.outerHTML='${getInitials(acc.name || acc.username)}'">`;
+                    } else {
+                        avatarContent = getInitials(acc.name || acc.username);
+                    }
+
+                    bubble.innerHTML = `
+                        <div class="avatar-ring">
+                            <div class="avatar-inner">${avatarContent}</div>
+                        </div>
+                        <span class="account-name">${acc.name || acc.username}</span>
+                        <div class="remove-btn" title="Remove account"><i class="fas fa-times"></i></div>
+                    `;
+
+                    // Click bubble → pre-fill username, focus password
+                    bubble.querySelector('.avatar-ring').addEventListener('click', function() {
+                        // Deselect all
+                        document.querySelectorAll('.saved-account-bubble').forEach(b => b.classList.remove('selected'));
+                        bubble.classList.add('selected');
+
+                        usernameInput.value = acc.username;
+                        passwordInput.value = '';
+                        passwordInput.focus();
+                        errorMsg.style.display = 'none';
+
+                        // Scroll login container into view smoothly
+                        document.getElementById('loginContainer').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    });
+
+                    // Remove (×) button
+                    bubble.querySelector('.remove-btn').addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const accs = getSavedAccounts();
+                        accs.splice(index, 1);
+                        saveSavedAccounts(accs);
+                        if (accs.length === 0) localStorage.removeItem('vivo_remember_me');
+                        renderSavedAccounts();
+                        // Clear pre-fill if this was the selected one
+                        if (usernameInput.value === acc.username) {
+                            usernameInput.value = '';
+                        }
+                    });
+
+                    row.appendChild(bubble);
+                });
+
+                // "Add account" bubble
+                const addBubble = document.createElement('div');
+                addBubble.className = 'add-account-bubble';
+                addBubble.id = 'addAccountBubble';
+                addBubble.innerHTML = `
+                    <div class="plus-ring"><i class="fas fa-plus"></i></div>
+                    <span class="account-name">Add Account</span>
+                `;
+                addBubble.addEventListener('click', function() {
+                    // Deselect saved bubbles, clear fields for fresh login
+                    document.querySelectorAll('.saved-account-bubble').forEach(b => b.classList.remove('selected'));
+                    usernameInput.value = '';
+                    passwordInput.value = '';
+                    document.getElementById('rememberMe').checked = true;
+                    usernameInput.focus();
+                    errorMsg.style.display = 'none';
+                    document.getElementById('loginContainer').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                });
+                row.appendChild(addBubble);
+            }
+
+            // Initial render on page load
+            renderSavedAccounts();
+
+            // Also re-render after successful login with Remember Me
+            // (the save happens inside loginBtn click, then redirect, so nothing extra needed)
+        });
+    </script>
+</body>
+</html>

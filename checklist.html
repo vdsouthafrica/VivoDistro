@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CheckList · Vivo Distro</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons@6.6.6/css/flag-icons.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0a0e1a 0%, #151a2c 100%);
+      color: #e5e5e5;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Simple Header with Back Button */
+    .simple-header {
+      background: #151a2c;
+      border-bottom: 1px solid rgba(108,99,255,0.2);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(108,99,255,0.2);
+      border-radius: 8px;
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background: rgba(108, 99, 255, 0.1);
+      border-color: #6C63FF;
+      transform: translateX(-3px);
+    }
+
+    .back-btn i {
+      color: #6C63FF;
+    }
+
+    .page-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .page-title i {
+      color: #6C63FF;
+    }
+
+    /* MAIN CONTENT */
+    .hub-main {
+      min-height: 100vh;
+      padding: 30px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* Enhanced Header */
+    .page-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(108,99,255,0.2);
+    }
+
+    .page-header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #fff 0%, #6C63FF 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .page-header h1 i {
+      background: linear-gradient(135deg, #6C63FF, #FF6584);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    /* Checklist Layout Enhanced */
+    .checklist-layout {
+      display: flex;
+      gap: 2rem;
+      height: calc(100vh - 150px);
+      min-height: 500px;
+    }
+
+    /* Sidebar Lists - Enhanced */
+    .list-sidebar {
+      width: 320px;
+      background: rgba(21, 26, 44, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(108,99,255,0.2);
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+
+    .list-sidebar-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid rgba(108,99,255,0.2);
+      background: rgba(108,99,255,0.05);
+    }
+
+    .list-sidebar-header h3 {
+      color: #fff;
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .list-sidebar-header h3 i {
+      color: #6C63FF;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #6C63FF, #FF6584);
+      border: none;
+      color: #fff;
+      padding: 0.75rem 1.2rem;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(108,99,255,0.4);
+    }
+
+    .list-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem;
+    }
+
+    .list-btn {
+      width: 100%;
+      text-align: left;
+      padding: 0.875rem 1rem;
+      background: rgba(30, 30, 40, 0.6);
+      border: 1px solid rgba(108,99,255,0.1);
+      color: #fff;
+      border-radius: 12px;
+      margin-bottom: 0.75rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+
+    .list-btn:hover {
+      background: rgba(108,99,255,0.15);
+      border-color: rgba(108,99,255,0.3);
+      transform: translateX(5px);
+    }
+
+    .list-btn.active {
+      background: linear-gradient(135deg, rgba(108,99,255,0.2), rgba(255,101,132,0.1));
+      border-color: #6C63FF;
+      color: #6C63FF;
+    }
+
+    .list-btn i {
+      color: #6C63FF;
+    }
+
+    /* Main Checklist Area - Enhanced */
+    .checklist-main {
+      flex: 1;
+      background: rgba(21, 26, 44, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(108,99,255,0.2);
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+
+    .checklist-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid rgba(108,99,255,0.2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      background: rgba(108,99,255,0.03);
+    }
+
+    .checklist-header h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, #fff, #6C63FF);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      background: rgba(42, 42, 53, 0.8);
+      border: 1px solid rgba(108,99,255,0.2);
+      color: #fff;
+      padding: 0.6rem 1.2rem;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s;
+    }
+
+    .btn:hover:not(:disabled) {
+      background: rgba(108,99,255,0.2);
+      border-color: #6C63FF;
+      transform: translateY(-2px);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-danger {
+      background: rgba(185, 28, 28, 0.2);
+      border-color: rgba(220, 38, 38, 0.3);
+    }
+
+    .btn-danger:hover:not(:disabled) {
+      background: rgba(220, 38, 38, 0.3);
+      border-color: #dc2626;
+    }
+
+    .items-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem;
+    }
+
+    /* Checklist Items - Enhanced */
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: rgba(30, 30, 40, 0.6);
+      border: 1px solid rgba(108,99,255,0.1);
+      border-radius: 12px;
+      margin-bottom: 0.75rem;
+      transition: all 0.3s;
+      animation: fadeInUp 0.3s ease;
+    }
+
+    .checklist-item:hover {
+      background: rgba(108,99,255,0.1);
+      border-color: rgba(108,99,255,0.3);
+      transform: translateX(5px);
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .checklist-item input[type="checkbox"] {
+      width: 22px;
+      height: 22px;
+      accent-color: #6C63FF;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+
+    .item-name {
+      flex: 1;
+      font-size: 1rem;
+      color: #fff;
+      font-weight: 500;
+    }
+
+    .checklist-item input[type="checkbox"]:checked + .item-name {
+      text-decoration: line-through;
+      color: #8892b0;
+    }
+
+    .quantity-badge {
+      background: linear-gradient(135deg, rgba(108,99,255,0.2), rgba(255,101,132,0.1));
+      color: #6C63FF;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: 1px solid rgba(108,99,255,0.3);
+    }
+
+    .delete-item {
+      background: none;
+      border: none;
+      color: #a0a0b0;
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 0.5rem;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    .delete-item:hover {
+      color: #dc2626;
+      background: rgba(220, 38, 38, 0.1);
+      transform: scale(1.1);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: #8892b0;
+      font-size: 1rem;
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    /* Modal Enhanced */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+
+    .modal-content {
+      background: linear-gradient(135deg, #1e1e28, #151a2c);
+      border-radius: 20px;
+      width: 90%;
+      max-width: 500px;
+      padding: 2rem;
+      border: 1px solid rgba(108,99,255,0.3);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      animation: modalSlideIn 0.3s ease;
+    }
+
+    @keyframes modalSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .modal-content h3 {
+      margin-bottom: 1.5rem;
+      color: #fff;
+      font-size: 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-content input {
+      width: 100%;
+      padding: 0.875rem;
+      margin-bottom: 1rem;
+      background: rgba(42, 42, 53, 0.8);
+      border: 1px solid rgba(108,99,255,0.2);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+
+    .modal-content input:focus {
+      outline: none;
+      border-color: #6C63FF;
+      box-shadow: 0 0 0 3px rgba(108,99,255,0.1);
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 12px;
+      z-index: 2000;
+      animation: slideInRight 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(100px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    /* Scrollbar Styling */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(255,255,255,0.05);
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #6C63FF;
+      border-radius: 3px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hub-main {
+        padding: 20px;
+      }
+      .simple-header {
+        padding: 0.8rem 1rem;
+      }
+      .back-btn span {
+        display: none;
+      }
+      .back-btn {
+        padding: 0.6rem;
+      }
+      .checklist-layout {
+        flex-direction: column;
+        height: auto;
+      }
+      .list-sidebar {
+        width: 100%;
+        max-height: 300px;
+      }
+      .checklist-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .header-actions {
+        width: 100%;
+      }
+      .header-actions .btn {
+        flex: 1;
+        justify-content: center;
+      }
+    }
+  </style>
+    <!-- GLobally Applied Theme Hook -->
+    <link rel="stylesheet" href="settings.css">
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const configT = localStorage.getItem('vivo_theme') || 'theme-default';
+            if(configT !== 'theme-default') document.body.classList.add(configT);
+        });
+    </script>
+</head>
+<body>
+
+  <!-- Simple Header with Back Button -->
+  <div class="simple-header">
+    <button class="back-btn" onclick="window.history.back()">
+      <i class="fas fa-arrow-left"></i>
+      <span>Back</span>
+    </button>
+    <div class="page-title">
+      <i class="fas fa-check-square"></i>
+      <span>CheckList</span>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="hub-main">
+    <div class="container">
+      <div class="page-header">
+        <h1>
+          <i class="fas fa-check-square"></i>
+          CheckList
+        </h1>
+      </div>
+
+      <div class="checklist-layout">
+        <div class="list-sidebar">
+          <div class="list-sidebar-header">
+            <h3><i class="fas fa-folder-open"></i> My Lists</h3>
+            <button class="btn-primary" id="newListBtn">
+              <i class="fas fa-plus"></i> New List
+            </button>
+          </div>
+          <div class="list-container" id="listsContainer"></div>
+        </div>
+
+        <div class="checklist-main">
+          <div class="checklist-header">
+            <h2 id="activeListTitle">
+              <i class="fas fa-clipboard-list"></i>
+              Select a list
+            </h2>
+            <div class="header-actions">
+              <button class="btn" id="addItemBtn" disabled>
+                <i class="fas fa-plus"></i> Add Item
+              </button>
+              <button class="btn" id="clearChecksBtn" disabled>
+                <i class="fas fa-undo-alt"></i> Clear Checks
+              </button>
+              <button class="btn btn-danger" id="deleteListBtn" disabled>
+                <i class="fas fa-trash-alt"></i> Delete List
+              </button>
+            </div>
+          </div>
+          <div class="items-container" id="itemsContainer">
+            <div class="empty-state">
+              <i class="fas fa-folder-open"></i>
+              <p>Select a list to view items</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- New List Modal -->
+  <div class="modal" id="newListModal">
+    <div class="modal-content">
+      <h3><i class="fas fa-plus-circle"></i> Create New List</h3>
+      <input type="text" id="newListName" placeholder="List name (e.g., Tour Gear, Backline, etc.)" autocomplete="off">
+      <div class="modal-actions">
+        <button class="btn" id="cancelNewListBtn">Cancel</button>
+        <button class="btn btn-primary" id="confirmNewListBtn">Create List</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Item Modal -->
+  <div class="modal" id="itemModal">
+    <div class="modal-content">
+      <h3><i class="fas fa-plus-circle"></i> <span id="itemModalTitle">Add Item</span></h3>
+      <input type="text" id="itemName" placeholder="Item name" autocomplete="off">
+      <input type="number" id="itemQuantity" placeholder="Quantity" value="1" min="1">
+      <div class="modal-actions">
+        <button class="btn" id="cancelItemBtn">Cancel</button>
+        <button class="btn btn-primary" id="saveItemBtn">Save Item</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async function() {
+      // Supabase config for user profile
+      const SUPABASE_URL = 'https://msjinuumxmezrijqemmp.supabase.co';
+      const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zamludXVteG1lenJpanFlbW1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwOTAyNjMsImV4cCI6MjA4NzY2NjI2M30.ic50fSC7MQfhSkhfE5E8B0R5-BGCQStMRZNHiy6Zakw';
+      const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      
+      // Checklist Storage
+      const STORAGE_KEY = 'vivo_checklists';
+      let checklists = [];
+      let activeListId = null;
+      let editingItemId = null;
+
+      function loadFromStorage() {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          try {
+            checklists = JSON.parse(stored);
+          } catch (e) {
+            checklists = [];
+          }
+        } else {
+          checklists = [
+            { id: generateId(), name: 'My First List', items: [] }
+          ];
+        }
+        saveToStorage();
+      }
+
+      function saveToStorage() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(checklists));
+      }
+
+      function generateId() {
+        return Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+      }
+
+      function showToast(message, isError = false) {
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = message;
+        if (isError) {
+          toast.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+        }
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2500);
+      }
+
+      function renderLists() {
+        const container = document.getElementById('listsContainer');
+        if (!checklists.length) {
+          container.innerHTML = '<div class="empty-state"><i class="fas fa-folder-open"></i><p>No lists yet. Create one!</p></div>';
+          return;
+        }
+        container.innerHTML = checklists.map(list => `
+          <button class="list-btn ${list.id === activeListId ? 'active' : ''}" data-list-id="${list.id}">
+            <i class="fas fa-list"></i>
+            ${escapeHtml(list.name)}
+          </button>
+        `).join('');
+        document.querySelectorAll('.list-btn').forEach(btn => {
+          btn.addEventListener('click', () => setActiveList(btn.dataset.listId));
+        });
+      }
+
+      function setActiveList(id) {
+        activeListId = id;
+        renderLists();
+        const list = checklists.find(l => l.id === id);
+        document.getElementById('activeListTitle').innerHTML = list ? `<i class="fas fa-clipboard-list"></i> ${escapeHtml(list.name)}` : '<i class="fas fa-clipboard-list"></i> Select a list';
+        document.getElementById('addItemBtn').disabled = !list;
+        document.getElementById('clearChecksBtn').disabled = !list;
+        document.getElementById('deleteListBtn').disabled = !list;
+        renderItems(list ? list.items : []);
+      }
+
+      function renderItems(items) {
+        const container = document.getElementById('itemsContainer');
+        if (!items || items.length === 0) {
+          container.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>No items. Click "Add Item" to start.</p></div>';
+          return;
+        }
+        container.innerHTML = items.map(item => `
+          <div class="checklist-item" data-item-id="${item.id}">
+            <input type="checkbox" class="item-checkbox" ${item.checked ? 'checked' : ''}>
+            <span class="item-name">${escapeHtml(item.name)}</span>
+            <span class="quantity-badge">x${item.quantity}</span>
+            <button class="delete-item" title="Delete item">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        `).join('');
+        document.querySelectorAll('.item-checkbox').forEach(cb => {
+          cb.addEventListener('change', function() {
+            const itemId = this.closest('.checklist-item').dataset.itemId;
+            const list = checklists.find(l => l.id === activeListId);
+            const item = list.items.find(i => i.id === itemId);
+            if (item) {
+              item.checked = this.checked;
+              saveToStorage();
+            }
+          });
+        });
+        document.querySelectorAll('.delete-item').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const itemId = this.closest('.checklist-item').dataset.itemId;
+            if (confirm('Delete this item?')) {
+              const list = checklists.find(l => l.id === activeListId);
+              list.items = list.items.filter(i => i.id !== itemId);
+              saveToStorage();
+              renderItems(list.items);
+              showToast('Item deleted');
+            }
+          });
+        });
+      }
+
+      // New List Modal
+      const newListModal = document.getElementById('newListModal');
+      const newListNameInput = document.getElementById('newListName');
+
+      document.getElementById('newListBtn').addEventListener('click', () => {
+        newListNameInput.value = '';
+        newListModal.style.display = 'flex';
+        setTimeout(() => newListNameInput.focus(), 100);
+      });
+
+      document.getElementById('cancelNewListBtn').addEventListener('click', () => {
+        newListModal.style.display = 'none';
+      });
+
+      document.getElementById('confirmNewListBtn').addEventListener('click', () => {
+        const name = newListNameInput.value.trim();
+        if (!name) {
+          showToast('Please enter a list name', true);
+          return;
+        }
+        const newList = { id: generateId(), name: name, items: [] };
+        checklists.push(newList);
+        saveToStorage();
+        renderLists();
+        setActiveList(newList.id);
+        newListModal.style.display = 'none';
+        showToast(`Created "${name}"`);
+      });
+
+      document.getElementById('clearChecksBtn').addEventListener('click', () => {
+        if (!activeListId) return;
+        const list = checklists.find(l => l.id === activeListId);
+        list.items.forEach(item => item.checked = false);
+        saveToStorage();
+        renderItems(list.items);
+        showToast('All checks cleared');
+      });
+
+      document.getElementById('deleteListBtn').addEventListener('click', () => {
+        if (!activeListId || !confirm('Delete this entire list?')) return;
+        checklists = checklists.filter(l => l.id !== activeListId);
+        saveToStorage();
+        activeListId = checklists.length > 0 ? checklists[0].id : null;
+        renderLists();
+        if (activeListId) setActiveList(activeListId);
+        else {
+          document.getElementById('activeListTitle').innerHTML = '<i class="fas fa-clipboard-list"></i> Select a list';
+          document.getElementById('itemsContainer').innerHTML = '<div class="empty-state"><i class="fas fa-folder-open"></i><p>No lists yet. Create one!</p></div>';
+          document.getElementById('addItemBtn').disabled = true;
+          document.getElementById('clearChecksBtn').disabled = true;
+          document.getElementById('deleteListBtn').disabled = true;
+        }
+        showToast('List deleted');
+      });
+
+      const itemModal = document.getElementById('itemModal');
+      const itemName = document.getElementById('itemName');
+      const itemQuantity = document.getElementById('itemQuantity');
+
+      document.getElementById('addItemBtn').addEventListener('click', () => {
+        editingItemId = null;
+        document.getElementById('itemModalTitle').textContent = 'Add Item';
+        itemName.value = '';
+        itemQuantity.value = '1';
+        itemModal.style.display = 'flex';
+        setTimeout(() => itemName.focus(), 100);
+      });
+
+      document.getElementById('cancelItemBtn').addEventListener('click', () => {
+        itemModal.style.display = 'none';
+      });
+
+      document.getElementById('saveItemBtn').addEventListener('click', () => {
+        const name = itemName.value.trim();
+        const qty = parseInt(itemQuantity.value);
+        if (!name || !activeListId) return;
+        const list = checklists.find(l => l.id === activeListId);
+        if (editingItemId) {
+          const item = list.items.find(i => i.id === editingItemId);
+          if (item) { item.name = name; item.quantity = qty; }
+        } else {
+          list.items.push({ id: generateId(), name: name, quantity: qty, checked: false });
+        }
+        saveToStorage();
+        itemModal.style.display = 'none';
+        renderItems(list.items);
+        showToast('Item saved');
+      });
+
+      window.addEventListener('click', (e) => {
+        if (e.target === itemModal) itemModal.style.display = 'none';
+        if (e.target === newListModal) newListModal.style.display = 'none';
+      });
+
+      function escapeHtml(unsafe) {
+        if (!unsafe) return '';
+        return unsafe.replace(/[&<>]/g, function(m) {
+          if (m === '&') return '&amp;';
+          if (m === '<') return '&lt;';
+          if (m === '>') return '&gt;';
+          return m;
+        });
+      }
+
+      loadFromStorage();
+      if (checklists.length > 0) setActiveList(checklists[0].id);
+      else renderLists();
+    });
+  </script>
+    <script src="settings-manager.js"></script>
+    <script src="navbar.js"></script>
+</body>
+</html>
+

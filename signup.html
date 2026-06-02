@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign Up | Vivo Distro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="responsive.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+    <!-- Favicons for all devices -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+    <link rel="shortcut icon" href="/icons/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+    <link rel="manifest" href="/manifest.json">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a0e1a 0%, #151a2c 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 480px;
+            background: rgba(21, 26, 44, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(90deg, #6C63FF, #FF6584);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 16px 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #6C63FF;
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        input::placeholder {
+            color: #5f6b8a;
+            font-weight: 400;
+        }
+        
+        .password-wrapper {
+            position: relative;
+            width: 100%;
+        }
+        
+        .password-wrapper input {
+            padding-right: 50px;
+        }
+        
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #5f6b8a;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .toggle-password:hover {
+            color: #6C63FF;
+        }
+        
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236C63FF'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 18px center;
+            background-size: 16px;
+            cursor: pointer;
+        }
+        
+        select option {
+            background-color: #1a1f35;
+            color: #fff;
+            padding: 12px;
+        }
+        
+        select option:first-child {
+            color: #8892b0;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(90deg, #6C63FF, #FF6584);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            letter-spacing: 0.3px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(108, 99, 255, 0.3);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .login-link {
+            text-align: center;
+            margin-top: 25px;
+            color: #8892b0;
+            font-size: 0.95rem;
+        }
+        
+        .login-link a {
+            color: #6C63FF;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+        
+        .error {
+            color: #F56565;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .username-taken {
+            color: #F56565;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        /* ===== PROFESSIONAL SUCCESS SCREEN ===== */
+        .success-screen {
+            text-align: center;
+            padding: 20px 0 10px;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .success-icon {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            border: 2px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .success-icon i {
+            font-size: 3rem;
+            color: #10b981;
+        }
+
+        .success-screen h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .email-display {
+            background: rgba(108, 99, 255, 0.1);
+            border: 1px solid rgba(108, 99, 255, 0.2);
+            border-radius: 50px;
+            padding: 12px 20px;
+            display: inline-block;
+            margin: 20px 0 15px;
+            font-weight: 500;
+            color: #6C63FF;
+            font-size: 1.1rem;
+        }
+
+        .email-display i {
+            margin-right: 8px;
+            color: #6C63FF;
+        }
+
+        .success-message {
+            color: #cbd5e0;
+            line-height: 1.7;
+            margin-bottom: 25px;
+            font-size: 1rem;
+            max-width: 350px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .success-message p {
+            margin-bottom: 8px;
+        }
+
+        .success-message .highlight {
+            color: #FF6584;
+            font-weight: 500;
+        }
+
+        .spam-note {
+            background: rgba(237, 137, 54, 0.1);
+            border: 1px solid rgba(237, 137, 54, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+            margin: 25px 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-align: left;
+        }
+
+        .spam-note i {
+            font-size: 1.3rem;
+            color: #ED8936;
+            flex-shrink: 0;
+        }
+
+        .spam-note p {
+            color: #cbd5e0;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .spam-note p strong {
+            color: #ED8936;
+            font-weight: 600;
+        }
+
+        .action-links {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0 15px;
+            flex-wrap: wrap;
+        }
+
+        .gmail-link {
+            background: rgba(234, 67, 53, 0.1);
+            border: 1px solid rgba(234, 67, 53, 0.3);
+            border-radius: 50px;
+            padding: 10px 20px;
+            color: #EA4335;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .gmail-link:hover {
+            background: rgba(234, 67, 53, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .resend-link {
+            background: none;
+            border: none;
+            color: #6C63FF;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: underline;
+            text-decoration-color: rgba(108, 99, 255, 0.3);
+            transition: all 0.2s;
+            padding: 8px 12px;
+        }
+
+        .resend-link:hover {
+            color: #8a84ff;
+            text-decoration-color: #6C63FF;
+        }
+
+        .resend-link i {
+            margin-right: 5px;
+            font-size: 0.8rem;
+        }
+
+        .resend-link:disabled {
+            opacity: 0.5;
+            cursor: wait;
+            text-decoration: none;
+        }
+
+        .back-to-login {
+            margin-top: 25px;
+            color: #5f6b8a;
+            font-size: 0.9rem;
+        }
+
+        .back-to-login a {
+            color: #6C63FF;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-to-login a:hover {
+            text-decoration: underline;
+        }
+
+        /* Terms Modal - FIXED */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .terms-modal {
+            width: 800px;
+            max-width: 95%;
+            max-height: 85vh;
+            background: #151a2c;
+            border-radius: 24px;
+            border: 1px solid rgba(108, 99, 255, 0.3);
+            overflow: hidden;
+            animation: slideUp 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            padding: 1.5rem 2rem;
+            background: rgba(108, 99, 255, 0.1);
+            border-bottom: 1px solid rgba(108, 99, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .modal-header h2 {
+            color: #fff;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-header h2 i {
+            color: #6C63FF;
+        }
+
+        .close-modal {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .close-modal:hover {
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+
+        .modal-body {
+            padding: 2rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .terms-content {
+            color: #cbd5e0;
+            line-height: 1.7;
+        }
+
+        .terms-content h3 {
+            color: #6C63FF;
+            font-size: 1.2rem;
+            margin: 1.5rem 0 0.8rem;
+        }
+
+        .terms-content h3:first-child {
+            margin-top: 0;
+        }
+
+        .terms-content p {
+            margin-bottom: 1rem;
+        }
+
+        .terms-content ul {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+        }
+
+        .terms-content li {
+            margin-bottom: 0.3rem;
+        }
+
+        .terms-footer {
+            padding: 1.5rem 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(0, 0, 0, 0.2);
+            flex-shrink: 0;
+        }
+
+        .agree-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .agree-checkbox input {
+            width: 20px;
+            height: 20px;
+            accent-color: #6C63FF;
+        }
+
+        .continue-btn {
+            padding: 12px 32px;
+            background: linear-gradient(135deg, #6C63FF, #FF6584);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .continue-btn.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .continue-btn.active:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(108, 99, 255, 0.3);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .action-links {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .gmail-link, .resend-link {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .spam-note {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><span class="gradient-text">Sign Up</span></h1>
+        
+        <!-- Professional Success Screen -->
+        <div class="success-screen" id="successScreen" style="display: none;">
+            <div class="success-icon">
+                <i class="fas fa-envelope-open-text"></i>
+            </div>
+            
+            <h2>Check Your Email</h2>
+            
+            <div class="email-display" id="sentEmailDisplay">
+                <i class="fas fa-envelope"></i>
+                <span id="sentEmail"></span>
+            </div>
+            
+            <div class="success-message">
+                <p>We've sent a confirmation link to your email address.</p>
+                <p><span class="highlight">Click the link</span> to verify your account and complete registration.</p>
+            </div>
+            
+            <div class="spam-note">
+                <i class="fas fa-exclamation-circle"></i>
+                <p><strong>Don't see the email?</strong> Check your spam folder. If you still don't see it after a few minutes, you can resend the confirmation.</p>
+            </div>
+            
+            <div class="action-links">
+                <!-- Gmail Quick Link -->
+                <a href="https://mail.google.com" target="_blank" class="gmail-link">
+                    <i class="fab fa-google"></i> Open Gmail
+                </a>
+                
+                <!-- Resend Link (small and subtle) -->
+                <button class="resend-link" id="resendBtn">
+                    <i class="fas fa-redo-alt"></i> Resend confirmation
+                </button>
+            </div>
+            
+            <div class="back-to-login">
+                <a href="login.html">← Back to Login</a>
+            </div>
+        </div>
+        
+        <!-- Sign Up Form -->
+        <div id="signupForm">
+            <div class="form-group">
+                <input type="text" id="username" placeholder="Username" autocomplete="off" required>
+                <div class="username-taken" id="usernameTaken">Username already taken</div>
+            </div>
+            
+            <div class="form-group">
+                <div class="password-wrapper">
+                    <input type="password" id="password" placeholder="Password" required>
+                    <button type="button" class="toggle-password" id="togglePassword">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <div class="password-wrapper">
+                    <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+                    <button type="button" class="toggle-password" id="toggleConfirmPassword">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <input type="email" id="email" placeholder="Email address" required>
+            </div>
+            
+            <div class="form-group">
+                <select id="role" required>
+                    <option value="" disabled selected>Select your role</option>
+                    <option value="performer">Performer</option>
+                    <option value="agent">Agent</option>
+                    <option value="booker">Booker</option>
+                </select>
+            </div>
+            
+            <button class="btn" id="signupBtn">Create Account</button>
+            
+            <div class="login-link">
+                Already have an account? <a href="login.html">Log in</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terms & Conditions Modal -->
+    <div class="modal-overlay" id="termsModal">
+        <div class="terms-modal">
+            <div class="modal-header">
+                <h2><i class="fas fa-file-contract"></i> Terms & Conditions</h2>
+                <button class="close-modal" id="closeTermsModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="terms-content">
+                    <h3>1. Platform Role and Limitation of Responsibility</h3>
+                    <p>Vivo Distro is an online platform designed to provide tools and services that assist individuals and businesses within the music and performance industry. The platform may offer features that help users manage their professional activities, connect with other users, promote their services, and explore potential opportunities within the entertainment sector.</p>
+                    <p>However, Vivo Distro functions strictly as a technology platform and intermediary tool. Vivo Distro does not act as an employer, booking agent, manager, promoter, or legal representative for any user of the platform. Users remain fully responsible for their own professional decisions, agreements, and interactions conducted through or outside the platform.</p>
+                    <p>By using Vivo Distro, users acknowledge that the platform is intended to support and facilitate networking and management within the music industry, but it does not guarantee any specific outcomes.</p>
+
+                    <h3>2. No Guarantee of Gigs, Work, or Career Success</h3>
+                    <p>Vivo Distro provides tools that may help users showcase their work, manage their professional information, and potentially connect with other individuals or businesses within the entertainment industry.</p>
+                    <p>However, Vivo Distro does not guarantee employment, bookings, gigs, contracts, or any form of professional engagement. The success of any user in obtaining gigs, collaborations, or business opportunities depends on numerous factors outside the control of Vivo Distro, including but not limited to market demand, user skill, reputation, networking efforts, and decisions made by third parties.</p>
+                    <p>Users acknowledge and agree that failure to receive bookings, gigs, or other professional opportunities through the platform shall not be considered the responsibility or fault of Vivo Distro.</p>
+
+                    <h3>3. Independent Transactions Between Users</h3>
+                    <p>Vivo Distro may allow users to connect, communicate, and enter into business relationships with one another. Any agreements, bookings, payments, or professional arrangements made between users are strictly private transactions between the involved parties.</p>
+                    <p>Vivo Distro does not participate in, supervise, or guarantee any agreements made between users, including but not limited to:</p>
+                    <ul>
+                        <li>Booking agreements</li>
+                        <li>Performance contracts</li>
+                        <li>Payment arrangements</li>
+                        <li>Service agreements</li>
+                        <li>Collaboration deals</li>
+                    </ul>
+                    <p>Vivo Distro shall not be held liable for disputes, financial losses, contract breaches, cancellations, or any other issues arising from transactions between users of the platform.</p>
+                    <p>Users are encouraged to conduct their own due diligence and, where appropriate, use formal contracts when entering into professional agreements.</p>
+
+                    <h3>4. User-Provided Information and Advertising</h3>
+                    <p>Users of Vivo Distro may create profiles, advertise services, provide professional information, and represent their skills, experience, or business offerings on the platform.</p>
+                    <p>Vivo Distro does not independently verify or guarantee the accuracy, authenticity, or reliability of any information provided by users. All content, advertisements, claims, and representations made on the platform are the sole responsibility of the user who posted them.</p>
+                    <p>Vivo Distro shall not be held responsible for any false, misleading, incomplete, or inaccurate information provided by users, including but not limited to:</p>
+                    <ul>
+                        <li>Misrepresentation of skills or experience</li>
+                        <li>Incorrect business information</li>
+                        <li>Fraudulent activity</li>
+                        <li>Misleading promotional material</li>
+                    </ul>
+                    <p>Users agree that they interact with other users at their own discretion and risk.</p>
+
+                    <h3>5. Platform Purpose and Realistic Expectations</h3>
+                    <p>Vivo Distro is designed as a multi-tool platform intended to assist performers, artists, agents, and other music industry professionals in organizing and managing aspects of their professional activities.</p>
+                    <p>While the platform aims to provide helpful tools and opportunities for connection within the music industry, users acknowledge that Vivo Distro is not a talent agency, record label, or career management service.</p>
+                    <p>Use of the platform does not guarantee fame, professional recognition, career advancement, or financial success. Outcomes within the entertainment industry depend on numerous external factors including user effort, talent, market conditions, and industry demand.</p>
+                    <p>Vivo Distro provides tools and opportunities — not guaranteed results.</p>
+
+                    <h3>6. Acceptance of Risk</h3>
+                    <p>By creating an account and using Vivo Distro, users acknowledge that:</p>
+                    <ul>
+                        <li>All professional interactions and agreements with other users occur at their own risk.</li>
+                        <li>Vivo Distro does not guarantee business success or professional opportunities.</li>
+                        <li>The platform serves solely as a facilitating tool for the music and performance community.</li>
+                    </ul>
+                    <p>Users agree that Vivo Distro shall not be held liable for any direct or indirect losses, damages, missed opportunities, or disputes arising from the use of the platform.</p>
+                </div>
+            </div>
+            <div class="terms-footer">
+                <label class="agree-checkbox">
+                    <input type="checkbox" id="agreeTerms">
+                    <span>I have read and agree to the Terms and Conditions</span>
+                </label>
+                <button class="continue-btn" id="continueBtn">Continue to Create Account</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Supabase configuration
+            const supabaseUrl = 'https://msjinuumxmezrijqemmp.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zamludXVteG1lenJpanFlbW1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwOTAyNjMsImV4cCI6MjA4NzY2NjI2M30.ic50fSC7MQfhSkhfE5E8B0R5-BGCQStMRZNHiy6Zakw';
+            const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey, {
+                auth: {
+                    autoRefreshToken: true,
+                    persistSession: true,
+                    detectSessionInUrl: true
+                }
+            });
+
+            // Get DOM elements
+            const signupForm = document.getElementById('signupForm');
+            const successScreen = document.getElementById('successScreen');
+            const sentEmailSpan = document.getElementById('sentEmail');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const confirmInput = document.getElementById('confirmPassword');
+            const emailInput = document.getElementById('email');
+            const roleSelect = document.getElementById('role');
+            const signupBtn = document.getElementById('signupBtn');
+            const usernameTaken = document.getElementById('usernameTaken');
+            const togglePassword = document.getElementById('togglePassword');
+            const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+            const resendBtn = document.getElementById('resendBtn');
+
+            // Terms modal elements
+            const termsModal = document.getElementById('termsModal');
+            const closeTermsModal = document.getElementById('closeTermsModal');
+            const agreeCheckbox = document.getElementById('agreeTerms');
+            const continueBtn = document.getElementById('continueBtn');
+
+            let pendingFormData = null;
+            let lastSignupEmail = '';
+
+            // Toggle password visibility
+            togglePassword.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+            });
+
+            toggleConfirmPassword.addEventListener('click', function() {
+                const type = confirmInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                confirmInput.setAttribute('type', type);
+                this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+            });
+
+            // Check username availability
+            let usernameTimeout;
+            usernameInput.addEventListener('input', function() {
+                clearTimeout(usernameTimeout);
+                const username = this.value.trim();
+                
+                if (username.length < 3) {
+                    usernameTaken.style.display = 'none';
+                    return;
+                }
+                
+                usernameTimeout = setTimeout(async () => {
+                    try {
+                        const { data, error } = await supabaseClient
+                            .from('usernames')
+                            .select('username')
+                            .eq('username', username)
+                            .maybeSingle();
+                        
+                        if (error) {
+                            console.error('Username check error:', error);
+                            return;
+                        }
+                        
+                        usernameTaken.style.display = data ? 'block' : 'none';
+                    } catch (err) {
+                        console.error('Username check exception:', err);
+                    }
+                }, 500);
+            });
+
+            // Close modal
+            closeTermsModal.addEventListener('click', function() {
+                termsModal.classList.remove('active');
+                agreeCheckbox.checked = false;
+                continueBtn.classList.remove('active');
+            });
+
+            // Close when clicking outside
+            termsModal.addEventListener('click', function(e) {
+                if (e.target === termsModal) {
+                    termsModal.classList.remove('active');
+                    agreeCheckbox.checked = false;
+                    continueBtn.classList.remove('active');
+                }
+            });
+
+            // Enable/disable continue button based on checkbox
+            agreeCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    continueBtn.classList.add('active');
+                } else {
+                    continueBtn.classList.remove('active');
+                }
+            });
+
+            // Continue to account creation
+            continueBtn.addEventListener('click', function() {
+                if (agreeCheckbox.checked && pendingFormData) {
+                    termsModal.classList.remove('active');
+                    createAccount(pendingFormData);
+                }
+            });
+
+            // SIGN UP BUTTON CLICK - Show Terms First
+            signupBtn.addEventListener('click', async function() {
+                // Get form values
+                const username = usernameInput.value.trim();
+                const password = passwordInput.value;
+                const confirm = confirmInput.value;
+                const email = emailInput.value.trim();
+                const role = roleSelect.value;
+
+                // Validation
+                if (!username || !password || !email || !role) {
+                    alert('Please fill in all fields');
+                    return;
+                }
+
+                if (password !== confirm) {
+                    alert('Passwords do not match');
+                    return;
+                }
+
+                if (password.length < 6) {
+                    alert('Password must be at least 6 characters');
+                    return;
+                }
+
+                // Check if username is taken
+                const { data: existingUser } = await supabaseClient
+                    .from('usernames')
+                    .select('username')
+                    .eq('username', username)
+                    .maybeSingle();
+
+                if (existingUser) {
+                    usernameTaken.style.display = 'block';
+                    return;
+                }
+
+                // Save form data and show terms modal
+                pendingFormData = {
+                    username,
+                    password,
+                    email,
+                    role
+                };
+
+                termsModal.classList.add('active');
+            });
+
+            // Create account function - UPDATED WITH CORRECT REDIRECT URL
+            async function createAccount(formData) {
+                // Disable button during signup
+                signupBtn.disabled = true;
+                signupBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
+
+                try {
+                    const { username, password, email, role } = formData;
+
+                    // Create auth user with proper redirect URL
+                    console.log('Creating auth user for:', email);
+                    
+                    // IMPORTANT: Use your GitHub Pages domain for redirect
+                    const redirectUrl = 'https://vdsouthafrica.github.io/VivoDistro/email-confirmed.html';
+                    
+                    const { data: authData, error: authError } = await supabaseClient.auth.signUp({
+                        email: email,
+                        password: password,
+                        options: {
+                            data: {
+                                username: username,
+                                role: role
+                            },
+                            emailRedirectTo: redirectUrl
+                        }
+                    });
+
+                    if (authError) {
+                        console.error('AUTH ERROR:', authError);
+                        
+                        if (authError.message.includes('User already registered')) {
+                            alert('This email is already registered. Please login instead.');
+                            window.location.href = 'login.html';
+                        } else {
+                            alert('Auth Error: ' + authError.message);
+                        }
+                        
+                        signupBtn.disabled = false;
+                        signupBtn.innerHTML = 'Create Account';
+                        return;
+                    }
+
+                    if (!authData || !authData.user) {
+                        throw new Error('No user data returned from auth');
+                    }
+
+                    console.log('Auth user created successfully!');
+                    
+                    // Wait for auth to propagate
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    
+                    // Save username to database
+                    console.log('Saving username to database...');
+                    
+                    const { error: usernameError } = await supabaseClient
+                        .from('usernames')
+                        .insert({
+                            username: username,
+                            user_id: authData.user.id,
+                            email: email,
+                            role: role,
+                            created_at: new Date().toISOString()
+                        });
+
+                    if (usernameError) {
+                        console.error('Username save error:', usernameError);
+                        // Try upsert as fallback
+                        await supabaseClient
+                            .from('usernames')
+                            .upsert({
+                                username: username,
+                                user_id: authData.user.id,
+                                email: email,
+                                role: role,
+                                created_at: new Date().toISOString()
+                            }, { onConflict: 'user_id' });
+                    }
+
+                    // Save pending user data as backup
+                    localStorage.setItem('pendingUser', JSON.stringify({
+                        userId: authData.user.id,
+                        email: email,
+                        username: username,
+                        role: role,
+                        timestamp: new Date().toISOString()
+                    }));
+
+                    // Success! Show professional success screen
+                    lastSignupEmail = email;
+                    sentEmailSpan.textContent = email;
+                    signupForm.style.display = 'none';
+                    successScreen.style.display = 'block';
+                    
+                } catch (error) {
+                    console.error('CATASTROPHIC ERROR:', error);
+                    alert('FATAL ERROR: ' + error.message + '\n\nCheck console (F12) for details');
+                    signupBtn.disabled = false;
+                    signupBtn.innerHTML = 'Create Account';
+                }
+            }
+
+            // Resend confirmation email - UPDATED WITH CORRECT REDIRECT URL
+            resendBtn.addEventListener('click', async function() {
+                if (!lastSignupEmail) return;
+                
+                resendBtn.disabled = true;
+                resendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Resending...';
+                
+                try {
+                    const { error } = await supabaseClient.auth.resend({
+                        type: 'signup',
+                        email: lastSignupEmail,
+                        options: {
+                            emailRedirectTo: 'https://vdsouthafrica.github.io/VivoDistro/email-confirmed.html'
+                        }
+                    });
+                    
+                    if (error) {
+                        alert('Error resending: ' + error.message);
+                    } else {
+                        // Show success message without changing button text permanently
+                        resendBtn.innerHTML = '<i class="fas fa-check"></i> Resent!';
+                        setTimeout(() => {
+                            resendBtn.innerHTML = '<i class="fas fa-redo-alt"></i> Resend confirmation';
+                            resendBtn.disabled = false;
+                        }, 2000);
+                    }
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                    resendBtn.disabled = false;
+                    resendBtn.innerHTML = '<i class="fas fa-redo-alt"></i> Resend confirmation';
+                }
+            });
+
+            // Enter key submits
+            confirmInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    signupBtn.click();
+                }
+            });
+
+            // Check URL for confirmation status
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('confirmed') === 'true') {
+                signupForm.style.display = 'none';
+                successScreen.style.display = 'none';
+                
+                const tempMessage = document.createElement('div');
+                tempMessage.className = 'success-screen';
+                tempMessage.style.display = 'block';
+                tempMessage.innerHTML = `
+                    <div class="success-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h2>Email Confirmed!</h2>
+                    <div class="success-message">
+                        <p>Your email has been verified successfully.</p>
+                        <p>You can now log in to your account.</p>
+                    </div>
+                    <a href="login.html" class="btn" style="text-decoration: none; margin-top: 15px;">Go to Login</a>
+                `;
+                document.querySelector('.container').appendChild(tempMessage);
+            }
+            
+            // Check for any pending usernames that failed to save
+            async function checkPendingUsernames() {
+                console.log('Checking for pending usernames...');
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                if (user) {
+                    const pendingKey = 'pendingUser';
+                    const pending = localStorage.getItem(pendingKey);
+                    if (pending) {
+                        const data = JSON.parse(pending);
+                        console.log('Found pending user data for', user.id);
+                        
+                        // Check if username exists
+                        const { data: existing } = await supabaseClient
+                            .from('usernames')
+                            .select('*')
+                            .eq('user_id', user.id);
+                            
+                        if (!existing || existing.length === 0) {
+                            console.log('No username found, attempting to save pending data...');
+                            
+                            const { error } = await supabaseClient
+                                .from('usernames')
+                                .upsert({
+                                    username: data.username,
+                                    user_id: user.id,
+                                    email: data.email,
+                                    role: data.role
+                                });
+                                
+                            if (error) {
+                                console.error('Failed to save pending username:', error);
+                            } else {
+                                console.log('Pending username saved successfully');
+                                localStorage.removeItem(pendingKey);
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Check for pending usernames on page load
+            setTimeout(checkPendingUsernames, 1000);
+        });
+    </script>
+</body>
+</html>

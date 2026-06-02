@@ -1,0 +1,1588 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>My Artists | Vivo Distro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons@6.6.6/css/flag-icons.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: #0a0e1a;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Hide ugly scroll arrows globally */
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+
+        /* ========== COLLAPSIBLE SIDEBAR ========== */
+        .hub-sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 80px;
+            background: #151a2c;
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            transition: width 0.3s ease;
+            overflow: hidden;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .hub-sidebar:hover {
+            width: 280px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            overflow-y: auto;
+        }
+
+        .hub-sidebar:hover::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .hub-sidebar:hover::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .hub-sidebar:hover::-webkit-scrollbar-thumb {
+            background: #6C63FF;
+            border-radius: 4px;
+        }
+
+        .hub-sidebar:hover .sidebar-nav a span,
+        .hub-sidebar:hover .user-info,
+        .hub-sidebar:hover .logo span {
+            opacity: 1;
+        }
+
+        .sidebar-header {
+            padding: 25px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            white-space: nowrap;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .logo i {
+            color: #6C63FF;
+            font-size: 1.5rem;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .logo span {
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .logo-highlight {
+            color: #6C63FF;
+        }
+
+        .sidebar-nav {
+            padding: 20px 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 20px;
+            color: #8892b0;
+            text-decoration: none;
+            transition: all 0.3s;
+            white-space: nowrap;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: rgba(108, 99, 255, 0.1);
+            color: #fff;
+            border-left-color: #6C63FF;
+        }
+
+        .nav-item.active {
+            background: rgba(108, 99, 255, 0.15);
+            color: #6C63FF;
+            border-left-color: #6C63FF;
+        }
+
+        .nav-item i {
+            font-size: 1.2rem;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .nav-item span {
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-weight: 500;
+        }
+
+        /* Dropdown styles */
+        .dropdown-container {
+            position: relative;
+        }
+
+        .dropdown-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-right: 20px;
+        }
+
+        .dropdown-toggle .chevron {
+            transition: transform 0.3s;
+            font-size: 0.8rem;
+            opacity: 0;
+        }
+
+        .hub-sidebar:hover .dropdown-toggle .chevron {
+            opacity: 1;
+        }
+
+        .dropdown-toggle.open .chevron {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .dropdown-menu.show {
+            max-height: 300px;
+        }
+
+        .dropdown-menu .nav-item {
+            padding-left: 75px !important;
+            font-size: 0.9rem;
+        }
+
+        .sidebar-footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            white-space: nowrap;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(108, 99, 255, 0.2);
+            border: 2px solid #6C63FF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .user-avatar i {
+            font-size: 1.2rem;
+            color: #6C63FF;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-info {
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .user-info h4 {
+            font-size: 0.95rem;
+            color: #fff;
+            margin-bottom: 3px;
+        }
+
+        .user-info p {
+            font-size: 0.8rem;
+            color: #8892b0;
+        }
+
+        /* ========== MAIN CONTENT ========== */
+        .hub-main {
+            margin-left: 0;
+            padding: 30px;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0a0e1a 0%, #151a2c 100%);
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            text-decoration: none;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .back-btn:hover {
+            background: rgba(108, 99, 255, 0.2);
+            border-color: #6C63FF;
+            transform: translateX(-5px);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Page Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .page-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #6C63FF);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .page-header p {
+            color: #94a3b8;
+            margin-top: 5px;
+        }
+
+        .add-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #6C63FF, #FF6584);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(108, 99, 255, 0.3);
+        }
+
+        /* Cards Grid */
+        .artists-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        /* Artist Card */
+        .artist-card {
+            background: #151a2c;
+            border-radius: 20px;
+            border: 1px solid rgba(108, 99, 255, 0.15);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            height: 420px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .artist-card:hover {
+            transform: translateY(-5px);
+            border-color: #6C63FF;
+            box-shadow: 0 20px 30px rgba(108, 99, 255, 0.15);
+        }
+
+        /* Expanded Card */
+        .artist-card.expanded {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 700px;
+            max-width: 90vw;
+            height: auto;
+            max-height: 85vh;
+            overflow-y: auto;
+            z-index: 2000;
+            cursor: default;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+            border: 2px solid #6C63FF;
+        }
+
+        .artist-card.expanded:hover {
+            transform: translate(-50%, -50%);
+        }
+
+        body.modal-open::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1999;
+        }
+
+        .close-expanded {
+            display: none;
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: all 0.2s;
+        }
+
+        .close-expanded:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+
+        .artist-card.expanded .close-expanded {
+            display: flex;
+        }
+
+        .card-inner {
+            padding: 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        /* Card Header */
+        .card-header {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            align-items: center;
+        }
+
+        .avatar {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6C63FF, #9d8cff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #fff;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .title-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .title-info h2 {
+            font-size: 1.2rem;
+            margin-bottom: 0.3rem;
+            color: #fff;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .location-display {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            color: #94a3b8;
+            font-size: 0.8rem;
+        }
+
+        .location-display i {
+            color: #6C63FF;
+            font-size: 0.7rem;
+        }
+
+        /* Role Tags */
+        .role-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.8rem;
+            min-height: 32px;
+        }
+
+        .role-tag {
+            background: rgba(108, 99, 255, 0.12);
+            color: #6C63FF;
+            padding: 0.2rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            border: 1px solid rgba(108, 99, 255, 0.2);
+        }
+
+        /* Bio */
+        .bio {
+            color: #cbd5e0;
+            line-height: 1.5;
+            margin-bottom: 0.8rem;
+            font-size: 0.85rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 40px;
+        }
+
+        .expand-hint {
+            color: #6C63FF;
+            font-size: 0.7rem;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            opacity: 0.7;
+        }
+
+        /* Instruments Tags */
+        .instruments-section {
+            margin-bottom: 0.8rem;
+        }
+
+        .instruments-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .instrument-tag {
+            background: rgba(108, 99, 255, 0.1);
+            color: #6C63FF;
+            padding: 0.2rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            border: 1px solid rgba(108, 99, 255, 0.2);
+        }
+
+        /* Social Links */
+        .social-links {
+            display: flex;
+            gap: 0.6rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            min-height: 36px;
+        }
+
+        .social-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.2s;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .social-icon:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+
+        .social-icon.instagram {
+            background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+            color: white;
+            border: none;
+        }
+
+        .social-icon.facebook {
+            background: #1877F2;
+            color: white;
+            border: none;
+        }
+
+        .social-icon.twitter {
+            background: #1DA1F2;
+            color: white;
+            border: none;
+        }
+
+        .social-icon.tiktok {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #ffffff !important;
+            backdrop-filter: blur(5px);
+        }
+
+        .social-icon.youtube {
+            background: #FF0000;
+            color: white;
+            border: none;
+        }
+
+        .social-icon.spotify {
+            background: #1DB954;
+            color: white;
+            border: none;
+        }
+
+        .social-icon.soundcloud {
+            background: #FF3300;
+            color: white;
+            border: none;
+        }
+
+        .social-icon.whatsapp {
+            background: #25D366;
+            color: white;
+            border: none;
+        }
+
+        .social-icon.email {
+            background: #EA4335;
+            color: white;
+            border: none;
+        }
+
+        .social-icon.website {
+            background: #6C63FF;
+            color: white;
+            border: none;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 0.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 1rem;
+            margin-top: auto;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 0.6rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            border: none;
+        }
+
+        .edit-btn {
+            background: rgba(108, 99, 255, 0.1);
+            color: #6C63FF;
+            border: 1px solid rgba(108, 99, 255, 0.2);
+        }
+
+        .edit-btn:hover {
+            background: rgba(108, 99, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .delete-btn {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .delete-btn:hover {
+            background: rgba(239, 68, 68, 0.15);
+            transform: translateY(-2px);
+        }
+
+        /* Expanded Content */
+        .expanded-content {
+            display: none;
+            padding: 1.5rem;
+            border-top: 1px solid rgba(108, 99, 255, 0.2);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .artist-card.expanded .expanded-content {
+            display: block;
+        }
+
+        .expanded-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .expanded-section h4 {
+            color: #6C63FF;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.8rem;
+        }
+
+        .expanded-section p {
+            color: #cbd5e0;
+            line-height: 1.6;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .detail-item {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 0.8rem;
+        }
+
+        .detail-label {
+            color: #94a3b8;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            margin-bottom: 0.3rem;
+        }
+
+        .detail-value {
+            color: #fff;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1e1e28, #151a2c);
+            border-radius: 24px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 85vh;
+            overflow-y: auto;
+            border: 1px solid rgba(108, 99, 255, 0.3);
+            animation: modalSlideUp 0.3s ease;
+        }
+
+        @keyframes modalSlideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(108, 99, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: #151a2c;
+            z-index: 10;
+        }
+
+        .modal-header h2 {
+            font-size: 1.3rem;
+            color: #fff;
+        }
+
+        .modal-header h2 i {
+            color: #6C63FF;
+            margin-right: 8px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #94a3b8;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(108, 99, 255, 0.2);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #6C63FF;
+        }
+
+        .char-counter {
+            text-align: right;
+            font-size: 0.75rem;
+            margin-top: 0.3rem;
+            color: #48BB78;
+        }
+
+        .char-counter.warning {
+            color: #ED8936;
+        }
+
+        .char-counter.danger {
+            color: #F56565;
+        }
+
+        .type-checkboxes {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+        }
+
+        .type-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(108, 99, 255, 0.2);
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .type-checkbox:hover {
+            border-color: #6C63FF;
+            background: rgba(108, 99, 255, 0.05);
+        }
+
+        .type-checkbox input {
+            width: 16px;
+            height: 16px;
+            accent-color: #6C63FF;
+        }
+
+        .type-checkbox span {
+            color: #fff;
+            font-size: 0.85rem;
+        }
+
+        .instrument-tag {
+            display: inline-block;
+            background: rgba(108, 99, 255, 0.15);
+            color: #6C63FF;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin: 4px 4px 0 0;
+            font-size: 0.8rem;
+        }
+
+        .instrument-tag button {
+            background: none;
+            border: none;
+            color: #6C63FF;
+            margin-left: 6px;
+            cursor: pointer;
+        }
+
+        .social-input-row {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .social-select {
+            flex: 1;
+            padding: 0.6rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(108, 99, 255, 0.2);
+            border-radius: 8px;
+            color: #fff;
+        }
+
+        .social-url {
+            flex: 2;
+            padding: 0.6rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(108, 99, 255, 0.2);
+            border-radius: 8px;
+            color: #fff;
+        }
+
+        .remove-social {
+            width: 36px;
+            height: 36px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 8px;
+            color: #ef4444;
+            cursor: pointer;
+        }
+
+        .add-social-btn {
+            padding: 0.6rem;
+            background: rgba(108, 99, 255, 0.1);
+            border: 1px dashed rgba(108, 99, 255, 0.3);
+            border-radius: 8px;
+            color: #6C63FF;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+        .avatar-upload {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .avatar-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(108, 99, 255, 0.1);
+            border: 2px solid #6C63FF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid rgba(108, 99, 255, 0.2);
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .btn-cancel {
+            padding: 0.6rem 1.2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(108, 99, 255, 0.2);
+            border-radius: 8px;
+            color: #94a3b8;
+            cursor: pointer;
+        }
+
+        .btn-save {
+            padding: 0.6rem 1.2rem;
+            background: linear-gradient(135deg, #6C63FF, #FF6584);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem;
+            background: rgba(21, 26, 44, 0.6);
+            border-radius: 20px;
+            border: 2px dashed rgba(108, 99, 255, 0.3);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: #6C63FF;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state p {
+            color: #94a3b8;
+        }
+
+        @media (max-width: 1200px) {
+            .artists-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hub-sidebar {
+                width: 0;
+            }
+
+            .hub-sidebar:hover {
+                width: 250px;
+            }
+
+            .hub-main {
+                margin-left: 0;
+            }
+
+            .artists-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .type-checkboxes {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <!-- GLobally Applied Theme Hook -->
+    <link rel="stylesheet" href="settings.css">
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const configT = localStorage.getItem('vivo_theme') || 'theme-default';
+            if (configT !== 'theme-default') document.body.classList.add(configT);
+        });
+    </script>
+</head>
+
+<body>
+
+    <main class="hub-main">
+        <a href="agent-hub.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+        <div class="container">
+            <div class="page-header">
+                <div>
+                    <h1>My Artists</h1>
+                    <p>Manage and view your roster of talented performers</p>
+                </div>
+                <button class="add-btn" id="addArtistBtn">
+                    <i class="fas fa-plus"></i> Add New Artist
+                </button>
+            </div>
+
+            <div class="artists-grid" id="artistsGrid">
+                <div class="empty-state">
+                    <i class="fas fa-users"></i>
+                    <h3>No Artists Yet</h3>
+                    <p>Add your first artist to start building your roster</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add/Edit Artist Modal -->
+    <div class="modal-overlay" id="artistModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-user-plus"></i> <span id="modalTitle">Add Artist</span></h2>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+
+            <form id="artistForm">
+                <div class="modal-body">
+                    <div class="avatar-upload">
+                        <div class="avatar-preview" id="avatarPreview">
+                            <i class="fas fa-user" style="font-size: 2rem; color: #6C63FF;"></i>
+                        </div>
+                        <input type="file" id="avatarInput" accept="image/*" hidden>
+                        <p class="upload-hint" style="color:#8892b0; font-size:0.7rem; margin-top:5px;">Click to upload
+                        </p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Stage Name *</label>
+                        <input type="text" id="artistName" maxlength="35" required>
+                        <div class="char-counter" id="nameCounter">0/35 characters</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Location *</label>
+                        <input type="text" id="artistLocation" maxlength="50" required>
+                        <div class="char-counter" id="locationCounter">0/50 characters</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Bio</label>
+                        <textarea id="artistBio" rows="3" maxlength="300"></textarea>
+                        <div class="char-counter" id="bioCounter">0/300 characters</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Performer Type *</label>
+                        <div class="type-checkboxes" id="artistTypes">
+                            <label class="type-checkbox"><input type="checkbox" value="Solo Artist"><span>Solo
+                                    Artist</span></label>
+                            <label class="type-checkbox"><input type="checkbox" value="Duo"><span>Duo</span></label>
+                            <label class="type-checkbox"><input type="checkbox" value="Band"><span>Band</span></label>
+                            <label class="type-checkbox"><input type="checkbox" value="DJ"><span>DJ</span></label>
+                            <label class="type-checkbox"><input type="checkbox" value="Sound Engineer"><span>Sound
+                                    Engineer</span></label>
+                            <label class="type-checkbox"><input type="checkbox" value="Music Producer"><span>Music
+                                    Producer</span></label>
+                            <label class="type-checkbox"><input type="checkbox"
+                                    value="Songwriter"><span>Songwriter</span></label>
+                            <label class="type-checkbox"><input type="checkbox"
+                                    value="Instrumentalist"><span>Instrumentalist</span></label>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="instrumentSection" style="display: none;">
+                        <label>Instruments</label>
+                        <input type="text" id="instrumentInput" placeholder="Type instrument and press Enter"
+                            maxlength="30">
+                        <div id="instrumentsList" style="margin-top: 8px;"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Social Media Links</label>
+                        <div id="socialInputs"></div>
+                        <button type="button" class="add-social-btn" id="addSocialBtn">
+                            <i class="fas fa-plus"></i> Add Social Media
+                        </button>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" id="cancelModal">Cancel</button>
+                    <button type="submit" class="btn-save">Save Artist</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const supabaseUrl = 'https://msjinuumxmezrijqemmp.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zamludXVteG1lenJpanFlbW1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwOTAyNjMsImV4cCI6MjA4NzY2NjI2M30.ic50fSC7MQfhSkhfE5E8B0R5-BGCQStMRZNHiy6Zakw';
+            const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+            let currentAgentId = null;
+            let editingArtistId = null;
+            let selectedInstruments = [];
+            let avatarImageData = null;
+
+            const socialPlatforms = {
+                'whatsapp': 'WhatsApp', 'email': 'Email', 'instagram': 'Instagram',
+                'facebook': 'Facebook', 'twitter': 'Twitter', 'tiktok': 'TikTok',
+                'youtube': 'YouTube', 'spotify': 'Spotify', 'soundcloud': 'SoundCloud',
+                'website': 'Website'
+            };
+
+            loadAgentAndArtists();
+
+            async function loadAgentAndArtists() {
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                if (!user) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const { data: agent } = await supabaseClient
+                    .from('agents')
+                    .select('id')
+                    .eq('auth_id', user.id)
+                    .single();
+
+                if (agent) {
+                    currentAgentId = agent.id;
+                    loadArtists();
+                }
+            }
+
+            async function loadArtists() {
+                if (!currentAgentId) return;
+
+                const { data: artists, error } = await supabaseClient
+                    .from('roster_artists')
+                    .select('*')
+                    .eq('agent_id', currentAgentId)
+                    .order('created_at', { ascending: false });
+
+                if (error) {
+                    console.error('Error loading artists:', error);
+                    return;
+                }
+
+                renderArtists(artists || []);
+            }
+
+            function renderArtists(artists) {
+                const grid = document.getElementById('artistsGrid');
+
+                if (artists.length === 0) {
+                    grid.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-users"></i>
+                            <h3>No Artists Yet</h3>
+                            <p>Add your first artist to start building your roster</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                grid.innerHTML = artists.map(artist => `
+                    <div class="artist-card" data-id="${artist.id}">
+                        <div class="close-expanded"><i class="fas fa-times"></i></div>
+                        <div class="card-inner">
+                            <div class="card-header">
+                                <div class="avatar">
+                                    ${artist.image_url ? `<img src="${artist.image_url}">` : '<i class="fas fa-user"></i>'}
+                                </div>
+                                <div class="title-info">
+                                    <h2>${escapeHtml(artist.name)}</h2>
+                                    <div class="location-display"><i class="fas fa-map-marker-alt"></i> ${artist.location?.split(',')[0] || artist.location || 'Location'}</div>
+                                </div>
+                            </div>
+                            <div class="role-tags">
+                                ${artist.types?.slice(0, 3).map(t => `<span class="role-tag">${t}</span>`).join('') || '<span class="role-tag">Performer</span>'}
+                            </div>
+                            <div class="bio">${artist.bio || 'No bio added yet'}</div>
+                            <div class="expand-hint"><i class="fas fa-chevron-down"></i> Click to expand</div>
+                            <div class="social-links">
+                                ${artist.social_links?.map(link => {
+                    const iconClass = getSocialIconClass(link.platform);
+                    const colorClass = getSocialColorClass(link.platform);
+                    return `<a href="${link.url}" target="_blank" class="social-icon ${colorClass}"><i class="${iconClass}"></i></a>`;
+                }).join('') || ''}
+                            </div>
+                            <div class="action-buttons">
+                                <button class="action-btn edit-btn" onclick="event.stopPropagation(); editArtist('${artist.id}')"><i class="fas fa-edit"></i> Edit</button>
+                                <button class="action-btn delete-btn" onclick="event.stopPropagation(); deleteArtist('${artist.id}')"><i class="fas fa-trash"></i> Delete</button>
+                            </div>
+                        </div>
+                        <div class="expanded-content">
+                            <div class="expanded-section"><h4>Full Bio</h4><p>${artist.bio || 'No bio provided'}</p></div>
+                            ${artist.instruments?.length ? `
+                            <div class="expanded-section"><h4>Instruments</h4><div class="instruments-tags">${artist.instruments.map(i => `<span class="instrument-tag">${i}</span>`).join('')}</div></div>
+                            ` : ''}
+                            <div class="details-grid">
+                                <div class="detail-item"><div class="detail-label">Location</div><div class="detail-value">${artist.location || 'Not specified'}</div></div>
+                                <div class="detail-item"><div class="detail-label">Performer Types</div><div class="detail-value">${artist.types?.join(', ') || 'Not specified'}</div></div>
+                                <div class="detail-item"><div class="detail-label">Added</div><div class="detail-value">${new Date(artist.created_at).toLocaleDateString()}</div></div>
+                            </div>
+                            ${artist.social_links?.length ? `
+                            <div class="expanded-section"><h4>Connect</h4><div class="social-links">${artist.social_links.map(link => {
+                    const iconClass = getSocialIconClass(link.platform);
+                    const colorClass = getSocialColorClass(link.platform);
+                    return `<a href="${link.url}" target="_blank" class="social-icon ${colorClass}"><i class="${iconClass}"></i></a>`;
+                }).join('')}</div></div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `).join('');
+
+                // Add click handlers for expansion
+                document.querySelectorAll('.artist-card').forEach(card => {
+                    card.addEventListener('click', function (e) {
+                        if (e.target.closest('button') || e.target.closest('a') || e.target.closest('.close-expanded')) return;
+                        document.querySelectorAll('.artist-card.expanded').forEach(c => c.classList.remove('expanded'));
+                        this.classList.add('expanded');
+                        document.body.classList.add('modal-open');
+                        setTimeout(() => this.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+                    });
+                    const closeBtn = card.querySelector('.close-expanded');
+                    if (closeBtn) closeBtn.addEventListener('click', (e) => { e.stopPropagation(); card.classList.remove('expanded'); document.body.classList.remove('modal-open'); });
+                });
+            }
+
+            function getSocialIconClass(platform) {
+                const icons = {
+                    'whatsapp': 'fab fa-whatsapp',
+                    'email': 'fas fa-envelope',
+                    'instagram': 'fab fa-instagram',
+                    'facebook': 'fab fa-facebook-f',
+                    'twitter': 'fab fa-twitter',
+                    'tiktok': 'fab fa-tiktok',
+                    'youtube': 'fab fa-youtube',
+                    'spotify': 'fab fa-spotify',
+                    'soundcloud': 'fab fa-soundcloud',
+                    'website': 'fas fa-globe'
+                };
+                return icons[platform] || 'fas fa-link';
+            }
+
+            function getSocialColorClass(platform) {
+                const colors = {
+                    'instagram': 'instagram',
+                    'facebook': 'facebook',
+                    'twitter': 'twitter',
+                    'tiktok': 'tiktok',
+                    'youtube': 'youtube',
+                    'spotify': 'spotify',
+                    'soundcloud': 'soundcloud',
+                    'whatsapp': 'whatsapp',
+                    'email': 'email',
+                    'website': 'website'
+                };
+                return colors[platform] || '';
+            }
+
+            // Modal functionality
+            const modal = document.getElementById('artistModal');
+            const addBtn = document.getElementById('addArtistBtn');
+            const closeBtn = document.getElementById('closeModal');
+            const cancelBtn = document.getElementById('cancelModal');
+
+            addBtn.addEventListener('click', () => {
+                editingArtistId = null;
+                document.getElementById('modalTitle').textContent = 'Add Artist';
+                document.getElementById('artistForm').reset();
+                document.getElementById('instrumentSection').style.display = 'none';
+                selectedInstruments = [];
+                document.getElementById('instrumentsList').innerHTML = '';
+                document.getElementById('socialInputs').innerHTML = '';
+                document.getElementById('avatarPreview').innerHTML = '<i class="fas fa-user" style="font-size: 2rem; color: #6C63FF;"></i>';
+                avatarImageData = null;
+                updateCharCounters();
+                modal.classList.add('active');
+            });
+
+            closeBtn.addEventListener('click', () => modal.classList.remove('active'));
+            cancelBtn.addEventListener('click', () => modal.classList.remove('active'));
+
+            // Avatar upload
+            const avatarPreview = document.getElementById('avatarPreview');
+            const avatarInput = document.getElementById('avatarInput');
+            avatarPreview.addEventListener('click', () => avatarInput.click());
+            avatarInput.addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        avatarPreview.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;">`;
+                        avatarImageData = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Character counters
+            function updateCharCounters() {
+                const nameInput = document.getElementById('artistName');
+                const locationInput = document.getElementById('artistLocation');
+                const bioInput = document.getElementById('artistBio');
+
+                nameInput?.addEventListener('input', function () {
+                    const length = this.value.length;
+                    const counter = document.getElementById('nameCounter');
+                    counter.textContent = `${length}/35 characters`;
+                    if (length >= 35) counter.className = 'char-counter danger';
+                    else if (length >= 30) counter.className = 'char-counter warning';
+                    else counter.className = 'char-counter';
+                });
+
+                locationInput?.addEventListener('input', function () {
+                    const length = this.value.length;
+                    const counter = document.getElementById('locationCounter');
+                    counter.textContent = `${length}/50 characters`;
+                    if (length >= 50) counter.className = 'char-counter danger';
+                    else if (length >= 40) counter.className = 'char-counter warning';
+                    else counter.className = 'char-counter';
+                });
+
+                bioInput?.addEventListener('input', function () {
+                    const length = this.value.length;
+                    const counter = document.getElementById('bioCounter');
+                    counter.textContent = `${length}/300 characters`;
+                    if (length >= 300) counter.className = 'char-counter danger';
+                    else if (length >= 250) counter.className = 'char-counter warning';
+                    else counter.className = 'char-counter';
+                });
+            }
+            updateCharCounters();
+
+            // Instrumentalist toggle
+            document.querySelectorAll('#artistTypes input').forEach(cb => {
+                cb.addEventListener('change', function () {
+                    const instrumentalistChecked = document.querySelector('#artistTypes input[value="Instrumentalist"]')?.checked;
+                    document.getElementById('instrumentSection').style.display = instrumentalistChecked ? 'block' : 'none';
+                });
+            });
+
+            // Instruments input
+            const instrumentInput = document.getElementById('instrumentInput');
+            instrumentInput.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const instrument = this.value.trim();
+                    if (instrument && !selectedInstruments.includes(instrument)) {
+                        selectedInstruments.push(instrument);
+                        this.value = '';
+                        updateInstrumentsDisplay();
+                    }
+                }
+            });
+
+            function updateInstrumentsDisplay() {
+                const container = document.getElementById('instrumentsList');
+                container.innerHTML = selectedInstruments.map(inst =>
+                    `<span class="instrument-tag">${escapeHtml(inst)} <button type="button" onclick="removeInstrument('${escapeHtml(inst)}')">×</button></span>`
+                ).join('');
+            }
+
+            window.removeInstrument = function (instrument) {
+                selectedInstruments = selectedInstruments.filter(i => i !== instrument);
+                updateInstrumentsDisplay();
+            };
+
+            // Social inputs
+            document.getElementById('addSocialBtn').addEventListener('click', addSocialInput);
+
+            function addSocialInput(platform = '', url = '') {
+                const container = document.getElementById('socialInputs');
+                const row = document.createElement('div');
+                row.className = 'social-input-row';
+                row.innerHTML = `
+                    <select class="social-select">
+                        <option value="">Select Platform</option>
+                        ${Object.entries(socialPlatforms).map(([key, name]) =>
+                    `<option value="${key}" ${platform === key ? 'selected' : ''}>${name}</option>`
+                ).join('')}
+                    </select>
+                    <input type="text" class="social-url" placeholder="URL" value="${escapeHtml(url)}">
+                    <button type="button" class="remove-social" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
+                `;
+                container.appendChild(row);
+            }
+
+            // Form submission
+            document.getElementById('artistForm').addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                if (!currentAgentId) return;
+
+                const types = [];
+                document.querySelectorAll('#artistTypes input:checked').forEach(cb => {
+                    types.push(cb.value);
+                });
+
+                if (types.length === 0) {
+                    alert('Please select at least one performer type');
+                    return;
+                }
+
+                const socialLinks = [];
+                document.querySelectorAll('#socialInputs .social-input-row').forEach(row => {
+                    const select = row.querySelector('select');
+                    const input = row.querySelector('input');
+                    if (select.value && input.value) {
+                        socialLinks.push({ platform: select.value, url: input.value });
+                    }
+                });
+
+                const artistData = {
+                    agent_id: currentAgentId,
+                    name: document.getElementById('artistName').value.trim(),
+                    location: document.getElementById('artistLocation').value.trim(),
+                    bio: document.getElementById('artistBio').value.trim(),
+                    types: types,
+                    instruments: selectedInstruments,
+                    image_url: avatarImageData,
+                    social_links: socialLinks
+                };
+
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+                submitBtn.disabled = true;
+
+                let error;
+                if (editingArtistId) {
+                    ({ error } = await supabaseClient
+                        .from('roster_artists')
+                        .update(artistData)
+                        .eq('id', editingArtistId));
+                } else {
+                    ({ error } = await supabaseClient
+                        .from('roster_artists')
+                        .insert([artistData]));
+                }
+
+                if (error) {
+                    alert('Error: ' + error.message);
+                    console.error('Save error:', error);
+                } else {
+                    modal.classList.remove('active');
+                    loadArtists();
+                }
+
+                submitBtn.innerHTML = 'Save Artist';
+                submitBtn.disabled = false;
+            });
+
+            window.editArtist = async function (artistId) {
+                const { data: artist } = await supabaseClient
+                    .from('roster_artists')
+                    .select('*')
+                    .eq('id', artistId)
+                    .single();
+
+                if (artist) {
+                    editingArtistId = artistId;
+                    document.getElementById('modalTitle').textContent = 'Edit Artist';
+
+                    document.getElementById('artistName').value = artist.name || '';
+                    document.getElementById('artistLocation').value = artist.location || '';
+                    document.getElementById('artistBio').value = artist.bio || '';
+
+                    document.querySelectorAll('#artistTypes input').forEach(cb => {
+                        cb.checked = artist.types?.includes(cb.value) || false;
+                    });
+
+                    if (artist.types?.includes('Instrumentalist')) {
+                        document.getElementById('instrumentSection').style.display = 'block';
+                    }
+
+                    selectedInstruments = artist.instruments || [];
+                    updateInstrumentsDisplay();
+
+                    if (artist.image_url) {
+                        document.getElementById('avatarPreview').innerHTML = `<img src="${artist.image_url}" style="width:100%;height:100%;object-fit:cover;">`;
+                        avatarImageData = artist.image_url;
+                    } else {
+                        document.getElementById('avatarPreview').innerHTML = '<i class="fas fa-user" style="font-size: 2rem; color: #6C63FF;"></i>';
+                        avatarImageData = null;
+                    }
+
+                    document.getElementById('socialInputs').innerHTML = '';
+                    artist.social_links?.forEach(link => {
+                        addSocialInput(link.platform, link.url);
+                    });
+
+                    updateCharCounters();
+                    modal.classList.add('active');
+                }
+            };
+
+            window.deleteArtist = async function (artistId) {
+                if (confirm('Are you sure you want to remove this artist from your roster?')) {
+                    const { error } = await supabaseClient
+                        .from('roster_artists')
+                        .delete()
+                        .eq('id', artistId);
+
+                    if (!error) {
+                        loadArtists();
+                    }
+                }
+            };
+
+            function escapeHtml(str) {
+                if (!str) return '';
+                return str.replace(/[&<>]/g, function (m) {
+                    if (m === '&') return '&amp;';
+                    if (m === '<') return '&lt;';
+                    if (m === '>') return '&gt;';
+                    return m;
+                });
+            }
+
+            loadAgentAndArtists();
+        });
+    </script>
+    <script src="settings-manager.js"></script>
+    <script src="navbar.js"></script>
+</body>
+
+</html>

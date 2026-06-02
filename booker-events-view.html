@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events | Vivo Distro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <link rel="stylesheet" href="responsive.css"> <!-- YOUR NEW RESPONSIVE CSS -->
+     <script src="global-fullscreen.js" defer></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        body {
+            background: #0a0e1a;
+            color: #fff;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: #151a2c;
+            border-bottom: 1px solid #2a2f45;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid #2a2f45;
+            border-radius: 10px;
+            color: #fff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: rgba(108,99,255,0.1);
+            border-color: #6C63FF;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        .logo i {
+            color: #6C63FF;
+        }
+        
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+        
+        .booker-header {
+            background: linear-gradient(135deg, #151a2c, #1e243b);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 1px solid #2a2f45;
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+        
+        .booker-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6C63FF, #FF6584);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: #fff;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        
+        .booker-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .booker-info h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .booker-location {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #8892b0;
+            margin-bottom: 15px;
+        }
+        
+        .event-count {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(108,99,255,0.15);
+            border-radius: 30px;
+            color: #6C63FF;
+        }
+        
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+        }
+        
+        .event-card {
+            background: #151a2c;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid #2a2f45;
+            transition: all 0.3s ease;
+        }
+        
+        .event-card:hover {
+            transform: translateY(-5px);
+            border-color: #6C63FF;
+        }
+        
+        .event-photos {
+            height: 200px;
+            background: #1e243b;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .photo-slider {
+            display: flex;
+            height: 100%;
+            transition: transform 0.3s ease;
+        }
+        
+        .photo-slide {
+            min-width: 100%;
+            height: 100%;
+        }
+        
+        .photo-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .no-photos {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #8892b0;
+            font-size: 3rem;
+        }
+        
+        .slider-controls {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            display: flex;
+            gap: 5px;
+        }
+        
+        .slider-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.5);
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+        
+        .slider-btn:hover {
+            background: #6C63FF;
+        }
+        
+        .event-content {
+            padding: 20px;
+        }
+        
+        .event-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .event-header h3 {
+            font-size: 1.3rem;
+        }
+        
+        .event-date {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #6C63FF;
+            font-size: 0.85rem;
+            background: rgba(108,99,255,0.15);
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+        
+        .event-venue {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #8892b0;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .event-description {
+            color: #cbd5e0;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+        
+        .event-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #2a2f45;
+            padding-top: 15px;
+        }
+        
+        .ticket-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #6C63FF;
+            text-decoration: none;
+            padding: 8px 15px;
+            background: rgba(108,99,255,0.1);
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .ticket-link:hover {
+            background: rgba(108,99,255,0.2);
+        }
+        
+        .chat-btn {
+            padding: 8px 20px;
+            background: #6C63FF;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .chat-btn:hover {
+            background: #554fd8;
+            transform: translateY(-2px);
+        }
+        
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px;
+            background: #151a2c;
+            border-radius: 20px;
+            border: 2px dashed #2a2f45;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            color: #6C63FF;
+            opacity: 0.3;
+            margin-bottom: 20px;
+        }
+        
+        .empty-state h3 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+        
+        .empty-state p {
+            color: #8892b0;
+        }
+
+        /* ========== MOBILE RESPONSIVE FIXES ========== */
+        @media screen and (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+            }
+            
+            .main-container {
+                padding: 20px;
+            }
+            
+            .booker-header {
+                flex-direction: column;
+                text-align: center;
+                padding: 30px 20px;
+                gap: 20px;
+            }
+            
+            .booker-avatar {
+                width: 90px;
+                height: 90px;
+                font-size: 2.2rem;
+            }
+            
+            .booker-info h1 {
+                font-size: 1.8rem;
+            }
+            
+            .booker-location {
+                font-size: 1rem;
+                justify-content: center;
+            }
+            
+            .events-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .event-card {
+                margin: 0;
+            }
+            
+            .event-photos {
+                height: 180px;
+            }
+            
+            .event-content {
+                padding: 15px;
+            }
+            
+            .event-header {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+            
+            .event-header h3 {
+                font-size: 1.2rem;
+            }
+            
+            .event-date {
+                align-self: flex-start;
+            }
+            
+            .event-venue {
+                font-size: 0.85rem;
+                flex-wrap: wrap;
+            }
+            
+            .event-description {
+                font-size: 0.9rem;
+                margin-bottom: 12px;
+            }
+            
+            .event-footer {
+                flex-direction: column;
+                gap: 12px;
+                align-items: stretch;
+            }
+            
+            .ticket-link {
+                width: 100%;
+                justify-content: center;
+                padding: 12px;
+            }
+            
+            .chat-btn {
+                width: 100%;
+                padding: 12px;
+                border-radius: 10px;
+            }
+            
+            .slider-controls {
+                bottom: 5px;
+                right: 5px;
+            }
+            
+            .slider-btn {
+                width: 28px;
+                height: 28px;
+                font-size: 0.8rem;
+            }
+            
+            .empty-state {
+                padding: 40px 20px;
+            }
+            
+            .empty-state i {
+                font-size: 3rem;
+            }
+            
+            .empty-state h3 {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Extra small devices */
+        @media screen and (max-width: 480px) {
+            .booker-header {
+                padding: 25px 15px;
+            }
+            
+            .booker-avatar {
+                width: 80px;
+                height: 80px;
+                font-size: 2rem;
+            }
+            
+            .booker-info h1 {
+                font-size: 1.5rem;
+            }
+            
+            .event-photos {
+                height: 160px;
+            }
+            
+            .event-content {
+                padding: 12px;
+            }
+            
+            .event-header h3 {
+                font-size: 1.1rem;
+            }
+            
+            .event-date {
+                font-size: 0.75rem;
+                padding: 3px 8px;
+            }
+            
+            .event-venue {
+                font-size: 0.8rem;
+            }
+            
+            .event-description {
+                font-size: 0.85rem;
+                -webkit-line-clamp: 2;
+            }
+            
+            .ticket-link, .chat-btn {
+                padding: 10px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Landscape mode optimization */
+        @media screen and (max-height: 600px) and (orientation: landscape) {
+            .booker-header {
+                padding: 25px;
+                margin-bottom: 25px;
+            }
+            
+            .event-photos {
+                height: 150px;
+            }
+            
+            .events-grid {
+                gap: 15px;
+            }
+        }
+    </style>
+    <!-- GLobally Applied Theme Hook -->
+    <link rel="stylesheet" href="settings.css">
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const configT = localStorage.getItem('vivo_theme') || 'theme-default';
+            if(configT !== 'theme-default') document.body.classList.add(configT);
+        });
+    </script>
+</head>
+<body>
+    <header class="header">
+        <a href="javascript:history.back()" class="back-btn">
+            <i class="fas fa-arrow-left"></i> <span>Back</span>
+        </a>
+        <div class="logo">
+            <i class="fas fa-calendar-alt"></i> <span>VIVO <span style="color:#6C63FF;">EVENTS</span></span>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="booker-header" id="bookerHeader" style="display: none;">
+            <div class="booker-avatar" id="bookerAvatar">
+                <i class="fas fa-building"></i>
+            </div>
+            <div class="booker-info">
+                <h1 id="bookerName">Loading...</h1>
+                <div class="booker-location" id="bookerLocation">
+                    <i class="fas fa-map-marker-alt"></i> <span>Loading...</span>
+                </div>
+                <div class="event-count" id="eventCount">
+                    <i class="fas fa-calendar"></i> <span>0</span> Events
+                </div>
+            </div>
+        </div>
+
+        <div class="events-grid" id="eventsGrid">
+            <div class="empty-state">
+                <i class="fas fa-spinner fa-spin"></i>
+                <h3>Loading events...</h3>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // ========== USE A DIFFERENT VARIABLE NAME ==========
+        const supabaseClient = supabase.createClient(
+            'https://msjinuumxmezrijqemmp.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zamludXVteG1lenJpanFlbW1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwOTAyNjMsImV4cCI6MjA4NzY2NjI2M30.ic50fSC7MQfhSkhfE5E8B0R5-BGCQStMRZNHiy6Zakw'
+        );
+
+        // ========== DOMContentLoaded WRAPPER ==========
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Get booker ID from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const bookerId = urlParams.get('id');
+
+            if (!bookerId) {
+                showError('No booker specified');
+                return;
+            }
+
+            await loadBookerDetails(bookerId);
+            await loadEvents(bookerId);
+
+            async function loadBookerDetails(bookerId) {
+                try {
+                    const { data: booker, error } = await supabaseClient
+                        .from('bookers')
+                        .select('*')
+                        .eq('id', bookerId)
+                        .single();
+
+                    if (error || !booker) {
+                        showError('Booker not found');
+                        return;
+                    }
+
+                    document.getElementById('bookerHeader').style.display = 'flex';
+                    document.getElementById('bookerName').textContent = booker.name || 'Venue Name';
+                    document.getElementById('bookerLocation').innerHTML = 
+                        `<i class="fas fa-map-marker-alt"></i> <span>${booker.location || 'Location not set'}</span>`;
+
+                    if (booker.logo_url) {
+                        document.getElementById('bookerAvatar').innerHTML = 
+                            `<img src="${booker.logo_url}" alt="${booker.name}">`;
+                    }
+                } catch (error) {
+                    console.error('Error loading booker:', error);
+                    showError('Failed to load booker details');
+                }
+            }
+
+            async function loadEvents(bookerId) {
+                try {
+                    const today = new Date().toISOString().split('T')[0];
+                    
+                    const { data: events, error } = await supabaseClient
+                        .from('events')
+                        .select('*')
+                        .eq('booker_id', bookerId)
+                        .gte('event_date', today)
+                        .order('event_date', { ascending: true });
+
+                    if (error) {
+                        console.error('Error loading events:', error);
+                        showError('Failed to load events');
+                        return;
+                    }
+
+                    document.querySelector('#eventCount span').textContent = events.length;
+
+                    if (events.length === 0) {
+                        document.getElementById('eventsGrid').innerHTML = `
+                            <div class="empty-state">
+                                <i class="fas fa-calendar-times"></i>
+                                <h3>No Upcoming Events</h3>
+                                <p>This venue hasn't scheduled any events yet</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    renderEvents(events);
+                } catch (error) {
+                    console.error('Error loading events:', error);
+                    showError('Failed to load events');
+                }
+            }
+
+            function renderEvents(events) {
+                const grid = document.getElementById('eventsGrid');
+                
+                grid.innerHTML = events.map(event => {
+                    const eventDate = new Date(event.event_date).toLocaleDateString('en-US', {
+                        weekday: 'short',
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric'
+                    });
+
+                    const eventTime = event.event_time ? 
+                        new Date(`2000-01-01T${event.event_time}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 
+                        'Time TBD';
+
+                    return `
+                        <div class="event-card">
+                            <div class="event-photos" id="photos-${event.id}">
+                                ${renderPhotos(event.photos || [])}
+                            </div>
+                            <div class="event-content">
+                                <div class="event-header">
+                                    <h3>${event.name}</h3>
+                                    <span class="event-date"><i class="far fa-calendar"></i> ${eventDate}</span>
+                                </div>
+                                <div class="event-venue">
+                                    <i class="fas fa-map-marker-alt"></i> ${event.venue}, ${event.location}
+                                    ${event.event_time ? `<span style="margin-left:10px;"><i class="far fa-clock"></i> ${eventTime}</span>` : ''}
+                                </div>
+                                <div class="event-description">${event.description || 'No description available'}</div>
+                                <div class="event-footer">
+                                    ${event.ticket_link ? `
+                                        <a href="${event.ticket_link}" target="_blank" class="ticket-link">
+                                            <i class="fas fa-ticket-alt"></i> Buy Tickets
+                                        </a>
+                                    ` : '<span></span>'}
+                                    <button class="chat-btn" onclick="startChat('${bookerId}')">
+                                        <i class="fas fa-comment"></i> Contact Venue
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                events.forEach(event => {
+                    if (event.photos?.length > 1) {
+                        initSlider(event.id, event.photos);
+                    }
+                });
+            }
+
+            function renderPhotos(photos) {
+                if (!photos || photos.length === 0) {
+                    return '<div class="no-photos"><i class="fas fa-image"></i></div>';
+                }
+
+                return `
+                    <div class="photo-slider" id="slider-${Date.now()}">
+                        ${photos.map(photo => `
+                            <div class="photo-slide">
+                                <img src="${photo}" alt="Event photo">
+                            </div>
+                        `).join('')}
+                    </div>
+                    ${photos.length > 1 ? `
+                        <div class="slider-controls">
+                            <button class="slider-btn prev-btn"><i class="fas fa-chevron-left"></i></button>
+                            <button class="slider-btn next-btn"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                    ` : ''}
+                `;
+            }
+
+            function initSlider(eventId, photos) {
+                const card = document.getElementById(`photos-${eventId}`);
+                if (!card) return;
+
+                const slider = card.querySelector('.photo-slider');
+                const prevBtn = card.querySelector('.prev-btn');
+                const nextBtn = card.querySelector('.next-btn');
+                let currentIndex = 0;
+
+                if (prevBtn) {
+                    prevBtn.addEventListener('click', () => {
+                        currentIndex = (currentIndex - 1 + photos.length) % photos.length;
+                        slider.style.transform = `translateX(-${currentIndex * 100}%)`;
+                    });
+                }
+
+                if (nextBtn) {
+                    nextBtn.addEventListener('click', () => {
+                        currentIndex = (currentIndex + 1) % photos.length;
+                        slider.style.transform = `translateX(-${currentIndex * 100}%)`;
+                    });
+                }
+            }
+
+            function showError(message) {
+                document.getElementById('eventsGrid').innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-circle" style="color: #F56565;"></i>
+                        <h3>Error</h3>
+                        <p>${message}</p>
+                    </div>
+                `;
+            }
+        });
+
+        // ========== GLOBAL CHAT FUNCTION ==========
+        window.startChat = function(bookerId) {
+            window.location.href = `vivo-chat.html?user=${bookerId}`;
+        };
+    </script>
+    <script src="settings-manager.js"></script>
+    <script src="navbar.js"></script>
+</body>
+</html>
+
